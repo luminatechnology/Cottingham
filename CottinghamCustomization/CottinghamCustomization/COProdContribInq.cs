@@ -14,17 +14,17 @@ namespace CottinghamCustomization
     {
         #region Constant string Variables
         public const string ContribReportID = "GL651000";
-        public const string AcctGrp_Sales = "SALES";
-        public const string AcctGrp_COGS = "COGS";
-        public const string AcctGrp_ATL = "ATL";
-        public const string AcctGrp_BTL = "BTL";
-        public const string AcctGrp_Prin = "PRINCIPAL";
-        public const string AcctTyp_Sales = "Net Revenue sales";
-        public const string AcctTyp_COGS = AcctGrp_COGS;
-        public const string AcctTyp_GrProf = "Gross Profit";
-        public const string AcctTyp_Matg = "Marketing";
-        public const string AcctTyp_ATL = AcctGrp_ATL;
-        public const string AcctTyp_BTL = AcctGrp_BTL;
+        public const string AcctGrp_Sales   = "SALES";
+        public const string AcctGrp_COGS    = "COGS";
+        public const string AcctGrp_ATL     = "ATL";
+        public const string AcctGrp_BTL     = "BTL";
+        public const string AcctGrp_Prin    = "PRINCIPAL";
+        public const string AcctTyp_Sales   = "Net Revenue sales";
+        public const string AcctTyp_COGS    = AcctGrp_COGS;
+        public const string AcctTyp_GrProf  = "Gross Profit";
+        public const string AcctTyp_Matg    = "Marketing";
+        public const string AcctTyp_ATL     = AcctGrp_ATL;
+        public const string AcctTyp_BTL     = AcctGrp_BTL;
         public const string AcctTyp_ToMatg  = "Total Marketing Exp.";
         public const string AcctTyp_SupPrin = "Support from Principal";
         public const string AcctTyp_NetProf = "Net Profile";
@@ -57,7 +57,7 @@ namespace CottinghamCustomization
         #region Actions
         public PXAction<BudgetFilter> contribReport;
         [PXUIField(DisplayName = "Product Contribution", MapEnableRights = PXCacheRights.Select, MapViewRights = PXCacheRights.Select)]
-        [PXButton]
+        [PXButton(CommitChanges = true)]
         protected virtual IEnumerable ContribReport(PXAdapter adapter)
         {
             PXLongOperation.StartOperation(this, () => { throw RunReport(); });
@@ -76,9 +76,9 @@ namespace CottinghamCustomization
         #region Methods
         public virtual List<ProductContributionData> LoadAllData()
         {
-            var filter = Filter.Current;
+            var filter    = Filter.Current;
             var filterExt = filter.GetExtension<BudgetFilterExt>();
-            var records = new List<ProductContributionData>();
+            var records   = new List<ProductContributionData>();
 
             PXSelectBase<GLHistory> cmdHistory = new PXSelectReadonly2<GLHistory, LeftJoin<Account, On<GLHistory.accountID, Equal<Account.accountID>>,
                                                                                   LeftJoin<Sub, On<Sub.subID, Equal<GLHistory.subID>>,
@@ -97,8 +97,6 @@ namespace CottinghamCustomization
             }
 
             foreach (PXResult<GLHistory, Account, Sub, MasterFinPeriod> aggregatingResult in cmdHistory.Select(filterExt.UsrFinPeriodID, filter.BranchID))
-            //SubCDUtils.CreateSubCDWildcard(budLine.AccountMask, AccountAttribute.DimensionName),
-            //SubCDUtils.CreateSubCDWildcard(budLine.SubMask, SubAccountAttribute.DimensionName)))
             {
                 GLHistory histAggr = aggregatingResult;
                 Account histAcct = aggregatingResult;
@@ -142,10 +140,11 @@ namespace CottinghamCustomization
 
             foreach (PXResult<GLBudgetLine, MasterFinPeriod, Account, Sub, GLBudgetLineDetail> result in cmdBudgetLine.Select(filter.LedgerID, filter.BranchID, filterExt.UsrFinPeriodID))
             {
-                Account            acct = result;
-                GLBudgetLine       budLine = result;
-                MasterFinPeriod    period = result;
-                GLBudgetLineDetail lineDtl = result;
+                Account            acct     = result;
+                GLBudgetLine       budLine  = result;
+                MasterFinPeriod    period   = result;
+                GLBudgetLineDetail lineDtl  = result;
+                Branch             branch   = Branch.PK.Find(this, budLine.BranchID);
                 PMAccountGroup     acctGrop = PXSelectReadonly<PMAccountGroup, Where<PMAccountGroup.groupID, Equal<Required<Account.accountGroupID>>>>.Select(this, acct.AccountGroupID);
 
                 if (acctGrop != null && acctGrop.GroupCD.Trim().IsIn(AcctGrp_Sales, AcctGrp_COGS, AcctGrp_ATL, AcctGrp_BTL, AcctGrp_Prin))
@@ -153,6 +152,9 @@ namespace CottinghamCustomization
                     ProductContributionData contribData = new ProductContributionData()
                     {
                         PeriodNbr = period.PeriodNbr,
+                        BranchID = branch.BranchID,
+                        AcctName = branch.AcctName,
+                        LogoNameRpt = branch.BranchOrOrganizationLogoNameReport,
                         AccountID = acct.AccountID,
                         AccountCD = acct.AccountCD,
                         SubID = lineDtl.SubID,
@@ -177,6 +179,8 @@ namespace CottinghamCustomization
                                         BudgetAmt = x.Sum(y => y.BudgetAmt),
                                         ActualAmt = x.Sum(y => y.ActualAmt)
                                     }).ToList();
+
+            // Reset list collection records.
             records.Clear();
 
             int recCount = 1;
@@ -185,6 +189,7 @@ namespace CottinghamCustomization
             decimal? totalNetBud = 0m;
             decimal? totalNetAct = 0m;
 
+            // Insert "Fixed Number" record into temp table.
             do
             {
                 ProductContributionData contribData = null;
@@ -194,9 +199,9 @@ namespace CottinghamCustomization
                     case (int)GLAccountType.Sales:
                         var row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_Sales);
 
-                        totalBudAmt = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_Sales && f.ActualAmt == 0m)?.BudgetAmt ?? 0m;
+                        //totalBudAmt = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_Sales && f.ActualAmt == 0m)?.BudgetAmt ?? 0m;
 
-                        contribData = CreateDetailRecord(AcctTyp_Sales, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.AcctGroup, totalBudAmt, row?.ActualAmt);
+                        contribData = CreateDetailRecord(AcctTyp_Sales, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.AcctGroup, row?.BudgetAmt, row?.ActualAmt);
                         
                         totalBudAmt = row?.BudgetAmt;
                         totalActAmt = row?.ActualAmt;
@@ -205,9 +210,9 @@ namespace CottinghamCustomization
                     case (int)GLAccountType.COGS:
                         row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_COGS);
 
-                        totalBudAmt = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_COGS && f.ActualAmt == 0m)?.BudgetAmt ?? 0m;
+                        //totalBudAmt = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_COGS && f.ActualAmt == 0m)?.BudgetAmt ?? 0m;
 
-                        contribData = CreateDetailRecord(AcctTyp_COGS, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.AcctGroup, totalBudAmt, row?.ActualAmt, true);
+                        contribData = CreateDetailRecord(AcctTyp_COGS, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.AcctGroup, row?.BudgetAmt, row?.ActualAmt, true);
                         
                         totalBudAmt += row?.BudgetAmt;
                         totalActAmt += row?.ActualAmt;
@@ -227,9 +232,9 @@ namespace CottinghamCustomization
                     case (int)GLAccountType.ATL:
                         row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_ATL);
 
-                        totalBudAmt = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_ATL && f.ActualAmt == 0m)?.BudgetAmt ?? 0m;
+                        //totalBudAmt = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_ATL && f.ActualAmt == 0m)?.BudgetAmt ?? 0m;
 
-                        contribData = CreateDetailRecord(AcctGrp_ATL, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.AcctGroup, totalBudAmt, row?.ActualAmt);
+                        contribData = CreateDetailRecord(AcctGrp_ATL, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.AcctGroup, row?.BudgetAmt, row?.ActualAmt);
                         
                         totalBudAmt = row?.BudgetAmt;
                         totalActAmt = row?.ActualAmt;
@@ -238,9 +243,9 @@ namespace CottinghamCustomization
                     case (int)GLAccountType.BTL:
                         row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_BTL);
 
-                        totalBudAmt = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_BTL && f.ActualAmt == 0m)?.BudgetAmt ?? 0m;
+                        //totalBudAmt = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_BTL && f.ActualAmt == 0m)?.BudgetAmt ?? 0m;
 
-                        contribData = CreateDetailRecord(AcctGrp_BTL, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.AcctGroup, totalBudAmt, row?.ActualAmt, true);
+                        contribData = CreateDetailRecord(AcctGrp_BTL, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.AcctGroup, row?.BudgetAmt, row?.ActualAmt, true);
                         
                         totalBudAmt += row?.BudgetAmt;
                         totalActAmt += row?.ActualAmt;
@@ -256,9 +261,9 @@ namespace CottinghamCustomization
                     case (int)GLAccountType.SupFmPrin:
                         row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_Prin);
 
-                        totalBudAmt = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_Prin && f.ActualAmt == 0m)?.BudgetAmt ?? 0m;
+                        //totalBudAmt = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_Prin && f.ActualAmt == 0m)?.BudgetAmt ?? 0m;
 
-                        contribData = CreateDetailRecord(AcctTyp_SupPrin, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.AcctGroup, totalBudAmt, row?.ActualAmt, true);
+                        contribData = CreateDetailRecord(AcctTyp_SupPrin, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.AcctGroup, row?.BudgetAmt, row?.ActualAmt, true);
 
                         totalNetBud -= totalBudAmt;
                         totalNetAct -= totalActAmt;
@@ -296,6 +301,19 @@ namespace CottinghamCustomization
         #endregion
 
         #region Static Method
+        /// <summary>
+        /// Generate the report data according to parameters.
+        /// </summary>
+        /// <param name="acctType"></param>
+        /// <param name="branchID"></param>
+        /// <param name="acctName"></param>
+        /// <param name="logo"></param>
+        /// <param name="periodNbr"></param>
+        /// <param name="acctGrp"></param>
+        /// <param name="budgetAmt"></param>
+        /// <param name="actualAmt"></param>
+        /// <param name="bottomSold"></param>
+        /// <returns></returns>
         protected static ProductContributionData CreateDetailRecord(string acctType, int? branchID, string acctName, string logo, string periodNbr, 
                                                                     string acctGrp, decimal? budgetAmt, decimal? actualAmt, bool? bottomSold = false)
         {
@@ -326,6 +344,9 @@ namespace CottinghamCustomization
     }
 
     #region Temp DAC
+    /// <summary>
+    /// The DAC is only for product contribution report.
+    /// </summary>
     [Serializable]
     [PXCacheName("Temp Product Contribution")]
     public class ProductContributionData : PX.Data.IBqlTable
