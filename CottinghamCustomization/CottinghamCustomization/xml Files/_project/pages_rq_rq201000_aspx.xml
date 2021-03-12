@@ -1,0 +1,17 @@
+﻿<Page path="~/pages/rq/rq201000.aspx" ControlId="1" pageSource="tVhbU+M2FH6GGf6Dxp3tWzFL2xdqmELCJTMJm01Sdt92lPiQqNhWKsmQ7EN/e8+RbOL4RkJbD0Mc6eg7t0/nSAk+/M6GfA6sz5N5ii/nXucHjw24NqBo4kZEOPa3vxnR/o1UcRcMF9FxbIc9dpkaef0MifkiFKTLc8+oFLyjw4MHHomQGxjBXyloc+498kiDxzoyzLBHn09PPp6cnBxzvVwdz7THeskClDD63CN934afnIDHJsLQij8SQy+htdxjHy6ODo8OA/TEGTlZL4E9CGVSHg25WexgPkEEqP+sIxODXrBe99yb4ftHstQODSM+gzsZhaBocrnojj2m0oSjT2NQzwiDIAfBcnU2/Nrlho9lqmZgkUL9KqqdKNqnxZScmVCg2BcRkqHo5gePDZWIuVo/CHjBdERca9AUywPy7J7HuGr49fjT9E+YGX08+ox/WXit8ICLxHjsSiq0dWzWpOVemjEYa+FB0OFRNOWzp46MY56E2o7mlo9Ls8wp7CVoOaIOpTbkHTkdPXrMb19Mn8J0Fsgu0LmzDnHMn+HN9U70Rihdo3tsuDL38HKrJFHOge8E2Od1eG5p4NfFJ/BLiSXG+AXKNDHotJlBN80EIo5S/i3MI36pEGhjSc6wLNXffxJJCKszhmSyrNnill03gHgKasMt1oVHnkaGDFUyIkAIkVJ2vte1KB2+NEImuF8d1ZidtFMM2QW9JBQzbqTKE2FnaIvr2qnLmRHPwqwLk7ZmsHziRkAUWuZCPuQxmyGbJao4Y/EdbHSR8eTPF/RcvnjsOuG4t8Jc3UAkdyDmC4zeKZWRLM8TiJcRlqYiYfp8LVMzSiMox9uSrSOjNE5y3D6fQqSz8A5cnjF8ZJX9vkVFpBhuV6lYJbp1mc2cL0ptoU1gZa5DYTK0LuiZagPKBLZB7lOiQQFmqGQsNIR94OFExNCGWJW14EeHrPC8I6h2aCRfcjq8EeQthzoLmD1dyVV92bE7cvHUSbWRMaiMx20+VkT9C+Q0PgeOhPuofQDkpkI276C3Klvv5hb0ADewWEbrt4E3kg6WPPrXedvK09jmpYpYtryndZofDWQrgcuSl5GYJ314NLV1f6eMjBBKiZnpGYj7oj0jVdn/wIA7EWLZpFOTVOv2QlARrVW/ibZfLG5Z78p7yq6d6+fmznXb3LkmfFr2g9YYPvW2e0+qFEK7LsIqfSov2L+cnCxXNd2OjM7bArtD2YjkkZLUSJCgttpC+DqQgW+AvYvAzwFcP6Dcbp2F0BUaY1RsS32P2QnLBLei0E4O8uqQ49wqEdbFZI7jtY38SST07g6p2D4nFLwMcitMF24onwr68Iyb8CL/XtBvZ6rN3/qctdVsCdbe7c5YhNqrJOzUICsqxjCPkRh4Yn/K2tKOe6S0PyL5Qq2ttD2LmkpNdPR5g4Bh+fbtza7atKJOWdWtymr6v8uhoHXdLo53lVx25UvSZgjm06TVe4uFv0+jCE/l7ib3lmU50HsNoUvP3uFwi1Bl4NfzOXBU1VWbaLe4yUZydYVGvDUVVDLqx7n57bLpeS09p6e/UiWjcytdMK7wgpGfcWoiU29FE+FyFa5Yvh9ui0ntMO8nwggPIe7YKZUrrY1E3cNsl/Em7E3RLAcIr3tlJmT98rVsvs4EfqnAbm4hr1eOUkYLWHmj8EsXD7/YbJr7z20fr0YzmSZGV3vOVr/5P4o0q3lKe7jxqAPhVRrOwWS/BeEtcr+yUl1diG9dHbleLSHRkIUru9zup7MBIj9X9OiKjRuuakq1zmdQ43RKg22lrCzptA1kSD+XOFyvTV9LBjb+mPbuUhLcw7udcDM52jcjeFSgF5sts8POCPzNKa1x89X8IuAXzsGIV3ME/gc=">
+    <PXFormView ID="form" ParentId="phF_form" TypeFullName="PX.Web.UI.PXFormView">
+        <Children Key="Template">
+            <AddItem>
+                <PXSegmentMask TypeFullName="PX.Web.UI.PXSegmentMask">
+                    <Prop Key="Virtual:ApplyStylesheetSkin" />
+                    <Prop Key="ID" Value="CstPXSegmentMask1" />
+                    <Prop Key="DataField" Value="UsrVendor" />
+                </PXSegmentMask>
+            </AddItem>
+            <PXLayoutRule OriginalIndex="4" />
+        </Children>
+    </PXFormView>
+    <PXCheckBox DataField="VendorMultiply" ParentId="phF_form_chkVendorMultiply" TypeFullName="PX.Web.UI.PXCheckBox">
+        <Prop Key="CommitChanges" Value="True" />
+    </PXCheckBox>
+</Page>

@@ -1,0 +1,2188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report Name="report1">
+  <Filters>
+    <FilterExp>
+      <DataField>INRegister.Released</DataField>
+      <Value>True</Value>
+    </FilterExp>
+    <FilterExp>
+      <DataField>INRegister.Hold</DataField>
+      <Value>False</Value>
+    </FilterExp>
+    <FilterExp>
+      <Condition>GreaterOrEqual</Condition>
+      <DataField>INTran.FinPeriodID</DataField>
+      <OpenBraces>1</OpenBraces>
+      <Value>='12' + CStr(CInt([@FinYear]) - 1)</Value>
+    </FilterExp>
+    <FilterExp>
+      <CloseBraces>1</CloseBraces>
+      <Condition>LessOrEqual</Condition>
+      <DataField>INTran.FinPeriodID</DataField>
+      <Value>='12' + [@FinYear]</Value>
+    </FilterExp>
+  </Filters>
+  <GridSize>4px, 4px</GridSize>
+  <NavigationDepth>1</NavigationDepth>
+  <PageSettings>
+    <Landscape>True</Landscape>
+    <PaperKind>Letter</PaperKind>
+  </PageSettings>
+  <Parameters>
+    <ReportParameter>
+      <DefaultValue>2020</DefaultValue>
+      <Name>FinYear</Name>
+      <Prompt>Period Year</Prompt>
+      <Required>True</Required>
+      <ViewName>=Report.GetFieldSchema('AccountByYearFilter.FinYear')</ViewName>
+    </ReportParameter>
+  </Parameters>
+  <Relations>
+    <ReportRelation>
+      <ChildName>INTran</ChildName>
+      <JoinType>Inner</JoinType>
+      <Links>
+        <RelationRow>
+          <ChildField>DocType</ChildField>
+          <ParentField>DocType</ParentField>
+        </RelationRow>
+        <RelationRow>
+          <ChildField>RefNbr</ChildField>
+          <ParentField>RefNbr</ParentField>
+        </RelationRow>
+      </Links>
+      <ParentName>INRegister</ParentName>
+    </ReportRelation>
+    <ReportRelation>
+      <ChildName>InventoryItem</ChildName>
+      <JoinType>Inner</JoinType>
+      <Links>
+        <RelationRow>
+          <ChildField>InventoryID</ChildField>
+          <ParentField>InventoryID</ParentField>
+        </RelationRow>
+      </Links>
+      <ParentName>INTran</ParentName>
+    </ReportRelation>
+    <ReportRelation>
+      <ChildName>INItemClass</ChildName>
+      <Links>
+        <RelationRow>
+          <ChildField>ItemClassID</ChildField>
+          <ParentField>ItemClassID</ParentField>
+        </RelationRow>
+      </Links>
+      <ParentName>InventoryItem</ParentName>
+    </ReportRelation>
+  </Relations>
+  <SchemaUrl>http://localhost/Cottingham</SchemaUrl>
+  <Sorting>
+    <SortExp>
+      <DataField>InventoryItem.ItemClassID</DataField>
+    </SortExp>
+    <SortExp>
+      <DataField>InventoryItem.InventoryCD</DataField>
+    </SortExp>
+  </Sorting>
+  <StylesTemplate>TemplateReport.rpx</StylesTemplate>
+  <Tables>
+    <ReportTable Name="INRegister">
+      <Fields>
+        <ReportField Name="BatchNbr"></ReportField>
+        <ReportField Name="BranchID"></ReportField>
+        <ReportField Name="BranchID_Branch_acctName"></ReportField>
+        <ReportField Name="BranchID_description"></ReportField>
+        <ReportField Name="ControlAmount">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="ControlCost">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="ControlQty">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="CreatedByID"></ReportField>
+        <ReportField Name="CreatedByID_Creator_username"></ReportField>
+        <ReportField Name="CreatedByID_description"></ReportField>
+        <ReportField Name="CreatedByScreenID"></ReportField>
+        <ReportField Name="CreatedDateTime">
+          <DataType>DateTime</DataType>
+        </ReportField>
+        <ReportField Name="DocType"></ReportField>
+        <ReportField Name="ExtRefNbr"></ReportField>
+        <ReportField Name="FinPeriodID"></ReportField>
+        <ReportField Name="Hold">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="KitInventoryID">
+          <DataType>Int32</DataType>
+        </ReportField>
+        <ReportField Name="KitLineNbr">
+          <DataType>Int16</DataType>
+        </ReportField>
+        <ReportField Name="KitRevisionID"></ReportField>
+        <ReportField Name="LastModifiedByID"></ReportField>
+        <ReportField Name="LastModifiedByID_description"></ReportField>
+        <ReportField Name="LastModifiedByID_Modifier_username"></ReportField>
+        <ReportField Name="LastModifiedByScreenID"></ReportField>
+        <ReportField Name="LastModifiedDateTime">
+          <DataType>DateTime</DataType>
+        </ReportField>
+        <ReportField Name="LineCntr">
+          <DataType>Int16</DataType>
+        </ReportField>
+        <ReportField Name="NoteActivity"></ReportField>
+        <ReportField Name="NoteFiles"></ReportField>
+        <ReportField Name="NoteID">
+          <DataType>Int64</DataType>
+        </ReportField>
+        <ReportField Name="NoteImages"></ReportField>
+        <ReportField Name="NoteText"></ReportField>
+        <ReportField Name="OrigModule"></ReportField>
+        <ReportField Name="RefNbr"></ReportField>
+        <ReportField Name="Released">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="Selected">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="SiteID"></ReportField>
+        <ReportField Name="SiteID_description"></ReportField>
+        <ReportField Name="SiteID_INSite_descr"></ReportField>
+        <ReportField Name="Status"></ReportField>
+        <ReportField Name="ToSiteID"></ReportField>
+        <ReportField Name="ToSiteID_description"></ReportField>
+        <ReportField Name="ToSiteID_INSite_descr"></ReportField>
+        <ReportField Name="TotalAmount">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TotalCost">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TotalQty">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranDate">
+          <DataType>DateTime</DataType>
+        </ReportField>
+        <ReportField Name="TranDesc"></ReportField>
+        <ReportField Name="TranPeriodID"></ReportField>
+        <ReportField Name="TransferNbr"></ReportField>
+        <ReportField Name="TransferType"></ReportField>
+        <ReportField Name="tstamp">
+          <DataType>Object</DataType>
+        </ReportField>
+      </Fields>
+      <FullName>PX.Objects.IN.INRegister</FullName>
+    </ReportTable>
+    <ReportTable Name="INTran">
+      <Fields>
+        <ReportField Name="AcctID"></ReportField>
+        <ReportField Name="AcctID_Account_description"></ReportField>
+        <ReportField Name="AcctID_description"></ReportField>
+        <ReportField Name="ARDocType"></ReportField>
+        <ReportField Name="ARLineNbr">
+          <DataType>Int16</DataType>
+        </ReportField>
+        <ReportField Name="ARRefNbr"></ReportField>
+        <ReportField Name="AssyType"></ReportField>
+        <ReportField Name="AvgCost">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="BAccountID">
+          <DataType>Int32</DataType>
+        </ReportField>
+        <ReportField Name="BaseQty">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="BranchID"></ReportField>
+        <ReportField Name="BranchID_Branch_acctName"></ReportField>
+        <ReportField Name="BranchID_description"></ReportField>
+        <ReportField Name="COGSAcctID"></ReportField>
+        <ReportField Name="COGSAcctID_Account_description"></ReportField>
+        <ReportField Name="COGSAcctID_description"></ReportField>
+        <ReportField Name="COGSSubID"></ReportField>
+        <ReportField Name="COGSSubID_description"></ReportField>
+        <ReportField Name="COGSSubID_Sub_description"></ReportField>
+        <ReportField Name="CostedQty">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="CreatedByID"></ReportField>
+        <ReportField Name="CreatedByID_Creator_username"></ReportField>
+        <ReportField Name="CreatedByID_description"></ReportField>
+        <ReportField Name="CreatedByScreenID"></ReportField>
+        <ReportField Name="CreatedDateTime">
+          <DataType>DateTime</DataType>
+        </ReportField>
+        <ReportField Name="DocType"></ReportField>
+        <ReportField Name="ExpireDate">
+          <DataType>DateTime</DataType>
+        </ReportField>
+        <ReportField Name="FinPeriodID"></ReportField>
+        <ReportField Name="InventoryID"></ReportField>
+        <ReportField Name="InventoryID_description"></ReportField>
+        <ReportField Name="InventoryID_InventoryItem_descr"></ReportField>
+        <ReportField Name="InvtAcctID"></ReportField>
+        <ReportField Name="InvtAcctID_Account_description"></ReportField>
+        <ReportField Name="InvtAcctID_description"></ReportField>
+        <ReportField Name="InvtMult">
+          <DataType>Int16</DataType>
+        </ReportField>
+        <ReportField Name="InvtSubID"></ReportField>
+        <ReportField Name="InvtSubID_description"></ReportField>
+        <ReportField Name="InvtSubID_Sub_description"></ReportField>
+        <ReportField Name="LastModifiedByID"></ReportField>
+        <ReportField Name="LastModifiedByID_description"></ReportField>
+        <ReportField Name="LastModifiedByID_Modifier_username"></ReportField>
+        <ReportField Name="LastModifiedByScreenID"></ReportField>
+        <ReportField Name="LastModifiedDateTime">
+          <DataType>DateTime</DataType>
+        </ReportField>
+        <ReportField Name="LineNbr">
+          <DataType>Int16</DataType>
+        </ReportField>
+        <ReportField Name="LocationID"></ReportField>
+        <ReportField Name="LocationID_description"></ReportField>
+        <ReportField Name="LocationID_INLocation_descr"></ReportField>
+        <ReportField Name="LotSerialNbr"></ReportField>
+        <ReportField Name="NoteActivity"></ReportField>
+        <ReportField Name="NoteFiles"></ReportField>
+        <ReportField Name="NoteID">
+          <DataType>Int64</DataType>
+        </ReportField>
+        <ReportField Name="NoteImages"></ReportField>
+        <ReportField Name="NoteText"></ReportField>
+        <ReportField Name="OrigBranchID">
+          <DataType>Int32</DataType>
+        </ReportField>
+        <ReportField Name="OrigLineNbr">
+          <DataType>Int16</DataType>
+        </ReportField>
+        <ReportField Name="OrigQty">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="OrigRefNbr"></ReportField>
+        <ReportField Name="OrigTranAmt">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="OrigTranCost">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="OrigTranType"></ReportField>
+        <ReportField Name="POLineType"></ReportField>
+        <ReportField Name="POReceiptLineNbr">
+          <DataType>Int16</DataType>
+        </ReportField>
+        <ReportField Name="POReceiptNbr"></ReportField>
+        <ReportField Name="ProjectID"></ReportField>
+        <ReportField Name="ProjectID_description"></ReportField>
+        <ReportField Name="ProjectID_PMProject_description"></ReportField>
+        <ReportField Name="Qty">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="ReasonCode"></ReportField>
+        <ReportField Name="RefNbr"></ReportField>
+        <ReportField Name="Released">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="SalesMult">
+          <DataType>Int16</DataType>
+        </ReportField>
+        <ReportField Name="SiteID"></ReportField>
+        <ReportField Name="SiteID_description"></ReportField>
+        <ReportField Name="SiteID_INSite_descr"></ReportField>
+        <ReportField Name="SOOrderLineNbr">
+          <DataType>Int16</DataType>
+        </ReportField>
+        <ReportField Name="SOOrderNbr"></ReportField>
+        <ReportField Name="SOOrderType"></ReportField>
+        <ReportField Name="SOShipmentLineNbr">
+          <DataType>Int16</DataType>
+        </ReportField>
+        <ReportField Name="SOShipmentNbr"></ReportField>
+        <ReportField Name="SOShipmentType"></ReportField>
+        <ReportField Name="SubID"></ReportField>
+        <ReportField Name="SubID_description"></ReportField>
+        <ReportField Name="SubID_Sub_description"></ReportField>
+        <ReportField Name="SubItemID"></ReportField>
+        <ReportField Name="TaskID"></ReportField>
+        <ReportField Name="TaskID_description"></ReportField>
+        <ReportField Name="TaskID_PMTask_description"></ReportField>
+        <ReportField Name="ToLocationID"></ReportField>
+        <ReportField Name="ToLocationID_description"></ReportField>
+        <ReportField Name="ToLocationID_INLocation_descr"></ReportField>
+        <ReportField Name="ToSiteID"></ReportField>
+        <ReportField Name="ToSiteID_description"></ReportField>
+        <ReportField Name="ToSiteID_INSite_descr"></ReportField>
+        <ReportField Name="TranAmt">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranCost">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranDate">
+          <DataType>DateTime</DataType>
+        </ReportField>
+        <ReportField Name="TranDesc"></ReportField>
+        <ReportField Name="TranPeriodID"></ReportField>
+        <ReportField Name="TranType"></ReportField>
+        <ReportField Name="tstamp">
+          <DataType>Object</DataType>
+        </ReportField>
+        <ReportField Name="UnassignedQty">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="UnitCost">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="UnitPrice">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="UOM"></ReportField>
+      </Fields>
+      <FullName>PX.Objects.IN.INTran</FullName>
+    </ReportTable>
+    <ReportTable Name="InventoryItem">
+      <Fields>
+        <ReportField Name="ABCCodeID"></ReportField>
+        <ReportField Name="ABCCodeID_description"></ReportField>
+        <ReportField Name="ABCCodeID_INABCCode_descr"></ReportField>
+        <ReportField Name="ABCCodeIsFixed">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="BaseItemVolume">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="BaseItemWeight">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="BasePrice">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="BasePriceDate">
+          <DataType>DateTime</DataType>
+        </ReportField>
+        <ReportField Name="BaseUnit"></ReportField>
+        <ReportField Name="BaseVolume">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="BaseWeight">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="COGSAcctID"></ReportField>
+        <ReportField Name="COGSAcctID_Account_description"></ReportField>
+        <ReportField Name="COGSAcctID_description"></ReportField>
+        <ReportField Name="COGSSubID"></ReportField>
+        <ReportField Name="COGSSubID_description"></ReportField>
+        <ReportField Name="COGSSubID_Sub_description"></ReportField>
+        <ReportField Name="Commisionable">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="CreatedByID"></ReportField>
+        <ReportField Name="CreatedByID_Creator_username"></ReportField>
+        <ReportField Name="CreatedByID_description"></ReportField>
+        <ReportField Name="CreatedByScreenID"></ReportField>
+        <ReportField Name="CreatedDateTime">
+          <DataType>DateTime</DataType>
+        </ReportField>
+        <ReportField Name="CycleID"></ReportField>
+        <ReportField Name="CycleID_description"></ReportField>
+        <ReportField Name="CycleID_INPICycle_descr"></ReportField>
+        <ReportField Name="DefaultSubItemID"></ReportField>
+        <ReportField Name="DefaultSubItemOnEntry">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="DeferredCode"></ReportField>
+        <ReportField Name="Descr"></ReportField>
+        <ReportField Name="DfltReceiptLocationID"></ReportField>
+        <ReportField Name="DfltReceiptLocationID_description"></ReportField>
+        <ReportField Name="DfltReceiptLocationID_INLocation_descr"></ReportField>
+        <ReportField Name="DfltShipLocationID"></ReportField>
+        <ReportField Name="DfltShipLocationID_description"></ReportField>
+        <ReportField Name="DfltShipLocationID_INLocation_descr"></ReportField>
+        <ReportField Name="DfltSiteID"></ReportField>
+        <ReportField Name="DfltSiteID_description"></ReportField>
+        <ReportField Name="DfltSiteID_INSite_descr"></ReportField>
+        <ReportField Name="DiscAcctID"></ReportField>
+        <ReportField Name="DiscAcctID_Account_description"></ReportField>
+        <ReportField Name="DiscAcctID_description"></ReportField>
+        <ReportField Name="DiscSubID"></ReportField>
+        <ReportField Name="DiscSubID_description"></ReportField>
+        <ReportField Name="DiscSubID_Sub_description"></ReportField>
+        <ReportField Name="GroupMask">
+          <DataType>Object</DataType>
+        </ReportField>
+        <ReportField Name="ImageUrl"></ReportField>
+        <ReportField Name="Included">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="InventoryCD"></ReportField>
+        <ReportField Name="InventoryID">
+          <DataType>Int32</DataType>
+        </ReportField>
+        <ReportField Name="InvtAcctID"></ReportField>
+        <ReportField Name="InvtAcctID_Account_description"></ReportField>
+        <ReportField Name="InvtAcctID_description"></ReportField>
+        <ReportField Name="InvtSubID"></ReportField>
+        <ReportField Name="InvtSubID_description"></ReportField>
+        <ReportField Name="InvtSubID_Sub_description"></ReportField>
+        <ReportField Name="IsSplitted">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="ItemClassID"></ReportField>
+        <ReportField Name="ItemClassID_description"></ReportField>
+        <ReportField Name="ItemClassID_INItemClass_descr"></ReportField>
+        <ReportField Name="ItemStatus"></ReportField>
+        <ReportField Name="ItemType"></ReportField>
+        <ReportField Name="KitItem">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="LastBasePrice">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="LastModifiedByID"></ReportField>
+        <ReportField Name="LastModifiedByID_description"></ReportField>
+        <ReportField Name="LastModifiedByID_Modifier_username"></ReportField>
+        <ReportField Name="LastModifiedByScreenID"></ReportField>
+        <ReportField Name="LastModifiedDateTime">
+          <DataType>DateTime</DataType>
+        </ReportField>
+        <ReportField Name="LastSiteID">
+          <DataType>Int32</DataType>
+        </ReportField>
+        <ReportField Name="LastStdCost">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="LCVarianceAcctID"></ReportField>
+        <ReportField Name="LCVarianceAcctID_Account_description"></ReportField>
+        <ReportField Name="LCVarianceAcctID_description"></ReportField>
+        <ReportField Name="LCVarianceSubID"></ReportField>
+        <ReportField Name="LCVarianceSubID_description"></ReportField>
+        <ReportField Name="LCVarianceSubID_Sub_description"></ReportField>
+        <ReportField Name="LotSerClassID"></ReportField>
+        <ReportField Name="LotSerClassID_description"></ReportField>
+        <ReportField Name="LotSerClassID_INLotSerClass_descr"></ReportField>
+        <ReportField Name="LotSerNumberResult"></ReportField>
+        <ReportField Name="LotSerNumShared">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="LotSerNumSharedVal"></ReportField>
+        <ReportField Name="LotSerNumVal"></ReportField>
+        <ReportField Name="MarkupPct">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="MinGrossProfitPct">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="MovementClassID"></ReportField>
+        <ReportField Name="MovementClassID_description"></ReportField>
+        <ReportField Name="MovementClassID_INMovementClass_descr"></ReportField>
+        <ReportField Name="MovementClassIsFixed">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="NegQty">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="NonStockReceipt">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="NonStockShip">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="NoteActivity"></ReportField>
+        <ReportField Name="NoteFiles"></ReportField>
+        <ReportField Name="NoteID">
+          <DataType>Int64</DataType>
+        </ReportField>
+        <ReportField Name="NoteImages"></ReportField>
+        <ReportField Name="NoteText"></ReportField>
+        <ReportField Name="PackageOption"></ReportField>
+        <ReportField Name="PendingBasePrice">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="PendingBasePriceDate">
+          <DataType>DateTime</DataType>
+        </ReportField>
+        <ReportField Name="PendingStdCost">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="PendingStdCostDate">
+          <DataType>DateTime</DataType>
+        </ReportField>
+        <ReportField Name="POAccrualAcctID"></ReportField>
+        <ReportField Name="POAccrualAcctID_Account_description"></ReportField>
+        <ReportField Name="POAccrualAcctID_description"></ReportField>
+        <ReportField Name="POAccrualSubID"></ReportField>
+        <ReportField Name="POAccrualSubID_description"></ReportField>
+        <ReportField Name="POAccrualSubID_Sub_description"></ReportField>
+        <ReportField Name="PostClassID"></ReportField>
+        <ReportField Name="PostClassID_description"></ReportField>
+        <ReportField Name="PostClassID_INPostClass_descr"></ReportField>
+        <ReportField Name="PPVAcctID"></ReportField>
+        <ReportField Name="PPVAcctID_Account_description"></ReportField>
+        <ReportField Name="PPVAcctID_description"></ReportField>
+        <ReportField Name="PPVSubID"></ReportField>
+        <ReportField Name="PPVSubID_description"></ReportField>
+        <ReportField Name="PPVSubID_Sub_description"></ReportField>
+        <ReportField Name="PreferredVendorID"></ReportField>
+        <ReportField Name="PreferredVendorID_BAccountR_acctName"></ReportField>
+        <ReportField Name="PreferredVendorID_description"></ReportField>
+        <ReportField Name="PreferredVendorID_Vendor_acctName"></ReportField>
+        <ReportField Name="PreferredVendorLocationID"></ReportField>
+        <ReportField Name="PreferredVendorLocationID_description"></ReportField>
+        <ReportField Name="PreferredVendorLocationID_Location_descr"></ReportField>
+        <ReportField Name="PriceClassID"></ReportField>
+        <ReportField Name="PriceClassID_description"></ReportField>
+        <ReportField Name="PriceClassID_INPriceClass_description"></ReportField>
+        <ReportField Name="PriceManagerID"></ReportField>
+        <ReportField Name="PriceManagerID_description"></ReportField>
+        <ReportField Name="PriceManagerID_EPEmployee_acctName"></ReportField>
+        <ReportField Name="PriceWorkgroupID"></ReportField>
+        <ReportField Name="PriceWorkgroupID_description"></ReportField>
+        <ReportField Name="PriceWorkgroupID_EPCompanyTree_description"></ReportField>
+        <ReportField Name="ProductManagerID"></ReportField>
+        <ReportField Name="ProductManagerID_description"></ReportField>
+        <ReportField Name="ProductManagerID_EPEmployee_acctName"></ReportField>
+        <ReportField Name="ProductWorkgroupID"></ReportField>
+        <ReportField Name="ProductWorkgroupID_description"></ReportField>
+        <ReportField Name="ProductWorkgroupID_EPCompanyTree_description"></ReportField>
+        <ReportField Name="PurchaseUnit"></ReportField>
+        <ReportField Name="ReasonCodeSubID"></ReportField>
+        <ReportField Name="ReasonCodeSubID_description"></ReportField>
+        <ReportField Name="ReasonCodeSubID_Sub_description"></ReportField>
+        <ReportField Name="RecPrice">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="SalesAcctID"></ReportField>
+        <ReportField Name="SalesAcctID_Account_description"></ReportField>
+        <ReportField Name="SalesAcctID_description"></ReportField>
+        <ReportField Name="SalesSubID"></ReportField>
+        <ReportField Name="SalesSubID_description"></ReportField>
+        <ReportField Name="SalesSubID_Sub_description"></ReportField>
+        <ReportField Name="SalesUnit"></ReportField>
+        <ReportField Name="Secured">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="StdCost">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="StdCostDate">
+          <DataType>DateTime</DataType>
+        </ReportField>
+        <ReportField Name="StdCstRevAcctID"></ReportField>
+        <ReportField Name="StdCstRevAcctID_Account_description"></ReportField>
+        <ReportField Name="StdCstRevAcctID_description"></ReportField>
+        <ReportField Name="StdCstRevSubID"></ReportField>
+        <ReportField Name="StdCstRevSubID_description"></ReportField>
+        <ReportField Name="StdCstRevSubID_Sub_description"></ReportField>
+        <ReportField Name="StdCstVarAcctID"></ReportField>
+        <ReportField Name="StdCstVarAcctID_Account_description"></ReportField>
+        <ReportField Name="StdCstVarAcctID_description"></ReportField>
+        <ReportField Name="StdCstVarSubID"></ReportField>
+        <ReportField Name="StdCstVarSubID_description"></ReportField>
+        <ReportField Name="StdCstVarSubID_Sub_description"></ReportField>
+        <ReportField Name="StkItem">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="TaxCategoryID"></ReportField>
+        <ReportField Name="TaxCategoryID_description"></ReportField>
+        <ReportField Name="TaxCategoryID_TaxCategory_descr"></ReportField>
+        <ReportField Name="TotalPercentage">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="tstamp">
+          <DataType>Object</DataType>
+        </ReportField>
+        <ReportField Name="UseParentSubID">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="ValMethod"></ReportField>
+        <ReportField Name="VolumeUOM"></ReportField>
+        <ReportField Name="WeightUOM"></ReportField>
+      </Fields>
+      <FullName>PX.Objects.IN.InventoryItem</FullName>
+    </ReportTable>
+    <ReportTable Name="INItemClass">
+      <Fields>
+        <ReportField Name="AccrueCost">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="AvailabilitySchemeID"></ReportField>
+        <ReportField Name="AvailabilitySchemeID_description"></ReportField>
+        <ReportField Name="AvailabilitySchemeID_INAvailabilityScheme_description"></ReportField>
+        <ReportField Name="BaseUnit"></ReportField>
+        <ReportField Name="CountryOfOrigin"></ReportField>
+        <ReportField Name="CountryOfOrigin_Country_description"></ReportField>
+        <ReportField Name="CountryOfOrigin_description"></ReportField>
+        <ReportField Name="CreatedByID"></ReportField>
+        <ReportField Name="CreatedByID_Creator_displayName"></ReportField>
+        <ReportField Name="CreatedByID_Creator_Username"></ReportField>
+        <ReportField Name="CreatedByID_description"></ReportField>
+        <ReportField Name="CreatedByScreenID"></ReportField>
+        <ReportField Name="CreatedDateTime">
+          <DataType>DateTime</DataType>
+        </ReportField>
+        <ReportField Name="CreatedDateTime_Day"></ReportField>
+        <ReportField Name="CreatedDateTime_Hour"></ReportField>
+        <ReportField Name="CreatedDateTime_Month"></ReportField>
+        <ReportField Name="CreatedDateTime_Quarter"></ReportField>
+        <ReportField Name="DecimalBaseUnit">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="DecimalPurchaseUnit">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="DecimalSalesUnit">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="DeferredCode"></ReportField>
+        <ReportField Name="DemandCalculation"></ReportField>
+        <ReportField Name="Descr"></ReportField>
+        <ReportField Name="DfltSiteID"></ReportField>
+        <ReportField Name="DfltSiteID_description"></ReportField>
+        <ReportField Name="DfltSiteID_INSite_descr"></ReportField>
+        <ReportField Name="DfltSiteID_Segment1"></ReportField>
+        <ReportField Name="GroupMask">
+          <DataType>Object</DataType>
+        </ReportField>
+        <ReportField Name="HSTariffCode"></ReportField>
+        <ReportField Name="Included">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="ItemClassCD"></ReportField>
+        <ReportField Name="ItemClassCD_Segment1"></ReportField>
+        <ReportField Name="ItemClassCD_Segment2"></ReportField>
+        <ReportField Name="ItemClassCDWildcard"></ReportField>
+        <ReportField Name="ItemClassCDWildcard_Segment1"></ReportField>
+        <ReportField Name="ItemClassCDWildcard_Segment2"></ReportField>
+        <ReportField Name="ItemClassID">
+          <DataType>Int32</DataType>
+        </ReportField>
+        <ReportField Name="ItemClassStrID"></ReportField>
+        <ReportField Name="ItemType"></ReportField>
+        <ReportField Name="LastModifiedByID"></ReportField>
+        <ReportField Name="LastModifiedByID_description"></ReportField>
+        <ReportField Name="LastModifiedByID_Modifier_displayName"></ReportField>
+        <ReportField Name="LastModifiedByID_Modifier_Username"></ReportField>
+        <ReportField Name="LastModifiedByScreenID"></ReportField>
+        <ReportField Name="LastModifiedDateTime">
+          <DataType>DateTime</DataType>
+        </ReportField>
+        <ReportField Name="LastModifiedDateTime_Day"></ReportField>
+        <ReportField Name="LastModifiedDateTime_Hour"></ReportField>
+        <ReportField Name="LastModifiedDateTime_Month"></ReportField>
+        <ReportField Name="LastModifiedDateTime_Quarter"></ReportField>
+        <ReportField Name="LotSerClassID"></ReportField>
+        <ReportField Name="LotSerClassID_description"></ReportField>
+        <ReportField Name="LotSerClassID_INLotSerClass_descr"></ReportField>
+        <ReportField Name="MarkupPct">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="MinGrossProfitPct">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="NegQty">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="NoteActivity"></ReportField>
+        <ReportField Name="NoteFiles"></ReportField>
+        <ReportField Name="NoteID">
+          <DataType>Object</DataType>
+        </ReportField>
+        <ReportField Name="NoteImages"></ReportField>
+        <ReportField Name="NoteText"></ReportField>
+        <ReportField Name="OvershipThreshold">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="ParentItemClassID">
+          <DataType>Int32</DataType>
+        </ReportField>
+        <ReportField Name="PostClassID"></ReportField>
+        <ReportField Name="PostClassID_description"></ReportField>
+        <ReportField Name="PostClassID_INPostClass_descr"></ReportField>
+        <ReportField Name="PriceClassID"></ReportField>
+        <ReportField Name="PriceClassID_description"></ReportField>
+        <ReportField Name="PriceClassID_INPriceClass_description"></ReportField>
+        <ReportField Name="PriceManagerID"></ReportField>
+        <ReportField Name="PriceManagerID_description"></ReportField>
+        <ReportField Name="PriceManagerID_EPEmployee_acctName"></ReportField>
+        <ReportField Name="PriceWorkgroupID"></ReportField>
+        <ReportField Name="PriceWorkgroupID_description"></ReportField>
+        <ReportField Name="PriceWorkgroupID_EPCompanyTree_description"></ReportField>
+        <ReportField Name="PurchaseUnit"></ReportField>
+        <ReportField Name="SalesUnit"></ReportField>
+        <ReportField Name="Secured">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="StkItem">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="TaxCalcMode"></ReportField>
+        <ReportField Name="TaxCategoryID"></ReportField>
+        <ReportField Name="TaxCategoryID_description"></ReportField>
+        <ReportField Name="TaxCategoryID_TaxCategory_descr"></ReportField>
+        <ReportField Name="tstamp"></ReportField>
+        <ReportField Name="UndershipThreshold">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="ValMethod"></ReportField>
+      </Fields>
+      <FullName>PX.Objects.IN.INItemClass</FullName>
+    </ReportTable>
+    <ReportTable Name="INItemCostHist">
+      <Fields>
+        <ReportField Name="AccountID">
+          <DataType>Int32</DataType>
+        </ReportField>
+        <ReportField Name="CostSiteID"></ReportField>
+        <ReportField Name="CostSiteID_description"></ReportField>
+        <ReportField Name="CostSiteID_INSite_descr"></ReportField>
+        <ReportField Name="CostSiteID_Segment1"></ReportField>
+        <ReportField Name="CostSubItemID"></ReportField>
+        <ReportField Name="CostSubItemID_Segment1"></ReportField>
+        <ReportField Name="FinBegCost">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinBegQty">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPeriodID"></ReportField>
+        <ReportField Name="FinPtdCOGS">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdCOGSCredits">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdCOGSDropShips">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdCostAdjusted">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdCostAssemblyIn">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdCostAssemblyOut">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdCostIssued">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdCostReceived">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdCostTransferIn">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdCostTransferOut">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdCreditMemos">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdDropShipSales">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdQtyAdjusted">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdQtyAssemblyIn">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdQtyAssemblyOut">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdQtyCreditMemos">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdQtyDropShipSales">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdQtyIssued">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdQtyReceived">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdQtySales">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdQtyTransferIn">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdQtyTransferOut">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinPtdSales">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinYtdCost">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="FinYtdQty">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="InventoryID"></ReportField>
+        <ReportField Name="InventoryID_description"></ReportField>
+        <ReportField Name="InventoryID_InventoryItem_descr"></ReportField>
+        <ReportField Name="InventoryID_Segment1"></ReportField>
+        <ReportField Name="InventoryID_Segment2"></ReportField>
+        <ReportField Name="InventoryID_Segment3"></ReportField>
+        <ReportField Name="SiteID"></ReportField>
+        <ReportField Name="SiteID_description"></ReportField>
+        <ReportField Name="SiteID_INSite_descr"></ReportField>
+        <ReportField Name="SiteID_Segment1"></ReportField>
+        <ReportField Name="SubID">
+          <DataType>Int32</DataType>
+        </ReportField>
+        <ReportField Name="TranBegCost">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranBegQty">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdCOGS">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdCOGSCredits">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdCOGSDropShips">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdCostAdjusted">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdCostAssemblyIn">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdCostAssemblyOut">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdCostIssued">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdCostReceived">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdCostTransferIn">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdCostTransferOut">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdCreditMemos">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdDropShipSales">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdQtyAdjusted">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdQtyAssemblyIn">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdQtyAssemblyOut">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdQtyCreditMemos">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdQtyDropShipSales">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdQtyIssued">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdQtyReceived">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdQtySales">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdQtyTransferIn">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdQtyTransferOut">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranPtdSales">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranYtdCost">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="TranYtdQty">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="tstamp"></ReportField>
+      </Fields>
+      <FullName>PX.Objects.IN.INItemCostHist</FullName>
+    </ReportTable>
+  </Tables>
+  <TabularFreeze>900px</TabularFreeze>
+  <Width>123.3cm</Width>
+  <Sections>
+    <PageHeader Name="pageHeaderSection1">
+      <GridSize>8px, 8px</GridSize>
+      <Height>1.0582cm</Height>
+      <Items>
+        <TextBox Name="textBox11">
+          <Location>4px, 0px</Location>
+          <Size>244px, 16px</Size>
+          <StyleName>Report Name</StyleName>
+          <Value>Inventory Tran. Summary</Value>
+        </TextBox>
+        <TextBox Name="textBox12">
+          <Location>80px, 20px</Location>
+          <Size>168px, 14px</Size>
+          <StyleName>Report Params</StyleName>
+          <Value>=Report.GetDefUI('AccessInfo.CompanyName')</Value>
+        </TextBox>
+        <TextBox Name="textBox14">
+          <Location>4px, 20px</Location>
+          <Size>76px, 14px</Size>
+          <StyleName>Report Params</StyleName>
+          <Value>Company:</Value>
+        </TextBox>
+        <TextBox Name="textBox15">
+          <Location>544px, 16px</Location>
+          <Size>36px, 14px</Size>
+          <StyleName>Report Params</StyleName>
+          <Value>Page:</Value>
+        </TextBox>
+        <TextBox Name="textBox16">
+          <Location>272px, 20px</Location>
+          <Size>76px, 14px</Size>
+          <StyleName>Report Params</StyleName>
+          <Value>User:</Value>
+        </TextBox>
+        <TextBox Name="textBox17">
+          <Location>600px, 16px</Location>
+          <Size>84px, 14px</Size>
+          <Style>
+            <TextAlign>Right</TextAlign>
+          </Style>
+          <StyleName>Report Params</StyleName>
+          <Value>=[PageOf]</Value>
+        </TextBox>
+        <TextBox Name="textBox18">
+          <Location>348px, 20px</Location>
+          <Size>168px, 14px</Size>
+          <StyleName>Report Params</StyleName>
+          <Value>=Report.GetDefUI('RowAccessInfo.DisplayName')</Value>
+        </TextBox>
+        <TextBox Name="textBox19">
+          <Format>g</Format>
+          <Location>584px, 0px</Location>
+          <Size>100px, 14px</Size>
+          <Style>
+            <TextAlign>Right</TextAlign>
+          </Style>
+          <StyleName>Report Params</StyleName>
+          <Value>=Now()</Value>
+        </TextBox>
+        <TextBox Name="textBox9">
+          <Location>544px, 0px</Location>
+          <Size>36px, 14px</Size>
+          <StyleName>Report Params</StyleName>
+          <Value>Date:</Value>
+        </TextBox>
+      </Items>
+    </PageHeader>
+    <Detail Name="detailSection1">
+      <GridSize>8px, 8px</GridSize>
+      <Height>0.63492cm</Height>
+      <Visible>False</Visible>
+      <Items>
+        <TextBox Name="textBox27">
+          <Format>N0</Format>
+          <Location>426px, 2px</Location>
+          <Size>90px, 14px</Size>
+          <Style>
+            <TextAlign>Right</TextAlign>
+          </Style>
+          <StyleName>Normal</StyleName>
+          <Value>=[INTran.FinPeriodID]</Value>
+        </TextBox>
+        <TextBox Name="textBox76">
+          <Format>N0</Format>
+          <Location>520px, 2px</Location>
+          <Size>90px, 14px</Size>
+          <Style>
+            <TextAlign>Right</TextAlign>
+          </Style>
+          <StyleName>Normal</StyleName>
+          <Value>=[INTran.TranCost]</Value>
+        </TextBox>
+      </Items>
+    </Detail>
+    <PageFooter Name="pageFooterSection1">
+      <GridSize>8px, 8px</GridSize>
+      <Height>0px</Height>
+      <Visible>False</Visible>
+    </PageFooter>
+    <PageHeader Name="pageHeaderSection2">
+      <GridSize>8px, 8px</GridSize>
+      <Height>0px</Height>
+    </PageHeader>
+  </Sections>
+  <Items />
+  <Groups>
+    <Group Name="ItemClass">
+      <Grouping>
+        <GroupExp>
+          <DataField>=[InventoryItem.ItemClassID]</DataField>
+        </GroupExp>
+      </Grouping>
+      <Headers>
+        <Header Name="groupHeaderSection1">
+          <GridSize>8px, 8px</GridSize>
+          <Height>0.95238cm</Height>
+          <StyleName>ColumnsHeaderSection</StyleName>
+          <Items>
+            <TextBox Name="textBox1">
+              <Location>1146px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Receipt</Value>
+            </TextBox>
+            <TextBox Name="textBox10">
+              <Location>768px, 0px</Location>
+              <Size>236px, 14px</Size>
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>='02-' + [@FinYear]</Value>
+            </TextBox>
+            <TextBox Name="textBox13">
+              <Location>1326px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Ending</Value>
+            </TextBox>
+            <TextBox Name="textBox2">
+              <Location>1056px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Beginning</Value>
+            </TextBox>
+            <TextBox Name="textBox20">
+              <Location>1236px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Issue</Value>
+            </TextBox>
+            <TextBox Name="textBox26">
+              <Location>72px, 0px</Location>
+              <Size>72px, 14px</Size>
+              <StyleName>Normal</StyleName>
+              <Value>=[INItemClass.ItemClassCD]</Value>
+            </TextBox>
+            <TextBox Name="textBox28">
+              <Location>426px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Receipt</Value>
+            </TextBox>
+            <TextBox Name="textBox29">
+              <Location>100px, 20px</Location>
+              <Size>236px, 14px</Size>
+              <StyleName>Heading 1</StyleName>
+              <Value>Description</Value>
+            </TextBox>
+            <TextBox Name="textBox30">
+              <Location>0px, 0px</Location>
+              <Size>72px, 14px</Size>
+              <StyleName>Heading 1</StyleName>
+              <Value>Item Class</Value>
+            </TextBox>
+            <TextBox Name="textBox31">
+              <Location>0px, 20px</Location>
+              <Size>100px, 14px</Size>
+              <StyleName>Heading 1</StyleName>
+              <Value>Inventory</Value>
+            </TextBox>
+            <TextBox Name="textBox32">
+              <Location>336px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Beginning</Value>
+            </TextBox>
+            <TextBox Name="textBox33">
+              <Location>606px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Ending</Value>
+            </TextBox>
+            <TextBox Name="textBox34">
+              <Location>516px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Issue</Value>
+            </TextBox>
+            <TextBox Name="textBox35">
+              <Location>1128px, 0px</Location>
+              <Size>236px, 14px</Size>
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>='03-' + [@FinYear]</Value>
+            </TextBox>
+            <TextBox Name="textBox36">
+              <Location>1506px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Receipt</Value>
+            </TextBox>
+            <TextBox Name="textBox37">
+              <Location>1416px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Beginning</Value>
+            </TextBox>
+            <TextBox Name="textBox38">
+              <Location>1686px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Ending</Value>
+            </TextBox>
+            <TextBox Name="textBox39">
+              <Location>1596px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Issue</Value>
+            </TextBox>
+            <TextBox Name="textBox4">
+              <Location>408px, 0px</Location>
+              <Size>236px, 14px</Size>
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>='01-' + [@FinYear]</Value>
+            </TextBox>
+            <TextBox Name="textBox40">
+              <Location>1488px, 0px</Location>
+              <Size>236px, 14px</Size>
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>='04-' + [@FinYear]</Value>
+            </TextBox>
+            <TextBox Name="textBox41">
+              <Location>1866px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Receipt</Value>
+            </TextBox>
+            <TextBox Name="textBox42">
+              <Location>1776px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Beginning</Value>
+            </TextBox>
+            <TextBox Name="textBox43">
+              <Location>2046px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Ending</Value>
+            </TextBox>
+            <TextBox Name="textBox44">
+              <Location>1956px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Issue</Value>
+            </TextBox>
+            <TextBox Name="textBox45">
+              <Location>1848px, 0px</Location>
+              <Size>236px, 14px</Size>
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>='05-' + [@FinYear]</Value>
+            </TextBox>
+            <TextBox Name="textBox46">
+              <Location>2226px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Receipt</Value>
+            </TextBox>
+            <TextBox Name="textBox47">
+              <Location>2136px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Beginning</Value>
+            </TextBox>
+            <TextBox Name="textBox48">
+              <Location>2406px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Ending</Value>
+            </TextBox>
+            <TextBox Name="textBox49">
+              <Location>2316px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Issue</Value>
+            </TextBox>
+            <TextBox Name="textBox5">
+              <Location>786px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Receipt</Value>
+            </TextBox>
+            <TextBox Name="textBox50">
+              <Location>2208px, 0px</Location>
+              <Size>236px, 14px</Size>
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>='06-' + [@FinYear]</Value>
+            </TextBox>
+            <TextBox Name="textBox51">
+              <Location>2586px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Receipt</Value>
+            </TextBox>
+            <TextBox Name="textBox52">
+              <Location>2496px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Beginning</Value>
+            </TextBox>
+            <TextBox Name="textBox53">
+              <Location>2766px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Ending</Value>
+            </TextBox>
+            <TextBox Name="textBox54">
+              <Location>2676px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Issue</Value>
+            </TextBox>
+            <TextBox Name="textBox55">
+              <Location>2568px, 0px</Location>
+              <Size>236px, 14px</Size>
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>='07-' + [@FinYear]</Value>
+            </TextBox>
+            <TextBox Name="textBox56">
+              <Location>2946px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Receipt</Value>
+            </TextBox>
+            <TextBox Name="textBox57">
+              <Location>2856px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Beginning</Value>
+            </TextBox>
+            <TextBox Name="textBox58">
+              <Location>3126px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Ending</Value>
+            </TextBox>
+            <TextBox Name="textBox59">
+              <Location>3036px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Issue</Value>
+            </TextBox>
+            <TextBox Name="textBox6">
+              <Location>696px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Beginning</Value>
+            </TextBox>
+            <TextBox Name="textBox60">
+              <Location>2928px, 0px</Location>
+              <Size>236px, 14px</Size>
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>='08-' + [@FinYear]</Value>
+            </TextBox>
+            <TextBox Name="textBox61">
+              <Location>3306px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Receipt</Value>
+            </TextBox>
+            <TextBox Name="textBox62">
+              <Location>3216px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Beginning</Value>
+            </TextBox>
+            <TextBox Name="textBox63">
+              <Location>3486px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Ending</Value>
+            </TextBox>
+            <TextBox Name="textBox64">
+              <Location>3396px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Issue</Value>
+            </TextBox>
+            <TextBox Name="textBox65">
+              <Location>3288px, 0px</Location>
+              <Size>236px, 14px</Size>
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>='09-' + [@FinYear]</Value>
+            </TextBox>
+            <TextBox Name="textBox66">
+              <Location>3666px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Receipt</Value>
+            </TextBox>
+            <TextBox Name="textBox67">
+              <Location>3576px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Beginning</Value>
+            </TextBox>
+            <TextBox Name="textBox68">
+              <Location>3846px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Ending</Value>
+            </TextBox>
+            <TextBox Name="textBox69">
+              <Location>3756px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Issue</Value>
+            </TextBox>
+            <TextBox Name="textBox7">
+              <Location>966px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Ending</Value>
+            </TextBox>
+            <TextBox Name="textBox70">
+              <Location>3640px, 0px</Location>
+              <Size>236px, 14px</Size>
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>='10-' + [@FinYear]</Value>
+            </TextBox>
+            <TextBox Name="textBox71">
+              <Location>4026px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Receipt</Value>
+            </TextBox>
+            <TextBox Name="textBox72">
+              <Location>3936px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Beginning</Value>
+            </TextBox>
+            <TextBox Name="textBox73">
+              <Location>4206px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Ending</Value>
+            </TextBox>
+            <TextBox Name="textBox74">
+              <Location>4116px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Issue</Value>
+            </TextBox>
+            <TextBox Name="textBox75">
+              <Location>4000px, 0px</Location>
+              <Size>236px, 14px</Size>
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>='11-' + [@FinYear]</Value>
+            </TextBox>
+            <TextBox Name="textBox8">
+              <Location>876px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Issue</Value>
+            </TextBox>
+            <TextBox Name="textBox81">
+              <Location>4386px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Receipt</Value>
+            </TextBox>
+            <TextBox Name="textBox82">
+              <Location>4296px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Beginning</Value>
+            </TextBox>
+            <TextBox Name="textBox83">
+              <Location>4566px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Ending</Value>
+            </TextBox>
+            <TextBox Name="textBox84">
+              <Location>4476px, 20px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>Issue</Value>
+            </TextBox>
+            <TextBox Name="textBox85">
+              <Location>4360px, 0px</Location>
+              <Size>236px, 14px</Size>
+              <Style>
+                <TextAlign>Center</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>='12-' + [@FinYear]</Value>
+            </TextBox>
+          </Items>
+        </Header>
+      </Headers>
+      <Footers>
+        <Footer Name="groupFooterSection1">
+          <GridSize>8px, 8px</GridSize>
+          <Height>0px</Height>
+        </Footer>
+      </Footers>
+    </Group>
+    <Group Name="InventoryID">
+      <Grouping>
+        <GroupExp>
+          <DataField>=[InventoryItem.InventoryID]</DataField>
+        </GroupExp>
+      </Grouping>
+      <Headers>
+        <Header Name="groupHeaderSection2">
+          <GridSize>8px, 8px</GridSize>
+          <Height>0px</Height>
+        </Header>
+      </Headers>
+      <Footers>
+        <Footer Name="groupFooterSection2">
+          <GridSize>8px, 8px</GridSize>
+          <Height>0.5291cm</Height>
+          <Variables>
+            <ReportVariable>
+              <Name>JanEnding</Name>
+              <ValueExpr>=Sum(IIf(Substring([INTran.FinPeriodID], 2, 4) &lt; [@FinYear], [INTran.TranCost], 0)) + Sum(IIf([INTran.FinPeriodID] = '01' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0)) - Sum(IIf([INTran.FinPeriodID] = '01' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</ValueExpr>
+            </ReportVariable>
+            <ReportVariable>
+              <Name>FebEnding</Name>
+              <ValueExpr>=$JanEnding + Sum(IIf([INTran.FinPeriodID] = '02' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0)) - Sum(IIf([INTran.FinPeriodID] = '02' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</ValueExpr>
+            </ReportVariable>
+            <ReportVariable>
+              <Name>MarEnding</Name>
+              <ValueExpr>=$FebEnding + Sum(IIf([INTran.FinPeriodID] = '03' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0)) - Sum(IIf([INTran.FinPeriodID] = '03' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</ValueExpr>
+            </ReportVariable>
+            <ReportVariable>
+              <Name>AprEnding</Name>
+              <ValueExpr>=$MarEnding + Sum(IIf([INTran.FinPeriodID] = '04' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0)) - Sum(IIf([INTran.FinPeriodID] = '04' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</ValueExpr>
+            </ReportVariable>
+            <ReportVariable>
+              <Name>MayEnding</Name>
+              <ValueExpr>=$AprEnding+ Sum(IIf([INTran.FinPeriodID] = '05' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0)) - Sum(IIf([INTran.FinPeriodID] = '05' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</ValueExpr>
+            </ReportVariable>
+            <ReportVariable>
+              <Name>JunEnding</Name>
+              <ValueExpr>=$MayEnding+ Sum(IIf([INTran.FinPeriodID] = '06' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0)) - Sum(IIf([INTran.FinPeriodID] = '06' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</ValueExpr>
+            </ReportVariable>
+            <ReportVariable>
+              <Name>JulEnding</Name>
+              <ValueExpr>=$JunEnding+ Sum(IIf([INTran.FinPeriodID] = '07' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0)) - Sum(IIf([INTran.FinPeriodID] = '07' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</ValueExpr>
+            </ReportVariable>
+            <ReportVariable>
+              <Name>AugEnding</Name>
+              <ValueExpr>=$JulEnding + Sum(IIf([INTran.FinPeriodID] = '08' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0)) - Sum(IIf([INTran.FinPeriodID] = '08' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</ValueExpr>
+            </ReportVariable>
+            <ReportVariable>
+              <Name>SepEnding</Name>
+              <ValueExpr>=$AugEnding + Sum(IIf([INTran.FinPeriodID] = '09' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0)) - Sum(IIf([INTran.FinPeriodID] = '09' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</ValueExpr>
+            </ReportVariable>
+            <ReportVariable>
+              <Name>OctEnding</Name>
+              <ValueExpr>=$SepEnding + Sum(IIf([INTran.FinPeriodID] = '10' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0)) - Sum(IIf([INTran.FinPeriodID] = '10' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</ValueExpr>
+            </ReportVariable>
+            <ReportVariable>
+              <Name>NovEnding</Name>
+              <ValueExpr>=$OctEnding + Sum(IIf([INTran.FinPeriodID] = '11' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0)) - Sum(IIf([INTran.FinPeriodID] = '11' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</ValueExpr>
+            </ReportVariable>
+            <ReportVariable>
+              <Name>DecEnding</Name>
+              <ValueExpr>=$NovEnding + Sum(IIf([INTran.FinPeriodID] = '12' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0)) - Sum(IIf([INTran.FinPeriodID] = '12' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</ValueExpr>
+            </ReportVariable>
+          </Variables>
+          <Items>
+            <TextBox Name="textBox100">
+              <Format>N0</Format>
+              <Location>2136px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$MayEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox101">
+              <Format>N0</Format>
+              <Location>2316px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '06' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox102">
+              <Format>N0</Format>
+              <Location>2586px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '07' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox103">
+              <Format>N0</Format>
+              <Location>2766px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$JulEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox104">
+              <Format>N0</Format>
+              <Location>2496px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$JunEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox105">
+              <Format>N0</Format>
+              <Location>2676px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '07' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox106">
+              <Format>N0</Format>
+              <Location>2946px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '08' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox107">
+              <Format>N0</Format>
+              <Location>3126px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$AugEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox108">
+              <Format>N0</Format>
+              <Location>2856px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$JulEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox109">
+              <Format>N0</Format>
+              <Location>3036px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '08' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox110">
+              <Format>N0</Format>
+              <Location>3306px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '09' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox111">
+              <Format>N0</Format>
+              <Location>3486px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$SepEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox112">
+              <Format>N0</Format>
+              <Location>3216px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$AugEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox113">
+              <Format>N0</Format>
+              <Location>3396px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '09' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox114">
+              <Format>N0</Format>
+              <Location>3666px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '10' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox115">
+              <Format>N0</Format>
+              <Location>3846px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$OctEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox116">
+              <Format>N0</Format>
+              <Location>3576px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$SepEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox117">
+              <Format>N0</Format>
+              <Location>3756px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '10' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox118">
+              <Format>N0</Format>
+              <Location>4026px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '11' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox119">
+              <Format>N0</Format>
+              <Location>4206px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$NovEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox120">
+              <Format>N0</Format>
+              <Location>3936px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$OctEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox121">
+              <Format>N0</Format>
+              <Location>4116px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '11' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox122">
+              <Format>N0</Format>
+              <Location>4386px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '12' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox123">
+              <Format>N0</Format>
+              <Location>4566px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$DecEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox124">
+              <Format>N0</Format>
+              <Location>4296px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$NovEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox125">
+              <Format>N0</Format>
+              <Location>4476px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '12' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox21">
+              <Format>N0</Format>
+              <Location>516px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '01' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox22">
+              <Format>N0</Format>
+              <Location>336px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf(Substring([INTran.FinPeriodID], 2, 4) &lt; [@FinYear], [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox23">
+              <Format>N0</Format>
+              <Location>606px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$JanEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox24">
+              <Location>0px, 2px</Location>
+              <Size>100px, 14px</Size>
+              <StyleName>Normal</StyleName>
+              <Value>=[InventoryItem.InventoryCD]</Value>
+            </TextBox>
+            <TextBox Name="textBox25">
+              <Location>100px, 2px</Location>
+              <Size>236px, 14px</Size>
+              <Style>
+                <Font>
+                  <Name>PMingLiU</Name>
+                </Font>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=[InventoryItem.Descr]</Value>
+            </TextBox>
+            <TextBox Name="textBox3">
+              <Format>N0</Format>
+              <Location>426px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '01' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox77">
+              <Format>N0</Format>
+              <Location>786px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '02' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox78">
+              <Format>N0</Format>
+              <Location>966px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$FebEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox79">
+              <Format>N0</Format>
+              <Location>696px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$JanEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox80">
+              <Format>N0</Format>
+              <Location>876px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '02' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox86">
+              <Format>N0</Format>
+              <Location>1146px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '03' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox87">
+              <Format>N0</Format>
+              <Location>1326px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$MarEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox88">
+              <Format>N0</Format>
+              <Location>1056px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$FebEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox89">
+              <Format>N0</Format>
+              <Location>1236px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '03' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox90">
+              <Format>N0</Format>
+              <Location>1506px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '04' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox91">
+              <Format>N0</Format>
+              <Location>1686px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$AprEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox92">
+              <Format>N0</Format>
+              <Location>1416px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$MarEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox93">
+              <Format>N0</Format>
+              <Location>1596px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '04' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox94">
+              <Format>N0</Format>
+              <Location>1866px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '05' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox95">
+              <Format>N0</Format>
+              <Location>2046px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$MayEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox96">
+              <Format>N0</Format>
+              <Location>1776px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$AprEnding</Value>
+            </TextBox>
+            <TextBox Name="textBox97">
+              <Format>N0</Format>
+              <Location>1956px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '05' + [@FinYear] And[INTran.InvtMult] &lt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox98">
+              <Format>N0</Format>
+              <Location>2226px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=Sum(IIf([INTran.FinPeriodID] = '06' + [@FinYear] And[INTran.InvtMult] &gt; 0, [INTran.TranCost], 0))</Value>
+            </TextBox>
+            <TextBox Name="textBox99">
+              <Format>N0</Format>
+              <Location>2406px, 2px</Location>
+              <Size>90px, 14px</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=$JunEnding</Value>
+            </TextBox>
+          </Items>
+        </Footer>
+      </Footers>
+    </Group>
+  </Groups>
+</Report>

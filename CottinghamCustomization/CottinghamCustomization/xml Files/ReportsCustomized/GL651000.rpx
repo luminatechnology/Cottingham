@@ -1,0 +1,319 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report Name="report1">
+  <CommonSettings>
+    <ViewPdf>True</ViewPdf>
+  </CommonSettings>
+  <SchemaUrl>http://localhost/Cottingham</SchemaUrl>
+  <StylesTemplate>TemplateForm.rpx</StylesTemplate>
+  <Tables>
+    <ReportTable Name="ProductContributionData">
+      <Fields>
+        <ReportField Name="AccountCD"></ReportField>
+        <ReportField Name="AccountID"></ReportField>
+        <ReportField Name="AccountID_Account_description"></ReportField>
+        <ReportField Name="AccountID_description"></ReportField>
+        <ReportField Name="AccountID_Segment1"></ReportField>
+        <ReportField Name="AcctGroup"></ReportField>
+        <ReportField Name="AcctGroup_description"></ReportField>
+        <ReportField Name="AcctGroup_PMAccountGroup_description"></ReportField>
+        <ReportField Name="AcctGroup_Segment1"></ReportField>
+        <ReportField Name="AcctName"></ReportField>
+        <ReportField Name="AcctType"></ReportField>
+        <ReportField Name="ActualAmt">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="BottomSold">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="BranchID"></ReportField>
+        <ReportField Name="BranchID_Branch_acctName"></ReportField>
+        <ReportField Name="BranchID_description"></ReportField>
+        <ReportField Name="BranchID_Segment1"></ReportField>
+        <ReportField Name="BranchID_Segment2"></ReportField>
+        <ReportField Name="BranchID_Segment3"></ReportField>
+        <ReportField Name="BudgetAmt">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="CompltRate">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="LogoNameRpt"></ReportField>
+        <ReportField Name="PeriodNbr"></ReportField>
+        <ReportField Name="SubID"></ReportField>
+        <ReportField Name="SubID_description"></ReportField>
+        <ReportField Name="SubID_Segment1"></ReportField>
+        <ReportField Name="SubID_Segment2"></ReportField>
+        <ReportField Name="SubID_Segment3"></ReportField>
+        <ReportField Name="SubID_Segment4"></ReportField>
+        <ReportField Name="SubID_Sub_description"></ReportField>
+      </Fields>
+      <FullName>CottinghamCustomization.ProductContributionData</FullName>
+    </ReportTable>
+  </Tables>
+  <Sections>
+    <PageHeader Name="pageHeaderSection1">
+      <Height>3.6cm</Height>
+      <Items>
+        <PictureBox Name="pictureBox1">
+          <Location>0px, 0px</Location>
+          <MimeType>image/png</MimeType>
+          <QRCodeSettings />
+          <Size>176px, 96px</Size>
+          <Source>Database</Source>
+          <Value>=[ProductContributionData.LogoNameRpt]</Value>
+        </PictureBox>
+        <TextBox Name="textBox1">
+          <Location>216px, 8px</Location>
+          <Size>448px, 24px</Size>
+          <StyleName>Heading 2</StyleName>
+          <Value>=[ProductContributionData.AcctName]</Value>
+        </TextBox>
+        <TextBox Name="textBox10">
+          <Format>MMM dd, yyyy</Format>
+          <Location>216px, 64px</Location>
+          <Size>256px, 0.16667in</Size>
+          <StyleName>Heading 1</StyleName>
+          <Value>=[@Today]</Value>
+        </TextBox>
+        <TextBox Name="textBox16">
+          <Location>472px, 96px</Location>
+          <Size>1.25in, 0.16667in</Size>
+          <Style>
+            <BorderStyle>
+              <Bottom>Solid</Bottom>
+            </BorderStyle>
+            <BorderWidth>
+              <Bottom>1px</Bottom>
+            </BorderWidth>
+            <TextAlign>Center</TextAlign>
+          </Style>
+          <StyleName>Heading 1</StyleName>
+          <Value>Completion Rate</Value>
+        </TextBox>
+        <TextBox Name="textBox17">
+          <Location>344px, 96px</Location>
+          <Size>1.25in, 0.16667in</Size>
+          <Style>
+            <BorderStyle>
+              <Bottom>Solid</Bottom>
+            </BorderStyle>
+            <BorderWidth>
+              <Bottom>1px</Bottom>
+            </BorderWidth>
+            <TextAlign>Center</TextAlign>
+          </Style>
+          <StyleName>Heading 1</StyleName>
+          <Value>Actual</Value>
+        </TextBox>
+        <TextBox Name="textBox18">
+          <Location>216px, 96px</Location>
+          <Size>1.25in, 0.16667in</Size>
+          <Style>
+            <BorderStyle>
+              <Bottom>Solid</Bottom>
+            </BorderStyle>
+            <BorderWidth>
+              <Bottom>1px</Bottom>
+            </BorderWidth>
+            <TextAlign>Center</TextAlign>
+          </Style>
+          <StyleName>Heading 1</StyleName>
+          <Value>Budget</Value>
+        </TextBox>
+        <TextBox Name="textBox19">
+          <Location>0px, 120px</Location>
+          <Size>1.25in, 0.16667in</Size>
+          <StyleName>Heading 1</StyleName>
+          <Value>Revenue :</Value>
+        </TextBox>
+        <TextBox Name="textBox8">
+          <Location>216px, 48px</Location>
+          <Size>256px, 0.16667in</Size>
+          <StyleName>Heading 1</StyleName>
+          <Value>Product Contribution</Value>
+        </TextBox>
+      </Items>
+    </PageHeader>
+    <Detail Name="detailSection1">
+      <Expanded>False</Expanded>
+      <Height>0.7cm</Height>
+      <Visible>False</Visible>
+      <Items>
+        <Line Name="line1">
+          <Location>216px, 20px</Location>
+          <Size>1.25in, 0.03in</Size>
+          <VisibleExpr>=[ProductContributionData.BottomSold]</VisibleExpr>
+        </Line>
+        <Line Name="line2">
+          <Location>472px, 20px</Location>
+          <Size>1.25in, 0.03in</Size>
+          <VisibleExpr>=[ProductContributionData.BottomSold]</VisibleExpr>
+        </Line>
+        <Line Name="line3">
+          <Location>344px, 20px</Location>
+          <Size>1.25in, 0.03in</Size>
+          <VisibleExpr>=[ProductContributionData.BottomSold]</VisibleExpr>
+        </Line>
+        <Line Name="line4">
+          <Location>216px, 22px</Location>
+          <Size>1.25in, 0.02in</Size>
+          <VisibleExpr>=Trim([ProductContributionData.AcctType]) = 'Net Profile' And [ProductContributionData.BottomSold] = True</VisibleExpr>
+        </Line>
+        <Line Name="line5">
+          <Location>344px, 22px</Location>
+          <Size>1.25in, 0.02in</Size>
+          <VisibleExpr>=Trim([ProductContributionData.AcctType]) = 'Net Profile' And [ProductContributionData.BottomSold] = True</VisibleExpr>
+        </Line>
+        <Line Name="line6">
+          <Location>472px, 22px</Location>
+          <Size>1.25in, 0.02in</Size>
+          <VisibleExpr>=Trim([ProductContributionData.AcctType]) = 'Net Profile' And [ProductContributionData.BottomSold] = True</VisibleExpr>
+        </Line>
+        <TextBox Name="textBox5">
+          <Location>0px, 2px</Location>
+          <Size>208px, 0.18in</Size>
+          <StyleName>Normal</StyleName>
+          <Value>=[ProductContributionData.AcctType]</Value>
+        </TextBox>
+        <TextBox Name="textBox6">
+          <Format>N0</Format>
+          <Location>216px, 2px</Location>
+          <Size>1.25in, 0.18in</Size>
+          <Style>
+            <TextAlign>Right</TextAlign>
+          </Style>
+          <StyleName>Normal</StyleName>
+          <Value>=[ProductContributionData.BudgetAmt]</Value>
+        </TextBox>
+        <TextBox Name="textBox7">
+          <Format>N0</Format>
+          <Location>472px, 2px</Location>
+          <Size>1.25in, 0.18in</Size>
+          <Style>
+            <TextAlign>Right</TextAlign>
+          </Style>
+          <StyleName>Normal</StyleName>
+          <Value>=IIf([ProductContributionData.CompltRate] = Null, '', Format('{0} %', [ProductContributionData.CompltRate]))</Value>
+        </TextBox>
+        <TextBox Name="textBox9">
+          <Format>N0</Format>
+          <Location>344px, 2px</Location>
+          <Size>1.25in, 0.18in</Size>
+          <Style>
+            <TextAlign>Right</TextAlign>
+          </Style>
+          <StyleName>Normal</StyleName>
+          <Value>=[ProductContributionData.ActualAmt]</Value>
+        </TextBox>
+      </Items>
+    </Detail>
+  </Sections>
+  <Items />
+  <Groups>
+    <Group Name="Periodgroup">
+      <Grouping>
+        <GroupExp>
+          <DataField>=[ProductContributionData.PeriodNbr]</DataField>
+        </GroupExp>
+      </Grouping>
+      <Headers>
+        <Header Name="groupHeaderSection1">
+          <Height>0in</Height>
+          <Visible>False</Visible>
+        </Header>
+      </Headers>
+      <Footers>
+        <Footer Name="groupFooterSection1">
+          <Height>0cm</Height>
+          <PageBreak>After</PageBreak>
+          <Visible>False</Visible>
+        </Footer>
+      </Footers>
+    </Group>
+    <Group Name="AcctTypegroup">
+      <Grouping>
+        <GroupExp>
+          <DataField>=[ProductContributionData.AcctType]</DataField>
+        </GroupExp>
+      </Grouping>
+      <Headers>
+        <Header Name="groupHeaderSection2">
+          <Height>0.7cm</Height>
+          <Items>
+            <Line Name="line10">
+              <Location>344px, 20px</Location>
+              <Size>1.25in, 0.03in</Size>
+              <VisibleExpr>=[ProductContributionData.BottomSold]</VisibleExpr>
+            </Line>
+            <Line Name="line11">
+              <Location>472px, 20px</Location>
+              <Size>1.25in, 0.03in</Size>
+              <VisibleExpr>=[ProductContributionData.BottomSold]</VisibleExpr>
+            </Line>
+            <Line Name="line12">
+              <Location>216px, 20px</Location>
+              <Size>1.25in, 0.03in</Size>
+              <VisibleExpr>=[ProductContributionData.BottomSold]</VisibleExpr>
+            </Line>
+            <Line Name="line7">
+              <Location>472px, 22px</Location>
+              <Size>1.25in, 0.02in</Size>
+              <VisibleExpr>=Trim([ProductContributionData.AcctType]) = 'Net Profile' And [ProductContributionData.BottomSold] = True</VisibleExpr>
+            </Line>
+            <Line Name="line8">
+              <Location>344px, 22px</Location>
+              <Size>1.25in, 0.02in</Size>
+              <VisibleExpr>=Trim([ProductContributionData.AcctType]) = 'Net Profile' And [ProductContributionData.BottomSold] = True</VisibleExpr>
+            </Line>
+            <Line Name="line9">
+              <Location>216px, 22px</Location>
+              <Size>1.25in, 0.02in</Size>
+              <VisibleExpr>=Trim([ProductContributionData.AcctType]) = 'Net Profile' And [ProductContributionData.BottomSold] = True</VisibleExpr>
+            </Line>
+            <TextBox Name="textBox11">
+              <Format>N0</Format>
+              <Location>344px, 2px</Location>
+              <Size>1.25in, 0.18in</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=[ProductContributionData.ActualAmt]</Value>
+            </TextBox>
+            <TextBox Name="textBox12">
+              <Format>N0</Format>
+              <Location>472px, 2px</Location>
+              <Size>1.25in, 0.18in</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=IIf([ProductContributionData.CompltRate] = Null, '', Format('{0} %', [ProductContributionData.CompltRate]))</Value>
+            </TextBox>
+            <TextBox Name="textBox14">
+              <Format>N0</Format>
+              <Location>216px, 2px</Location>
+              <Size>1.25in, 0.18in</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=[ProductContributionData.BudgetAmt]</Value>
+            </TextBox>
+            <TextBox Name="textBox15">
+              <Location>0px, 2px</Location>
+              <Size>208px, 0.18in</Size>
+              <StyleName>Normal</StyleName>
+              <Value>=[ProductContributionData.AcctType]</Value>
+            </TextBox>
+          </Items>
+        </Header>
+      </Headers>
+      <Footers>
+        <Footer Name="groupFooterSection2">
+          <Height>0cm</Height>
+        </Footer>
+      </Footers>
+    </Group>
+  </Groups>
+</Report>

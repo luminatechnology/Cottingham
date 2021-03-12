@@ -1,0 +1,5 @@
+﻿<Automation screen="AR303000">
+    <Fields ScreenID="AR303000">
+        <Field IsActive="True" DisplayName="Display Name" FieldName="SPOUSE" ObjectName="PX.OBJECTS.CR.CONTACT" />
+    </Fields>
+</Automation>
