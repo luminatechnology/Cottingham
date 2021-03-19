@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using PX.Common;
 using PX.Data;
+using PX.Objects.CS;
 using PX.Objects.GL;
 using PX.Objects.GL.FinPeriods;
 using PX.Objects.PM;
@@ -27,7 +28,7 @@ namespace CottinghamCustomization
         public const string AcctTyp_BTL     = AcctGrp_BTL;
         public const string AcctTyp_ToMatg  = "Total Marketing Exp.";
         public const string AcctTyp_SupPrin = "Support from Principal";
-        public const string AcctTyp_NetProf = "Net Profile";
+        public const string AcctTyp_NetProf = "Net Profit";
         #endregion
 
         #region Select & Features
@@ -109,6 +110,8 @@ namespace CottinghamCustomization
                     ProductContributionData contribData = new ProductContributionData()
                     {
                         PeriodNbr = histperd.PeriodNbr,
+                        FinYear = histperd.FinYear,
+                        SubCDWildcard = GetSubCDSegmentDescr(this, filter.SubIDFilter),
                         BranchID = histAggr.BranchID,
                         AcctName = histBran.AcctName,
                         LogoNameRpt = histBran.BranchOrOrganizationLogoNameReport,
@@ -152,6 +155,8 @@ namespace CottinghamCustomization
                     ProductContributionData contribData = new ProductContributionData()
                     {
                         PeriodNbr = period.PeriodNbr,
+                        FinYear = period.FinYear,
+                        SubCDWildcard = GetSubCDSegmentDescr(this, filter.SubIDFilter),
                         BranchID = branch.BranchID,
                         AcctName = branch.AcctName,
                         LogoNameRpt = branch.BranchOrOrganizationLogoNameReport,
@@ -168,10 +173,12 @@ namespace CottinghamCustomization
             }
 
             var recordAggr = records.OrderBy(data => data.PeriodNbr).ThenBy(data => data.AccountCD)
-                                    .GroupBy(data => new { data.BranchID, data.AcctName, data.LogoNameRpt, data.AcctGroup, data.PeriodNbr })
+                                    .GroupBy(data => new { data.BranchID, data.AcctName, data.LogoNameRpt, data.AcctGroup, data.PeriodNbr, data.FinYear, data.SubCDWildcard })
                                     .Select(x => new
                                     {
                                         PeriodNbr = x.Key.PeriodNbr,
+                                        FinYear = x.Key.FinYear,
+                                        SubCD = x.Key.SubCDWildcard,
                                         BranchID = x.Key.BranchID,
                                         Logo = x.Key.LogoNameRpt,
                                         AcctName = x.Key.AcctName,
@@ -199,9 +206,7 @@ namespace CottinghamCustomization
                     case (int)GLAccountType.Sales:
                         var row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_Sales);
 
-                        //totalBudAmt = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_Sales && f.ActualAmt == 0m)?.BudgetAmt ?? 0m;
-
-                        contribData = CreateDetailRecord(AcctTyp_Sales, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.AcctGroup, row?.BudgetAmt, row?.ActualAmt);
+                        contribData = CreateDetailRecord(AcctTyp_Sales, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualAmt);
                         
                         totalBudAmt = row?.BudgetAmt;
                         totalActAmt = row?.ActualAmt;
@@ -210,31 +215,27 @@ namespace CottinghamCustomization
                     case (int)GLAccountType.COGS:
                         row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_COGS);
 
-                        //totalBudAmt = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_COGS && f.ActualAmt == 0m)?.BudgetAmt ?? 0m;
-
-                        contribData = CreateDetailRecord(AcctTyp_COGS, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.AcctGroup, row?.BudgetAmt, row?.ActualAmt, true);
+                        contribData = CreateDetailRecord(AcctTyp_COGS, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualAmt, true);
                         
-                        totalBudAmt += row?.BudgetAmt;
-                        totalActAmt += row?.ActualAmt;
+                        totalBudAmt -= row?.BudgetAmt;
+                        totalActAmt -= row?.ActualAmt;
                         break;
 
                     case (int)GLAccountType.GrossProfile:
-                        contribData = CreateDetailRecord(AcctTyp_GrProf, null, null, null, null, null, totalBudAmt, totalActAmt);
+                        contribData = CreateDetailRecord(AcctTyp_GrProf, null, null, null, null, null, null, null, totalBudAmt, totalActAmt);
 
-                        totalNetBud = totalBudAmt;
-                        totalNetAct = totalActAmt;
+                        totalNetBud = totalBudAmt ?? 0m;
+                        totalNetAct = totalActAmt ?? 0m;
                         break;
 
                     case (int)GLAccountType.Martketing:
-                        contribData = CreateDetailRecord(AcctTyp_Matg, null, null, null, null, null, null, null);
+                        contribData = CreateDetailRecord(AcctTyp_Matg, null, null, null, null, null, null, null, null, null);
                         break;
 
                     case (int)GLAccountType.ATL:
                         row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_ATL);
 
-                        //totalBudAmt = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_ATL && f.ActualAmt == 0m)?.BudgetAmt ?? 0m;
-
-                        contribData = CreateDetailRecord(AcctGrp_ATL, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.AcctGroup, row?.BudgetAmt, row?.ActualAmt);
+                        contribData = CreateDetailRecord(AcctGrp_ATL, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualAmt);
                         
                         totalBudAmt = row?.BudgetAmt;
                         totalActAmt = row?.ActualAmt;
@@ -243,34 +244,33 @@ namespace CottinghamCustomization
                     case (int)GLAccountType.BTL:
                         row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_BTL);
 
-                        //totalBudAmt = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_BTL && f.ActualAmt == 0m)?.BudgetAmt ?? 0m;
-
-                        contribData = CreateDetailRecord(AcctGrp_BTL, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.AcctGroup, row?.BudgetAmt, row?.ActualAmt, true);
+                        contribData = CreateDetailRecord(AcctGrp_BTL, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualAmt, true);
                         
                         totalBudAmt += row?.BudgetAmt;
                         totalActAmt += row?.ActualAmt;
                         break;
 
                     case (int)GLAccountType.TotalMatg:
-                        contribData = CreateDetailRecord(AcctTyp_ToMatg, null, null, null, null, null, totalBudAmt, totalActAmt);
+                        contribData = CreateDetailRecord(AcctTyp_ToMatg, null, null, null, null, null, null, null, totalBudAmt, totalActAmt);
 
-                        totalNetBud += totalBudAmt;
-                        totalNetAct += totalActAmt;
+                        totalNetBud -= totalBudAmt ?? 0m;
+                        totalNetAct -= totalActAmt ?? 0m;
                         break;
 
                     case (int)GLAccountType.SupFmPrin:
                         row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_Prin);
 
-                        //totalBudAmt = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_Prin && f.ActualAmt == 0m)?.BudgetAmt ?? 0m;
+                        contribData = CreateDetailRecord(AcctTyp_SupPrin, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualAmt, true);
 
-                        contribData = CreateDetailRecord(AcctTyp_SupPrin, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.AcctGroup, row?.BudgetAmt, row?.ActualAmt, true);
+                        totalBudAmt = row?.BudgetAmt;
+                        totalActAmt = row?.ActualAmt;
 
-                        totalNetBud -= totalBudAmt;
-                        totalNetAct -= totalActAmt;
+                        totalNetBud += totalBudAmt ?? 0m;
+                        totalNetAct += totalActAmt ?? 0m;
                         break;
 
                     case (int)GLAccountType.NetProfile:
-                        contribData = CreateDetailRecord(AcctTyp_NetProf, null, null, null, null, null, totalNetBud, totalNetAct, true);
+                        contribData = CreateDetailRecord(AcctTyp_NetProf, null, null, null, null, null, null, null, totalNetBud, totalNetAct, true);
                         break;
                 }
                 records.Add(contribData);
@@ -304,41 +304,69 @@ namespace CottinghamCustomization
         /// <summary>
         /// Generate the report data according to parameters.
         /// </summary>
-        /// <param name="acctType"></param>
-        /// <param name="branchID"></param>
-        /// <param name="acctName"></param>
-        /// <param name="logo"></param>
-        /// <param name="periodNbr"></param>
-        /// <param name="acctGrp"></param>
-        /// <param name="budgetAmt"></param>
-        /// <param name="actualAmt"></param>
-        /// <param name="bottomSold"></param>
-        /// <returns></returns>
-        protected static ProductContributionData CreateDetailRecord(string acctType, int? branchID, string acctName, string logo, string periodNbr, 
-                                                                    string acctGrp, decimal? budgetAmt, decimal? actualAmt, bool? bottomSold = false)
+        protected static ProductContributionData CreateDetailRecord(string acctType, int? branchID, string acctName, string logo, string periodNbr, string finYear,
+                                                                    string subCD, string acctGrp, decimal? budgetAmt, decimal? actualAmt, bool? bottomSold = false)
         {
             decimal? comptRate = null;
             
             if (budgetAmt.HasValue)
             {
-                comptRate = budgetAmt.Value <= 0m ? 0m : Math.Round(actualAmt.GetValueOrDefault() / budgetAmt.GetValueOrDefault(), 2);
+                comptRate = budgetAmt.Value <= 0m ? 0m : Math.Abs(Math.Round(actualAmt.GetValueOrDefault() / budgetAmt.GetValueOrDefault() * 100, 2) );
             }
 
             ProductContributionData contribData = new ProductContributionData()
             {
-                AcctType    = acctType,
-                BranchID    = branchID,
-                AcctName    = acctName,
-                LogoNameRpt = logo,
-                PeriodNbr   = periodNbr,
-                AcctGroup   = acctGrp,
-                BudgetAmt   = budgetAmt,
-                ActualAmt   = actualAmt,
-                CompltRate  = comptRate,
-                BottomSold  = bottomSold
+                AcctType      = acctType,
+                BranchID      = branchID,
+                AcctName      = acctName,
+                LogoNameRpt   = logo,
+                PeriodNbr     = periodNbr,
+                FinYear       = finYear,
+                SubCDWildcard = subCD,
+                AcctGroup     = acctGrp,
+                BudgetAmt     = budgetAmt,
+                ActualAmt     = actualAmt,
+                CompltRate    = comptRate,
+                BottomSold    = bottomSold
             };
 
             return contribData;
+        }
+
+        /// <summary>
+        /// Get sub account segment value description according to parameter.
+        /// </summary>
+        protected static string GetSubCDSegmentDescr(PXGraph graph, string subCD)
+        {
+            string segSubStrValue = string.Empty;
+
+            if (!string.IsNullOrEmpty(subCD) )
+            {
+                short segStartIndex = (short)subCD.Length;
+
+                foreach (Segment segment in PXSelect<Segment, Where<Segment.dimensionID, Equal<Required<Segment.dimensionID>>>,
+                                                              OrderBy<Desc<Segment.segmentID>>>.Select(graph, PX.Objects.GL.SubAccountAttribute.DimensionName))
+                {
+                    if (segment.SegmentID.HasValue && segment.Length.HasValue)
+                    {
+                        segStartIndex -= segment.Length.Value;
+
+                        segSubStrValue = subCD.Substring(segStartIndex, (int)segment.Length);
+                    }
+
+                    if (segSubStrValue.Trim() != string.Empty)
+                    {
+                        segSubStrValue = PXSelect<SegmentValue, Where<SegmentValue.dimensionID, Equal<Required<Segment.dimensionID>>,
+                                                                      And<SegmentValue.segmentID, Equal<Required<Segment.segmentID>>,
+                                                                          And<SegmentValue.value, Equal<Required<SegmentValue.value>>>>>>
+                                                                .SelectSingleBound(graph, null, segment.DimensionID, segment.SegmentID, segSubStrValue).TopFirst?.Descr;
+
+                        break;
+                    }
+                }
+            }
+
+            return segSubStrValue;
         }
         #endregion
     }
@@ -387,6 +415,12 @@ namespace CottinghamCustomization
         [SubAccount()]
         public virtual int? SubID { get; set; }
         public abstract class subID : PX.Data.BQL.BqlInt.Field<subID> { }
+        #endregion
+
+        #region SubCDWildcard
+        [PXString(IsUnicode = true)]
+        public virtual string SubCDWildcard { get; set; }
+        public abstract class subCDWildcard : PX.Data.BQL.BqlString.Field<subCDWildcard> { };
         #endregion
 
         #region AcctGroup
@@ -438,6 +472,12 @@ namespace CottinghamCustomization
         [PXString(2, IsFixed = true)]
         public virtual String PeriodNbr { get; set; }
         public abstract class periodNbr : PX.Data.BQL.BqlString.Field<periodNbr> { }
+        #endregion
+
+        #region FinYear
+        [PXString(4, IsFixed = true)]
+        public virtual string FinYear { get; set; }
+        public abstract class finYear : PX.Data.BQL.BqlString.Field<finYear> { }
         #endregion
     }
     #endregion
