@@ -120,7 +120,8 @@ namespace CottinghamCustomization
                         SubID = histAggr.SubID,
                         AcctGroup = acctGrop?.GroupCD,
                         BudgetAmt = 0m,
-                        ActualAmt = histAggr.CuryFinPtdCredit + histAggr.CuryFinPtdDebit
+                        ActualPtdAmt = histAggr.CuryFinPtdCredit + histAggr.CuryFinPtdDebit,
+                        ActualYtdAmt = histAggr.CuryFinYtdBalance
                     };
 
                     records.Add(contribData);
@@ -165,7 +166,8 @@ namespace CottinghamCustomization
                         SubID = lineDtl.SubID,
                         AcctGroup = acctGrop?.GroupCD,
                         BudgetAmt = lineDtl.Amount,
-                        ActualAmt = 0m
+                        ActualPtdAmt = 0m,
+                        ActualYtdAmt = 0m
                     };
 
                     records.Add(contribData);
@@ -184,17 +186,20 @@ namespace CottinghamCustomization
                                         AcctName = x.Key.AcctName,
                                         AcctGroup = x.Key.AcctGroup,
                                         BudgetAmt = x.Sum(y => y.BudgetAmt),
-                                        ActualAmt = x.Sum(y => y.ActualAmt)
+                                        ActualPtdAmt = x.Sum(y => y.ActualPtdAmt),
+                                        ActualYtdAmt = x.Sum(y => y.ActualYtdAmt)
                                     }).ToList();
 
             // Reset list collection records.
             records.Clear();
 
             int recCount = 1;
-            decimal? totalBudAmt = 0m;
-            decimal? totalActAmt = 0m;
-            decimal? totalNetBud = 0m;
-            decimal? totalNetAct = 0m;
+            decimal? totalBudAmt  = 0m;
+            decimal? totActPtdAmt = 0m;
+            decimal? totActYtdAmt = 0m;
+            decimal? totalNetBud  = 0m;
+            decimal? totNetActPtd = 0m;
+            decimal? totNetActYtd = 0m;
 
             // Insert "Fixed Number" record into temp table.
             do
@@ -206,71 +211,79 @@ namespace CottinghamCustomization
                     case (int)GLAccountType.Sales:
                         var row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_Sales);
 
-                        contribData = CreateDetailRecord(AcctTyp_Sales, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualAmt);
+                        contribData = CreateDetailRecord(AcctTyp_Sales, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualPtdAmt, row?.ActualYtdAmt);
                         
-                        totalBudAmt = row?.BudgetAmt;
-                        totalActAmt = row?.ActualAmt;
+                        totalBudAmt  = row?.BudgetAmt;
+                        totActPtdAmt = row?.ActualPtdAmt;
+                        totActYtdAmt = row?.ActualYtdAmt;
                         break;
 
                     case (int)GLAccountType.COGS:
                         row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_COGS);
 
-                        contribData = CreateDetailRecord(AcctTyp_COGS, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualAmt, true);
+                        contribData = CreateDetailRecord(AcctTyp_COGS, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualPtdAmt, row?.ActualYtdAmt, true);
                         
-                        totalBudAmt -= row?.BudgetAmt;
-                        totalActAmt -= row?.ActualAmt;
+                        totalBudAmt  -= row?.BudgetAmt;
+                        totActPtdAmt -= row?.ActualPtdAmt;
+                        totActYtdAmt -= row?.ActualYtdAmt;
                         break;
 
                     case (int)GLAccountType.GrossProfile:
-                        contribData = CreateDetailRecord(AcctTyp_GrProf, null, null, null, null, null, null, null, totalBudAmt, totalActAmt);
+                        contribData = CreateDetailRecord(AcctTyp_GrProf, null, null, null, null, null, null, null, totalBudAmt, totActPtdAmt, totActYtdAmt);
 
-                        totalNetBud = totalBudAmt ?? 0m;
-                        totalNetAct = totalActAmt ?? 0m;
+                        totalNetBud  = totalBudAmt ?? 0m;
+                        totNetActPtd = totActPtdAmt ?? 0m;
+                        totNetActYtd = totActYtdAmt ?? 0m;
                         break;
 
                     case (int)GLAccountType.Martketing:
-                        contribData = CreateDetailRecord(AcctTyp_Matg, null, null, null, null, null, null, null, null, null);
+                        contribData = CreateDetailRecord(AcctTyp_Matg, null, null, null, null, null, null, null, null, null, null);
                         break;
 
                     case (int)GLAccountType.ATL:
                         row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_ATL);
 
-                        contribData = CreateDetailRecord(AcctGrp_ATL, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualAmt);
+                        contribData = CreateDetailRecord(AcctGrp_ATL, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualPtdAmt, row?.ActualYtdAmt);
                         
-                        totalBudAmt = row?.BudgetAmt;
-                        totalActAmt = row?.ActualAmt;
+                        totalBudAmt  = row?.BudgetAmt;
+                        totActPtdAmt = row?.ActualPtdAmt;
+                        totActYtdAmt = row?.ActualYtdAmt;
                         break;
 
                     case (int)GLAccountType.BTL:
                         row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_BTL);
 
-                        contribData = CreateDetailRecord(AcctGrp_BTL, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualAmt, true);
+                        contribData = CreateDetailRecord(AcctGrp_BTL, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualPtdAmt, row?.ActualYtdAmt, true);
                         
-                        totalBudAmt += row?.BudgetAmt;
-                        totalActAmt += row?.ActualAmt;
+                        totalBudAmt  += row?.BudgetAmt;
+                        totActPtdAmt += row?.ActualPtdAmt;
+                        totActYtdAmt += row?.ActualYtdAmt;
                         break;
 
                     case (int)GLAccountType.TotalMatg:
-                        contribData = CreateDetailRecord(AcctTyp_ToMatg, null, null, null, null, null, null, null, totalBudAmt, totalActAmt);
+                        contribData = CreateDetailRecord(AcctTyp_ToMatg, null, null, null, null, null, null, null, totalBudAmt, totActPtdAmt, totActYtdAmt);
 
-                        totalNetBud -= totalBudAmt ?? 0m;
-                        totalNetAct -= totalActAmt ?? 0m;
+                        totalNetBud  -= totalBudAmt ?? 0m;
+                        totActPtdAmt -= totActPtdAmt ?? 0m;
+                        totActYtdAmt -= totActYtdAmt ?? 0m;
                         break;
 
                     case (int)GLAccountType.SupFmPrin:
                         row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_Prin);
 
-                        contribData = CreateDetailRecord(AcctTyp_SupPrin, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualAmt, true);
+                        contribData = CreateDetailRecord(AcctTyp_SupPrin, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualPtdAmt, row?.ActualYtdAmt, true);
 
-                        totalBudAmt = row?.BudgetAmt;
-                        totalActAmt = row?.ActualAmt;
+                        totalBudAmt  = row?.BudgetAmt;
+                        totActPtdAmt = row?.ActualPtdAmt;
+                        totActYtdAmt = row?.ActualYtdAmt;
 
-                        totalNetBud += totalBudAmt ?? 0m;
-                        totalNetAct += totalActAmt ?? 0m;
+                        totalNetBud  += totalBudAmt ?? 0m;
+                        totNetActPtd += totActPtdAmt ?? 0m;
+                        totNetActYtd += totActYtdAmt ?? 0m;
                         break;
 
                     case (int)GLAccountType.NetProfile:
-                        contribData = CreateDetailRecord(AcctTyp_NetProf, null, null, null, null, null, null, null, totalNetBud, totalNetAct, true);
+                        contribData = CreateDetailRecord(AcctTyp_NetProf, null, null, null, null, null, null, null, totalNetBud, totNetActPtd, totNetActYtd, true);
                         break;
                 }
                 records.Add(contribData);
@@ -305,13 +318,13 @@ namespace CottinghamCustomization
         /// Generate the report data according to parameters.
         /// </summary>
         protected static ProductContributionData CreateDetailRecord(string acctType, int? branchID, string acctName, string logo, string periodNbr, string finYear,
-                                                                    string subCD, string acctGrp, decimal? budgetAmt, decimal? actualAmt, bool? bottomSold = false)
+                                                                    string subCD, string acctGrp, decimal? budgetAmt, decimal? actualPtdAmt, decimal? actualYtdAmt, bool? bottomSold = false)
         {
             decimal? comptRate = null;
             
             if (budgetAmt.HasValue)
             {
-                comptRate = budgetAmt.Value <= 0m ? 0m : Math.Abs(Math.Round(actualAmt.GetValueOrDefault() / budgetAmt.GetValueOrDefault() * 100, 2) );
+                comptRate = budgetAmt.Value <= 0m ? 0m : Math.Abs(Math.Round(actualPtdAmt.GetValueOrDefault() / budgetAmt.GetValueOrDefault() * 100, 2) );
             }
 
             ProductContributionData contribData = new ProductContributionData()
@@ -325,7 +338,8 @@ namespace CottinghamCustomization
                 SubCDWildcard = subCD,
                 AcctGroup     = acctGrp,
                 BudgetAmt     = budgetAmt,
-                ActualAmt     = actualAmt,
+                ActualPtdAmt  = actualPtdAmt,
+                ActualYtdAmt  = actualYtdAmt,
                 CompltRate    = comptRate,
                 BottomSold    = bottomSold
             };
@@ -450,10 +464,16 @@ namespace CottinghamCustomization
         public abstract class budgetAmt : PX.Data.BQL.BqlDecimal.Field<budgetAmt> { }
         #endregion
 
-        #region ActualAmt
+        #region ActualPtdAmt
         [PXDecimal()]
-        public virtual decimal? ActualAmt { get; set; }
-        public abstract class actualAmt : PX.Data.BQL.BqlDecimal.Field<actualAmt> { }
+        public virtual decimal? ActualPtdAmt { get; set; }
+        public abstract class actualPtdAmt : PX.Data.BQL.BqlDecimal.Field<actualPtdAmt> { }
+        #endregion
+
+        #region ActualYtdAmt
+        [PXDecimal()]
+        public virtual decimal? ActualYtdAmt { get; set; }
+        public abstract class actualYtdAmt : PX.Data.BQL.BqlDecimal.Field<actualYtdAmt> { }
         #endregion
 
         #region CompltRate
