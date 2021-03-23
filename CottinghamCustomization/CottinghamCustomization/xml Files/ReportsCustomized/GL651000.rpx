@@ -3,6 +3,9 @@
   <CommonSettings>
     <ViewPdf>True</ViewPdf>
   </CommonSettings>
+  <PageSettings>
+    <Landscape>True</Landscape>
+  </PageSettings>
   <SchemaUrl>http://localhost/Cottingham</SchemaUrl>
   <StylesTemplate>TemplateForm.rpx</StylesTemplate>
   <Tables>
@@ -19,7 +22,10 @@
         <ReportField Name="AcctGroup_Segment1"></ReportField>
         <ReportField Name="AcctName"></ReportField>
         <ReportField Name="AcctType"></ReportField>
-        <ReportField Name="ActualAmt">
+        <ReportField Name="ActualPtdAmt">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="ActualYtdAmt">
           <DataType>Decimal</DataType>
         </ReportField>
         <ReportField Name="BottomSold">
@@ -37,8 +43,10 @@
         <ReportField Name="CompltRate">
           <DataType>Decimal</DataType>
         </ReportField>
+        <ReportField Name="FinYear"></ReportField>
         <ReportField Name="LogoNameRpt"></ReportField>
         <ReportField Name="PeriodNbr"></ReportField>
+        <ReportField Name="SubCDWildcard"></ReportField>
         <ReportField Name="SubID"></ReportField>
         <ReportField Name="SubID_description"></ReportField>
         <ReportField Name="SubID_Segment1"></ReportField>
@@ -63,17 +71,17 @@
           <Value>=[ProductContributionData.LogoNameRpt]</Value>
         </PictureBox>
         <TextBox Name="textBox1">
-          <Location>216px, 8px</Location>
+          <Location>216px, 0px</Location>
           <Size>448px, 24px</Size>
           <StyleName>Heading 2</StyleName>
           <Value>=[ProductContributionData.AcctName]</Value>
         </TextBox>
         <TextBox Name="textBox10">
-          <Format>MMM dd, yyyy</Format>
+          <Format>MMM, yyyy</Format>
           <Location>216px, 64px</Location>
-          <Size>256px, 0.16667in</Size>
+          <Size>128px, 0.16667in</Size>
           <StyleName>Heading 1</StyleName>
-          <Value>=[@Today]</Value>
+          <Value>=CDate(Format('{0}/{1}/{2}', [ProductContributionData.PeriodNbr], 1, [ProductContributionData.FinYear]) )</Value>
         </TextBox>
         <TextBox Name="textBox16">
           <Location>472px, 96px</Location>
@@ -126,9 +134,30 @@
           <StyleName>Heading 1</StyleName>
           <Value>Revenue :</Value>
         </TextBox>
+        <TextBox Name="textBox2">
+          <Location>344px, 48px</Location>
+          <Size>248px, 0.16667in</Size>
+          <StyleName>Heading 1</StyleName>
+          <Value>=[ProductContributionData.SubCDWildcard]</Value>
+        </TextBox>
+        <TextBox Name="textBox3">
+          <Location>600px, 96px</Location>
+          <Size>1.25in, 0.16667in</Size>
+          <Style>
+            <BorderStyle>
+              <Bottom>Solid</Bottom>
+            </BorderStyle>
+            <BorderWidth>
+              <Bottom>1px</Bottom>
+            </BorderWidth>
+            <TextAlign>Center</TextAlign>
+          </Style>
+          <StyleName>Heading 1</StyleName>
+          <Value>Actual YTD</Value>
+        </TextBox>
         <TextBox Name="textBox8">
           <Location>216px, 48px</Location>
-          <Size>256px, 0.16667in</Size>
+          <Size>128px, 0.16667in</Size>
           <StyleName>Heading 1</StyleName>
           <Value>Product Contribution</Value>
         </TextBox>
@@ -140,7 +169,7 @@
       <Visible>False</Visible>
       <Items>
         <Line Name="line1">
-          <Location>216px, 20px</Location>
+          <Location>216px, 16px</Location>
           <Size>1.25in, 0.03in</Size>
           <VisibleExpr>=[ProductContributionData.BottomSold]</VisibleExpr>
         </Line>
@@ -238,7 +267,7 @@
       </Grouping>
       <Headers>
         <Header Name="groupHeaderSection2">
-          <Height>0.7cm</Height>
+          <Height>0.63492cm</Height>
           <Items>
             <Line Name="line10">
               <Location>344px, 20px</Location>
@@ -254,6 +283,16 @@
               <Location>216px, 20px</Location>
               <Size>1.25in, 0.03in</Size>
               <VisibleExpr>=[ProductContributionData.BottomSold]</VisibleExpr>
+            </Line>
+            <Line Name="line13">
+              <Location>600px, 20px</Location>
+              <Size>1.25in, 0.03in</Size>
+              <VisibleExpr>=[ProductContributionData.BottomSold]</VisibleExpr>
+            </Line>
+            <Line Name="line14">
+              <Location>600px, 22px</Location>
+              <Size>1.25in, 0.02in</Size>
+              <VisibleExpr>=Trim([ProductContributionData.AcctType]) = 'Net Profile' And [ProductContributionData.BottomSold] = True</VisibleExpr>
             </Line>
             <Line Name="line7">
               <Location>472px, 22px</Location>
@@ -278,7 +317,7 @@
                 <TextAlign>Right</TextAlign>
               </Style>
               <StyleName>Normal</StyleName>
-              <Value>=[ProductContributionData.ActualAmt]</Value>
+              <Value>=[ProductContributionData.ActualPtdAmt]</Value>
             </TextBox>
             <TextBox Name="textBox12">
               <Format>N0</Format>
@@ -305,6 +344,16 @@
               <Size>208px, 0.18in</Size>
               <StyleName>Normal</StyleName>
               <Value>=[ProductContributionData.AcctType]</Value>
+            </TextBox>
+            <TextBox Name="textBox4">
+              <Format>N0</Format>
+              <Location>600px, 2px</Location>
+              <Size>1.25in, 0.18in</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=[ProductContributionData.ActualYtdAmt]</Value>
             </TextBox>
           </Items>
         </Header>
