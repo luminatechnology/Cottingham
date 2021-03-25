@@ -1,8 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Report Name="report1">
-  <CommonSettings>
-    <ViewPdf>True</ViewPdf>
-  </CommonSettings>
   <PageSettings>
     <Landscape>True</Landscape>
   </PageSettings>
@@ -292,31 +289,33 @@
             <Line Name="line14">
               <Location>600px, 22px</Location>
               <Size>1.25in, 0.02in</Size>
-              <VisibleExpr>=Trim([ProductContributionData.AcctType]) = 'Net Profile' And [ProductContributionData.BottomSold] = True</VisibleExpr>
+              <VisibleExpr>=Trim([ProductContributionData.AcctType]) = 'Net Profit' And [ProductContributionData.BottomSold] = True</VisibleExpr>
             </Line>
             <Line Name="line7">
               <Location>472px, 22px</Location>
               <Size>1.25in, 0.02in</Size>
-              <VisibleExpr>=Trim([ProductContributionData.AcctType]) = 'Net Profile' And [ProductContributionData.BottomSold] = True</VisibleExpr>
+              <VisibleExpr>=Trim([ProductContributionData.AcctType]) = 'Net Profit' And [ProductContributionData.BottomSold] = True</VisibleExpr>
             </Line>
             <Line Name="line8">
               <Location>344px, 22px</Location>
               <Size>1.25in, 0.02in</Size>
-              <VisibleExpr>=Trim([ProductContributionData.AcctType]) = 'Net Profile' And [ProductContributionData.BottomSold] = True</VisibleExpr>
+              <VisibleExpr>=Trim([ProductContributionData.AcctType]) = 'Net Profit' And [ProductContributionData.BottomSold] = True</VisibleExpr>
             </Line>
             <Line Name="line9">
               <Location>216px, 22px</Location>
               <Size>1.25in, 0.02in</Size>
-              <VisibleExpr>=Trim([ProductContributionData.AcctType]) = 'Net Profile' And [ProductContributionData.BottomSold] = True</VisibleExpr>
+              <VisibleExpr>=Trim([ProductContributionData.AcctType]) = 'Net Profit' And [ProductContributionData.BottomSold] = True</VisibleExpr>
             </Line>
             <TextBox Name="textBox11">
               <Format>N0</Format>
               <Location>344px, 2px</Location>
+              <NavigateUrl>='Main?ScreenId=GI000071&amp;AccountGroup=' + [ProductContributionData.AcctGroup] + '+++++&amp;FinPeriodID=' + [ProductContributionData.PeriodNbr]+[ProductContributionData.FinYear]</NavigateUrl>
               <Size>1.25in, 0.18in</Size>
               <Style>
                 <TextAlign>Right</TextAlign>
               </Style>
               <StyleName>Normal</StyleName>
+              <Target>_blank</Target>
               <Value>=[ProductContributionData.ActualPtdAmt]</Value>
             </TextBox>
             <TextBox Name="textBox12">
