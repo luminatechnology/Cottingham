@@ -1,0 +1,285 @@
+﻿<ReportDefinition>
+    <data-set>
+        <relations format-version="3" relations-version="20200317" main-table="RMReport" file-name="(Type)-(Description)">
+            <link from="RMColumn (ColumnSetCode)" to="RMColumnSet (ColumnSetCode)" />
+            <link from="RMColumn (NoteID)" to="Note (NoteID)" type="Note" />
+            <link from="RMColumn (NoteID)" to="RMColumnKvExt (RecordID)" type="RowKvExt" />
+            <link from="RMColumnHeader (ColumnSetCode, ColumnCode)" to="RMColumn (ColumnSetCode, ColumnCode)" />
+            <link from="RMColumnHeader (NoteID)" to="Note (NoteID)" type="Note" />
+            <link from="RMColumnHeader (NoteID)" to="RMColumnHeaderKvExt (RecordID)" type="RowKvExt" />
+            <link from="RMColumn (DataSourceID)" to="RMDataSource (DataSourceID)" type="RowExtension" />
+            <link from="RMRow (DataSourceID)" to="RMDataSource (DataSourceID)" type="RowExtension" />
+            <link from="RMUnit (DataSourceID)" to="RMDataSource (DataSourceID)" type="RowExtension" />
+            <link from="RMReport (DataSourceID)" to="RMDataSource (DataSourceID)" type="RowExtension" />
+            <link from="RMReport (NoteID)" to="Note (NoteID)" type="Note" />
+            <link from="RMColumnSet (ColumnSetCode)" to="RMReport (ColumnSetCode)" type="FromMaster" updateable="False" />
+            <link from="RMColumnSet (NoteID)" to="Note (NoteID)" type="Note" />
+            <link from="RMRowSet (RowSetCode)" to="RMReport (RowSetCode)" type="FromMaster" updateable="False" />
+            <link from="RMRowSet (NoteID)" to="Note (NoteID)" type="Note" />
+            <link from="RMUnitSet (UnitSetCode)" to="RMReport (UnitSetCode)" type="FromMaster" updateable="False" />
+            <link from="Ledger (LedgerID)" to="RMDataSource (LedgerID)" type="FromMaster" updateable="False" do-not-change="Ledger" />
+            <link from="RMRow (RowSetCode)" to="RMRowSet (RowSetCode)" />
+            <link from="RMRow (NoteID)" to="Note (NoteID)" type="Note" />
+            <link from="RMRow (NoteID)" to="RMRowKvExt (RecordID)" type="RowKvExt" />
+            <link from="RMColumn (StyleID)" to="RMStyle (StyleID)" type="RowExtension" />
+            <link from="RMColumnHeader (StyleID)" to="RMStyle (StyleID)" type="RowExtension" />
+            <link from="RMReport (StyleID)" to="RMStyle (StyleID)" type="RowExtension" />
+            <link from="RMRow (StyleID)" to="RMStyle (StyleID)" type="RowExtension" />
+            <link from="RMUnit (UnitSetCode)" to="RMUnitSet (UnitSetCode)" />
+            <link from="RMUnit (NoteID)" to="Note (NoteID)" type="Note" />
+            <link from="RMUnit (NoteID)" to="RMUnitKvExt (RecordID)" type="RowKvExt" />
+        </relations>
+        <layout>
+            <table name="RMReport">
+                <table name="RMDataSource" uplink="(DataSourceID) = (DataSourceID)" />
+                <table name="Note" uplink="(NoteID) = (NoteID)" />
+                <table name="RMStyle" uplink="(StyleID) = (StyleID)" />
+            </table>
+            <table name="RMColumnSet">
+                <table name="RMColumn" uplink="(ColumnSetCode) = (ColumnSetCode)">
+                    <table name="RMColumnHeader" uplink="(ColumnSetCode, ColumnCode) = (ColumnSetCode, ColumnCode)">
+                        <table name="Note" uplink="(NoteID) = (NoteID)" />
+                        <table name="RMColumnHeaderKvExt" uplink="(NoteID) = (RecordID)" />
+                        <table name="RMStyle" uplink="(StyleID) = (StyleID)" />
+                    </table>
+                    <table name="Note" uplink="(NoteID) = (NoteID)" />
+                    <table name="RMColumnKvExt" uplink="(NoteID) = (RecordID)" />
+                    <table name="RMDataSource" uplink="(DataSourceID) = (DataSourceID)" />
+                    <table name="RMStyle" uplink="(StyleID) = (StyleID)" />
+                </table>
+                <table name="Note" uplink="(NoteID) = (NoteID)" />
+            </table>
+            <table name="RMRowSet">
+                <table name="RMRow" uplink="(RowSetCode) = (RowSetCode)">
+                    <table name="RMDataSource" uplink="(DataSourceID) = (DataSourceID)" />
+                    <table name="Note" uplink="(NoteID) = (NoteID)" />
+                    <table name="RMRowKvExt" uplink="(NoteID) = (RecordID)" />
+                    <table name="RMStyle" uplink="(StyleID) = (StyleID)" />
+                </table>
+                <table name="Note" uplink="(NoteID) = (NoteID)" />
+            </table>
+            <table name="RMUnitSet">
+                <table name="RMUnit" uplink="(UnitSetCode) = (UnitSetCode)">
+                    <table name="RMDataSource" uplink="(DataSourceID) = (DataSourceID)" />
+                    <table name="Note" uplink="(NoteID) = (NoteID)" />
+                    <table name="RMUnitKvExt" uplink="(NoteID) = (RecordID)" />
+                </table>
+            </table>
+            <table name="Ledger" />
+        </layout>
+        <data>
+            <RMReport>
+                <row ReportCode="PRODCONTRI" ReportUID="eaf14870-fcd6-485a-9c61-9705634680ce" Type="GL" Description="Product Contribution" RowSetCode="PRODCONTRI" ColumnSetCode="PRODCONTRI" RequestLedgerID="1" RequestAccountClassID="0" RequestStartAccount="0" RequestEndAccount="0" RequestStartSub="0" RequestEndSub="0" RequestStartAccountGroup="0" RequestEndAccountGroup="0" RequestStartProject="0" RequestEndProject="0" RequestStartProjectTask="0" RequestEndProjectTask="0" RequestStartInventory="0" RequestEndInventory="0" RequestStartPeriod="1" RequestEndPeriod="0" RequestOrganizationID="0" RequestUseMasterCalendar="0" RequestStartBranch="0" RequestEndBranch="0" Landscape="1" ApplyRestrictionGroups="1" PaperKind="9" MarginLeft="10" MarginLeftType="1" MarginTop="10" MarginTopType="1" MarginRight="10" MarginRightType="1" MarginBottom="10" MarginBottomType="1" WidthType="1" HeightType="1">
+                    <RMDataSource LedgerID="11" Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                    <RMStyle TextAlign="0" FontName="Arial                         " FontSize="11" FontSizeType="1" FontStyle="0" />
+                </row>
+            </RMReport>
+            <RMColumnSet>
+                <row Type="GL" ColumnSetCode="PRODCONTRI" HeaderCntr="7" Description="Product Contribution Column">
+                    <RMColumn ColumnCode="E" Rounding="0" Format=" #,##0.00;(#,##0.00)" ColumnType="0" CellEvalOrder="0" CellFormatOrder="0" Width="140" AutoHeight="0" ExtraSpace="0" SuppressEmpty="0" HideZero="0" SuppressLine="0" PrintControl="0" PageBreak="0">
+                        <RMColumnHeader HeaderNbr="7" StartColumn="E" EndColumn="E" Height="10">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="5" Formula="='Actual YTD'" StartColumn="E" EndColumn="E" Height="18">
+                            <RMStyle TextAlign="3" FontSize="14" FontSizeType="1" FontStyle="1" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="4" StartColumn="E" EndColumn="E" Height="10">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="3" StartColumn="E" EndColumn="E" Height="18">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="2" StartColumn="E" EndColumn="E" Height="16">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="1" StartColumn="C" EndColumn="E" Height="20">
+                            <RMStyle TextAlign="3" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMDataSource LedgerID="10" Expand="N" StartPeriodOffset="-1" EndPeriodOffset="-1" UseMasterCalendar="0" AmountType="5" RowDescription="N " />
+                        <RMStyle TextAlign="3" FontSizeType="1" FontStyle="0" />
+                    </RMColumn>
+                    <RMColumn ColumnCode="D" Formula="=C/B" Rounding="0" Format="#.##%" ColumnType="1" CellEvalOrder="1" CellFormatOrder="0" Width="140" AutoHeight="0" ExtraSpace="0" SuppressEmpty="0" HideZero="0" SuppressLine="0" PrintControl="0" PageBreak="0">
+                        <RMColumnHeader HeaderNbr="7" StartColumn="D" EndColumn="D" Height="10">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="5" Formula="='Completion Rate'" StartColumn="D" EndColumn="D" Height="18">
+                            <RMStyle TextAlign="3" FontSize="14" FontSizeType="1" FontStyle="1" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="4" StartColumn="D" EndColumn="D" Height="10">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="3" StartColumn="D" EndColumn="D" Height="18">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="2" StartColumn="D" EndColumn="D" Height="16">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="1" StartColumn="D" EndColumn="D" Height="20">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMDataSource Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle TextAlign="3" FontSizeType="1" FontStyle="0" />
+                    </RMColumn>
+                    <RMColumn ColumnCode="C" Rounding="0" Format=" #,##0.00;(#,##0.00)" ColumnType="0" CellEvalOrder="0" CellFormatOrder="0" Width="140" AutoHeight="0" ExtraSpace="0" SuppressEmpty="0" HideZero="0" SuppressLine="0" PrintControl="0" PageBreak="0">
+                        <RMColumnHeader HeaderNbr="7" StartColumn="C" EndColumn="C" Height="10">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="5" Formula="='Actual'" StartColumn="F" EndColumn="F" Height="18">
+                            <RMStyle TextAlign="3" FontSize="14" FontSizeType="1" FontStyle="1" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="4" StartColumn="F" EndColumn="F" Height="10">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="3" StartColumn="F" EndColumn="F" Height="18">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="2" StartColumn="F" EndColumn="F" Height="16">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="1" StartColumn="C" EndColumn="C" Height="20">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMDataSource LedgerID="10" Expand="N" UseMasterCalendar="0" AmountType="5" RowDescription="N " />
+                        <RMStyle TextAlign="3" FontSizeType="1" FontStyle="0" />
+                    </RMColumn>
+                    <RMColumn ColumnCode="B" Rounding="0" Format=" #,##0.00;(#,##0.00)" ColumnType="0" CellEvalOrder="0" CellFormatOrder="0" Width="140" AutoHeight="0" ExtraSpace="0" SuppressEmpty="0" HideZero="0" SuppressLine="0" PrintControl="0" PageBreak="0">
+                        <RMColumnHeader HeaderNbr="7" StartColumn="B" EndColumn="B" Height="10">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="5" Formula="='est. Budget'" StartColumn="B" EndColumn="B" Height="18">
+                            <RMStyle TextAlign="3" FontSize="14" FontSizeType="1" FontStyle="1" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="4" StartColumn="B" EndColumn="B" Height="10">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="3" StartColumn="B" EndColumn="B" Height="18">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="2" StartColumn="B" EndColumn="E" Height="16">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="1" StartColumn="B" EndColumn="B" Height="20">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMDataSource Expand="N" UseMasterCalendar="0" AmountType="5" RowDescription="N " />
+                        <RMStyle TextAlign="3" FontSizeType="1" FontStyle="0" />
+                    </RMColumn>
+                    <RMColumn ColumnCode="A" Formula="=@RowText" Rounding="0" ColumnType="1" CellEvalOrder="1" CellFormatOrder="0" Width="200" AutoHeight="0" ExtraSpace="10" SuppressEmpty="0" HideZero="0" SuppressLine="1" PrintControl="0" PageBreak="0">
+                        <RMColumnHeader HeaderNbr="7" StartColumn="A" EndColumn="A" Height="10">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="5" StartColumn="A" EndColumn="A" Height="18">
+                            <RMStyle TextAlign="0" FontSize="14" FontSizeType="1" FontStyle="1" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="4" StartColumn="A" EndColumn="A" Height="10">
+                            <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="3" Formula="=Format( '{0: MMM, yyyy}',Report.GetPeriodEndDate(@StartPeriod) )" StartColumn="A" EndColumn="A" Height="18">
+                            <RMStyle TextAlign="0" FontSize="11" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="2" Formula="='Product Contribution'" StartColumn="A" EndColumn="A" Height="16">
+                            <RMStyle TextAlign="0" FontSize="14" FontSizeType="1" FontStyle="1" />
+                        </RMColumnHeader>
+                        <RMColumnHeader HeaderNbr="1" Formula="=Report.GetDefUI('RowCompanyBAccount.AcctName')" StartColumn="A" EndColumn="B" Height="20">
+                            <RMStyle TextAlign="0" FontSize="16" FontSizeType="1" FontStyle="0" />
+                        </RMColumnHeader>
+                        <RMDataSource Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                    </RMColumn>
+                </row>
+            </RMColumnSet>
+            <RMRowSet>
+                <row RowSetCode="PRODCONTRI" Type="GL" RowCntr="97" Description="Product Contribution Column Row">
+                    <RMRow RowNbr="94" RowCode="00099" RowType="2" LineStyle="4" SuppressEmpty="0" HideZero="0" Height="1" Indent="0" PrintControl="0" PageBreak="0">
+                        <RMDataSource Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle Color="FF000000" TextAlign="0" FontSizeType="1" FontStyle="0" />
+                    </RMRow>
+                    <RMRow RowNbr="92" RowCode="00119" RowType="2" LineStyle="5" SuppressEmpty="0" HideZero="0" Height="2" Indent="0" PrintControl="0" PageBreak="0">
+                        <RMDataSource Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle Color="FF000000" TextAlign="0" FontSizeType="1" FontStyle="0" />
+                    </RMRow>
+                    <RMRow RowNbr="90" RowCode="00118" Description="Net Profit" RowType="3" Formula="=@00105-@00115+@00116" LineStyle="0" SuppressEmpty="0" HideZero="0" Height="18" Indent="0" PrintControl="0" PageBreak="0">
+                        <RMDataSource Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle TextAlign="0" FontSizeType="1" FontStyle="1" />
+                    </RMRow>
+                    <RMRow RowNbr="88" RowCode="00117" RowType="2" LineStyle="4" SuppressEmpty="0" HideZero="0" Height="2" Indent="0" PrintControl="0" PageBreak="0">
+                        <RMDataSource Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle Color="FF000000" TextAlign="0" FontSizeType="1" FontStyle="0" />
+                    </RMRow>
+                    <RMRow RowNbr="86" RowCode="00116" Description="Support from Principal" RowType="0" LineStyle="0" SuppressEmpty="0" HideZero="0" Height="18" Indent="0" PrintControl="0" PageBreak="0">
+                        <RMDataSource StartAccount="7400000" Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                    </RMRow>
+                    <RMRow RowNbr="84" RowCode="00115" Description="Total Marketing Exp." RowType="3" Formula="=@00110+@00113" LineStyle="0" SuppressEmpty="0" HideZero="0" Height="18" Indent="0" PrintControl="0" PageBreak="0">
+                        <RMDataSource Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle TextAlign="0" FontSizeType="1" FontStyle="1" />
+                    </RMRow>
+                    <RMRow RowNbr="82" RowCode="00114" RowType="2" LineStyle="4" SuppressEmpty="0" HideZero="0" Height="2" Indent="0" PrintControl="0" PageBreak="0">
+                        <RMDataSource Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle Color="FF000000" TextAlign="0" FontSizeType="1" FontStyle="0" />
+                    </RMRow>
+                    <RMRow RowNbr="80" RowCode="00113" Description="BTL" RowType="3" Formula="=Sum('00111','00112')" LineStyle="0" SuppressEmpty="0" HideZero="0" Height="18" Indent="0" PrintControl="0" PageBreak="0">
+                        <RMDataSource Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                    </RMRow>
+                    <RMRow RowNbr="78" RowCode="00112" RowType="0" LineStyle="0" SuppressEmpty="0" HideZero="0" Height="18" Indent="0" PrintControl="1" PageBreak="0">
+                        <RMDataSource AccountClassID="EXADVERT" StartAccount="6510000" EndAccount="6640000" Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                    </RMRow>
+                    <RMRow RowNbr="76" RowCode="00111" RowType="0" LineStyle="0" SuppressEmpty="0" HideZero="0" Height="18" Indent="0" PrintControl="1" PageBreak="0">
+                        <RMDataSource AccountClassID="EXADVERT" StartAccount="6140000" Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                    </RMRow>
+                    <RMRow RowNbr="74" RowCode="00110" Description="ATL" RowType="3" Formula="=Sum('00107','00109')" LineStyle="0" SuppressEmpty="0" HideZero="0" Height="18" Indent="0" PrintControl="0" PageBreak="0">
+                        <RMDataSource AccountClassID="EXADVERT" StartAccount="6150000" Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                    </RMRow>
+                    <RMRow RowNbr="72" RowCode="00109" RowType="0" LineStyle="0" SuppressEmpty="0" HideZero="0" Height="18" Indent="0" PrintControl="1" PageBreak="0">
+                        <RMDataSource AccountClassID="EXADVERT" StartAccount="6440000" Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                    </RMRow>
+                    <RMRow RowNbr="68" RowCode="00108" RowType="0" LineStyle="0" SuppressEmpty="0" HideZero="0" Height="18" Indent="0" PrintControl="1" PageBreak="0">
+                        <RMDataSource AccountClassID="EXADVERT" StartAccount="6150000" EndAccount="6210000" Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                    </RMRow>
+                    <RMRow RowNbr="66" RowCode="00107" RowType="0" LineStyle="0" SuppressEmpty="0" HideZero="0" Height="18" Indent="0" PrintControl="1" PageBreak="0">
+                        <RMDataSource AccountClassID="EXADVERT" StartAccount="6110000" EndAccount="6130000" Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                    </RMRow>
+                    <RMRow RowNbr="64" RowCode="00106" Description="Marketing" RowType="1" LineStyle="0" SuppressEmpty="0" HideZero="0" Height="18" Indent="0" PrintControl="0" PageBreak="0">
+                        <RMDataSource Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                    </RMRow>
+                    <RMRow RowNbr="13" RowCode="00105" Description="Gross Profit" RowType="3" Formula="=sum('00102', '00103')" LineStyle="0" SuppressEmpty="0" HideZero="0" Height="18" Indent="0" PrintControl="0" PageBreak="0">
+                        <RMDataSource Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle TextAlign="0" FontSizeType="1" FontStyle="1" />
+                    </RMRow>
+                    <RMRow RowNbr="12" RowCode="00104" RowType="2" LineStyle="4" SuppressEmpty="0" HideZero="0" Height="2" Indent="0" PrintControl="0" PageBreak="0">
+                        <RMDataSource Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle Color="FF000000" TextAlign="0" FontSizeType="1" FontStyle="0" />
+                    </RMRow>
+                    <RMRow RowNbr="4" RowCode="00103" Description="COGS" RowType="0" LineStyle="0" SuppressEmpty="0" HideZero="0" Height="18" Indent="0" PrintControl="0" PageBreak="0">
+                        <RMDataSource StartAccount="5200000" Expand="A" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                    </RMRow>
+                    <RMRow RowNbr="3" RowCode="00102" Description="Net Revenue Sales" RowType="0" LineStyle="0" SuppressEmpty="0" HideZero="0" Height="18" Indent="0" PrintControl="0" PageBreak="0">
+                        <RMDataSource StartAccount="4100000" Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                    </RMRow>
+                    <RMRow RowNbr="2" RowCode="00101" RowType="1" LineStyle="0" SuppressEmpty="0" HideZero="0" Height="10" Indent="0" PrintControl="0" PageBreak="0">
+                        <RMDataSource Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle TextAlign="0" FontSizeType="1" FontStyle="0" />
+                    </RMRow>
+                    <RMRow RowNbr="1" RowCode="00100" Description="Revenue:" RowType="1" LineStyle="0" SuppressEmpty="0" HideZero="0" Height="18" Indent="0" PrintControl="0" PageBreak="0">
+                        <RMDataSource Expand="N" UseMasterCalendar="0" AmountType="0" RowDescription="N " />
+                        <RMStyle TextAlign="0" FontSize="14" FontSizeType="1" FontStyle="1" />
+                    </RMRow>
+                </row>
+            </RMRowSet>
+            <Ledger>
+                <row LedgerID="10" LedgerCD="ACTUAL" BalanceType="A" PostInterCompany="1" BaseCuryID="TWD" Descr="Actual" ConsolAllowed="0" DeletedDatabaseRecord="0" NoteID="5fdd70c4-f50c-ea11-aa41-8201e990a350" />
+                <row LedgerID="11" LedgerCD="BUDGET" BalanceType="B" PostInterCompany="1" BaseCuryID="TWD" Descr="Budget" ConsolAllowed="0" DeletedDatabaseRecord="0" NoteID="899901f6-f50c-ea11-aa41-8201e990a350" />
+            </Ledger>
+        </data>
+    </data-set>
+</ReportDefinition>
