@@ -190,7 +190,7 @@
                 </row>
             </GIDesign>
             <MUIWorkspace>
-                <row IsPortal="0" WorkspaceID="b5ec7b62-d2e5-4234-999d-0c92a0b0b74d" Order="128" Title="Finance" Icon="balance-scale" AreaID="338edf81-5456-4735-8601-b213458e93fe" ScreenID="WSGL0000" IsSystem="0">
+                <row IsPortal="0" WorkspaceID="b5ec7b62-d2e5-4234-999d-0c92a0b0b74d" Order="135" Title="Finance" Icon="balance-scale" AreaID="338edf81-5456-4735-8601-b213458e93fe" ScreenID="WSGL0000" IsSystem="0">
                     <MUIFavoriteWorkspace IsPortal="0" Username="" IsFavorite="1" />
                 </row>
             </MUIWorkspace>
