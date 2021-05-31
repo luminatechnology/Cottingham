@@ -65,6 +65,7 @@
     <Compile Include="Graph_Extensions\POOrderEntry.cs" />
     <Compile Include="Graph_Extensions\POReceiptEntry.cs" />
     <Compile Include="COProdContribInq.cs" />
+    <Compile Include="Graph_Extensions\InventoryItemMaint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Graph_Extensions\RQRequestClassMaint.cs" />
     <Compile Include="Graph_Extensions\RQRequestEntry.cs" />
