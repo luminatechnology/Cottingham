@@ -17,6 +17,8 @@
                     <Prop Key="Virtual:ApplyStylesheetSkin" />
                     <Prop Key="ID" Value="CstPXSelector1" />
                     <Prop Key="DataField" Value="OwnerID" />
+                    <Prop Key="CommitChanges" Value="True" />
+                    <Prop Key="AllowEdit" Value="True" />
                 </PXSelector>
             </AddItem>
             <PXLayoutRule OriginalIndex="21" />

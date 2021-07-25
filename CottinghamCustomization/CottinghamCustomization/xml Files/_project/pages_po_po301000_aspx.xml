@@ -6,6 +6,13 @@
         <Children Key="Columns">
             <AddItem>
                 <PXGridColumn TypeFullName="PX.Web.UI.PXGridColumn">
+                    <Prop Key="DataField" Value="UsrAlcoholAttr" />
+                    <Prop Key="Width" Value="70" />
+                </PXGridColumn>
+            </AddItem>
+            <PXGridColumn DataField="SiteID" OriginalIndex="4" />
+            <AddItem>
+                <PXGridColumn TypeFullName="PX.Web.UI.PXGridColumn">
                     <Prop Key="DataField" Value="UsrPackaging" />
                     <Prop Key="Width" Value="70" />
                     <Prop Key="CommitChanges" Value="True" />
@@ -13,5 +20,8 @@
             </AddItem>
             <PXGridColumn DataField="BaseOrderQty" OriginalIndex="8" />
         </Children>
+    </PXGridLevel>
+    <PXGridLevel DataMember="Taxes" ParentId="phG_tab_Items#1_gridTaxes_Levels#0" TypeFullName="PX.Web.UI.PXGridLevel">
+        <Children Key="Columns" />
     </PXGridLevel>
 </Page>

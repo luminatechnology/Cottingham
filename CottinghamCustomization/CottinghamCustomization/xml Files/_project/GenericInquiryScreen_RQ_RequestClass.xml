@@ -1,6 +1,6 @@
 ﻿<GenericInquiryScreen>
     <data-set>
-        <relations format-version="3" relations-version="20190630" main-table="GIDesign" stable-sharing="True" file-name="(Name)">
+        <relations format-version="3" relations-version="20190730" main-table="GIDesign" stable-sharing="True" file-name="(Name)">
             <link from="GIFilter (DesignID)" to="GIDesign (DesignID)" />
             <link from="GIGroupBy (DesignID)" to="GIDesign (DesignID)" />
             <link from="GIMassAction (DesignID)" to="GIDesign (DesignID)" />
@@ -131,7 +131,7 @@
         </layout>
         <data>
             <GIDesign>
-                <row DesignID="9208c06c-1c0b-4aba-a7e3-89e1071909b1" Name="RQ-RequestClass" FilterColCount="3" PageSize="0" PrimaryScreenIDNew="RQ201000" NewRecordCreationEnabled="1" MassDeleteEnabled="0" AutoConfirmDelete="0" MassRecordsUpdateEnabled="0" MassActionsOnRecordsEnabled="0" ExposeViaOData="0" ExposeViaMobile="0">
+                <row DesignID="9208c06c-1c0b-4aba-a7e3-89e1071909b1" Name="RQ-RequestClass" FilterColCount="3" PageSize="0" PrimaryScreenIDNew="RQ201000" NewRecordCreationEnabled="1" MassDeleteEnabled="0" AutoConfirmDelete="0" MassRecordsUpdateEnabled="0" MassActionsOnRecordsEnabled="0" ExposeViaOData="0" ExposeViaMobile="0" ShowDeletedRecords="0">
                     <GINavigationScreen ScreenID="RQ201000" LineNbr="1" WindowMode="I">
                         <GINavigationParameter LineNbr="1" FieldName="ReqClassID" ParameterName="RQRequestClass.ReqClassID" IsExpression="0" />
                     </GINavigationScreen>

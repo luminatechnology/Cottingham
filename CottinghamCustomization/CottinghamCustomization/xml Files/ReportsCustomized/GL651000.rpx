@@ -40,6 +40,9 @@
         <ReportField Name="CompltRate">
           <DataType>Decimal</DataType>
         </ReportField>
+        <ReportField Name="Estimated">
+          <DataType>Boolean</DataType>
+        </ReportField>
         <ReportField Name="FinYear"></ReportField>
         <ReportField Name="LogoNameRpt"></ReportField>
         <ReportField Name="PeriodNbr"></ReportField>
@@ -108,7 +111,7 @@
             <TextAlign>Center</TextAlign>
           </Style>
           <StyleName>Heading 1</StyleName>
-          <Value>Actual</Value>
+          <Value>Actual MTD</Value>
         </TextBox>
         <TextBox Name="textBox18">
           <Location>216px, 96px</Location>
@@ -310,7 +313,7 @@
               <Format>N0</Format>
               <Location>344px, 2px</Location>
               <NavigateUrl>='Main?ScreenId=GI000071&amp;AccountGroup=' + [ProductContributionData.AcctGroup] + '+++++&amp;FinPeriodID=' + [ProductContributionData.PeriodNbr]+[ProductContributionData.FinYear]</NavigateUrl>
-              <Size>1.25in, 0.18in</Size>
+              <Size>90px, 0.18in</Size>
               <Style>
                 <TextAlign>Right</TextAlign>
               </Style>
@@ -327,6 +330,15 @@
               </Style>
               <StyleName>Normal</StyleName>
               <Value>=IIf([ProductContributionData.CompltRate] = Null, '', Format('{0} %', [ProductContributionData.CompltRate]))</Value>
+            </TextBox>
+            <TextBox Name="textBox13">
+              <Location>434px, 2px</Location>
+              <Size>30px, 0.18in</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=IIf([ProductContributionData.Estimated] = True, ' (est.)', '')</Value>
             </TextBox>
             <TextBox Name="textBox14">
               <Format>N0</Format>

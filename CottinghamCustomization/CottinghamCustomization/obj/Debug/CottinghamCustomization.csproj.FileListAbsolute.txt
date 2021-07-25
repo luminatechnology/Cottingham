@@ -7,3 +7,7 @@ C:\Program Files\Acumatica ERP\Cottingham\App_Data\Projects\CottinghamCustomizat
 C:\Program Files\Acumatica ERP\Cottingham\App_Data\Projects\CottinghamCustomization\CottinghamCustomization\obj\Debug\CottinghamCustomization.csproj.CopyComplete
 C:\Program Files\Acumatica ERP\Cottingham\App_Data\Projects\CottinghamCustomization\CottinghamCustomization\obj\Debug\CottinghamCustomization.dll
 C:\Program Files\Acumatica ERP\Cottingham\App_Data\Projects\CottinghamCustomization\CottinghamCustomization\obj\Debug\CottinghamCustomization.pdb
+C:\Program Files\Acumatica ERP\Cottingham\App_Data\Projects\CottinghamCustomization\CottinghamCustomization\bin\Debug\PX.Data.BQL.Fluent.dll
+C:\Program Files\Acumatica ERP\Cottingham\App_Data\Projects\CottinghamCustomization\CottinghamCustomization\bin\Debug\PX.Data.BQL.Fluent.pdb
+C:\Program Files\Acumatica ERP\Cottingham\App_Data\Projects\CottinghamCustomization\CottinghamCustomization\bin\Debug\PX.Data.BQL.Fluent.xml
+C:\Program Files\Acumatica ERP\Cottingham\App_Data\Projects\CottinghamCustomization\CottinghamCustomization\bin\Debug\PX.Data.BQL.Fluent.dll.config
