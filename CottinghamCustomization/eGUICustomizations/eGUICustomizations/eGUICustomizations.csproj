@@ -1,0 +1,118 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8B984394-8824-4CB1-B56C-AAFA68F083AD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>eGUICustomizations</RootNamespace>
+    <AssemblyName>eGUICustomizations</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <WarningLevel>3</WarningLevel>
+    <FileVersion>20.114.0020</FileVersion>
+    <InformationalVersion>20.114.0020</InformationalVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\..\..\Bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PX.Common">
+      <HintPath>..\..\..\..\..\Bin\PX.Common.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="PX.CS.Contracts">
+      <HintPath>..\..\..\..\..\Bin\PX.CS.Contracts.dll</HintPath>
+    </Reference>
+    <Reference Include="PX.Data">
+      <HintPath>..\..\..\..\..\Bin\PX.Data.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="PX.Data.BQL.Fluent">
+      <HintPath>..\..\..\..\..\Bin\PX.Data.BQL.Fluent.dll</HintPath>
+    </Reference>
+    <Reference Include="PX.Objects">
+      <HintPath>..\..\..\..\..\Bin\PX.Objects.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="PX.Objects.FS">
+      <HintPath>..\..\..\..\..\Bin\PX.Objects.FS.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DAC\TWNExportMethods.cs" />
+    <Compile Include="DAC\TWNExportTicketTypes.cs" />
+    <Compile Include="DAC\TWNGUIInvCredit.cs" />
+    <Compile Include="DAC\TWNGUIPreferences.cs" />
+    <Compile Include="DAC\TWNGUITrans.cs" />
+    <Compile Include="DAC\TWNInvTranHist.cs" />
+    <Compile Include="DAC\TWNManualGUIAP.cs" />
+    <Compile Include="DAC\TWNManualGUIAPBill.cs" />
+    <Compile Include="DAC\TWNManualGUIAR.cs" />
+    <Compile Include="DAC\TWNManualGUIBank.cs" />
+    <Compile Include="DAC\TWNManualGUIExpense.cs" />
+    <Compile Include="DAC\TWNNPOTable.cs" />
+    <Compile Include="DAC_Extension\APRegisterExtensions.cs" />
+    <Compile Include="DAC_Extension\ARRegisterExtensions.cs" />
+    <Compile Include="DAC_Extension\TaxExtensions.cs" />
+    <Compile Include="Descriptor\ARGUINbrAutoNumAttribute.cs" />
+    <Compile Include="Descriptor\TWMessages.cs" />
+    <Compile Include="Descriptor\TWNB2CPrinter.cs" />
+    <Compile Include="Descriptor\TWNGUIValidation.cs" />
+    <Compile Include="Descriptor\TWNStringList.cs" />
+    <Compile Include="Graph\TWNCreateNewGUIMaint.cs" />
+    <Compile Include="Graph\TWNeGUIInquiry.cs" />
+    <Compile Include="Graph\TWNExpGUICN2BankPro.cs" />
+    <Compile Include="Graph\TWNExpGUIInv2BankPro.cs" />
+    <Compile Include="Graph\TWNExpOnlineStrGUICN.cs" />
+    <Compile Include="Graph\TWNExpOnlineStrGUIInv.cs" />
+    <Compile Include="Graph\TWNExportMthsMaint.cs" />
+    <Compile Include="Graph\TWNExportTiktTypesMaint.cs" />
+    <Compile Include="Graph\TWNGenGUIMediaFile.cs" />
+    <Compile Include="Graph\TWNGenZeroTaxRateMedFile.cs" />
+    <Compile Include="Graph\TWNGUIPrefMaint.cs" />
+    <Compile Include="Graph\TWNManGUIAPMaint.cs" />
+    <Compile Include="Graph\TWNManGUIARMaint.cs" />
+    <Compile Include="Graph\TWNNPOMaint.cs" />
+    <Compile Include="Graph_Extension\AddReturnLineToDirectInvoice.cs" />
+    <Compile Include="Graph_Extension\APInvoiceEntry.cs" />
+    <Compile Include="Graph_Extension\ARInvoiceEntry.cs" />
+    <Compile Include="Graph_Extension\CATranEntry.cs" />
+    <Compile Include="Graph_Extension\ExpenseClaimEntry.cs" />
+    <Compile Include="Graph_Extension\SalesTaxMaint.cs" />
+    <Compile Include="Graph_Extension\SOOrderEntry.cs" />
+    <Compile Include="Graph_Release\APDocumentRelease.cs" />
+    <Compile Include="Graph_Release\ARReleaseProcess.cs" />
+    <Compile Include="Graph_Release\CAReleaseProcess.cs" />
+    <Compile Include="Graph_Release\EPReleaseProcess.cs" />
+    <Compile Include="Graph_Release\TWNReleaseProcess.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
