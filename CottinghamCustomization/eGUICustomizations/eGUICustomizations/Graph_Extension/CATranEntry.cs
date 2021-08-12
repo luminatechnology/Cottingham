@@ -30,25 +30,27 @@ namespace PX.Objects.CA
             ManGUIBank.Cache.AllowDelete = ManGUIBank.Cache.AllowInsert = ManGUIBank.Cache.AllowUpdate = !e.Row.Status.Equals(CATransferStatus.Released);
         }
 
-        protected void _(Events.RowPersisting<TWNManualGUIBank> e)
+        protected void _(Events.RowPersisting<CAAdj> e, PXRowPersisting baseHandler)
         {
+            baseHandler?.Invoke(e.Cache, e.Args);
+
             if (Base.CurrentDocument.Current == null || activateGUI.Equals(false)) { return; }
-
-            tWNGUIValidation.CheckCorrespondingInv(Base, e.Row.GUINbr, e.Row.VATInCode);
-
-            if (tWNGUIValidation.errorOccurred.Equals(true) )
-            {
-                e.Cache.RaiseExceptionHandling<TWNManualGUIExpense.gUINbr>(e.Row, e.Row.GUINbr, new PXSetPropertyException(tWNGUIValidation.errorMessage, PXErrorLevel.RowError));
-            }
 
             decimal taxSum = 0;
 
             foreach (TWNManualGUIBank row in ManGUIBank.Select())
             {
+                tWNGUIValidation.CheckCorrespondingInv(Base, row.GUINbr, row.VATInCode);
+
+                if (tWNGUIValidation.errorOccurred.Equals(true))
+                {
+                    e.Cache.RaiseExceptionHandling<TWNManualGUIExpense.gUINbr>(e.Row, row.GUINbr, new PXSetPropertyException(tWNGUIValidation.errorMessage, PXErrorLevel.RowError));
+                }
+
                 taxSum += row.TaxAmt.Value;
             }
 
-            if (!taxSum.Equals(Base.CurrentDocument.Current.TaxTotal))
+            if (taxSum != Base.CurrentDocument.Current.TaxTotal)
             {
                 throw new PXException(TWMessages.ChkTotalGUIAmt);
             }

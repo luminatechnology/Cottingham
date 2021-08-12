@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\Bin\</OutputPath>
+    <OutputPath>..\..\..\..\..\..\Bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
@@ -32,25 +32,25 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PX.Common">
-      <HintPath>..\..\..\..\..\Bin\PX.Common.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Bin\PX.Common.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PX.CS.Contracts">
-      <HintPath>..\..\..\..\..\Bin\PX.CS.Contracts.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Bin\PX.CS.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="PX.Data">
-      <HintPath>..\..\..\..\..\Bin\PX.Data.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Bin\PX.Data.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PX.Data.BQL.Fluent">
-      <HintPath>..\..\..\..\..\Bin\PX.Data.BQL.Fluent.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Bin\PX.Data.BQL.Fluent.dll</HintPath>
     </Reference>
     <Reference Include="PX.Objects">
-      <HintPath>..\..\..\..\..\Bin\PX.Objects.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Bin\PX.Objects.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PX.Objects.FS">
-      <HintPath>..\..\..\..\..\Bin\PX.Objects.FS.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Bin\PX.Objects.FS.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
