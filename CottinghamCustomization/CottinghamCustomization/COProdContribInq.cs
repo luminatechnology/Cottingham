@@ -327,7 +327,7 @@ namespace CottinghamCustomization
                         var rowATL = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_ATL);
                         var rowBTL = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_BTL);
 
-                        decimal? actualPtdAmt = (row.ActualYtdAmt - (rowATL.ActualYtdAmt + rowBTL.ActualYtdAmt) + (rowATL.ActualPtdAmt + rowBTL.ActualPtdAmt) ) / 12;
+                        decimal? actualPtdAmt = row == null ? 0 : (row.ActualYtdAmt - (rowATL.ActualYtdAmt + rowBTL.ActualYtdAmt) + (rowATL.ActualPtdAmt + rowBTL.ActualPtdAmt) ) / 12;
 
                         contribData = CreateDetailRecord(AcctTyp_SupPrin, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, actualPtdAmt, row?.ActualYtdAmt, true, true);
 
