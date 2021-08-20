@@ -60,12 +60,12 @@ namespace CottinghamCustomization
         public abstract class finPeriodID : PX.Data.BQL.BqlString.Field<finPeriodID> { }
         #endregion
 
-        #region CuryInfoID
-        [PXDBLong()]
-        [CurrencyInfo(typeof(CurrencyInfo.curyInfoID))]
-        public virtual long? CuryInfoID { get; set; }
-        public abstract class curyInfoID : PX.Data.BQL.BqlLong.Field<curyInfoID> { }
-        #endregion
+        //#region CuryInfoID
+        //[PXDBLong()]
+        //[CurrencyInfo(typeof(CurrencyInfo.curyInfoID))]
+        //public virtual long? CuryInfoID { get; set; }
+        //public abstract class curyInfoID : PX.Data.BQL.BqlLong.Field<curyInfoID> { }
+        //#endregion
 
         #region CuryCreditAmt
         [PXDBDecimal()]
