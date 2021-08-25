@@ -6,7 +6,6 @@ GO
 CREATE VIEW V_GLCompareIN
 AS SELECT gl.CompanyID, gl.BranchID, gl.Module, gl.BatchNbr, gl.LedgerID, gl.AccountID, gl.SubID, gl.FinPeriodID, gl.CuryCreditAmt, gl.CuryDebitAmt FROM GLTran gl 
 INNER JOIN Account a ON a.CompanyID = gl.CompanyID AND a.AccountID = gl.AccountID 
-WHERE NOT EXISTS (SELECT * FROM INTran WHERE CompanyID = 2 AND INTran.TranType = gl.TranType AND INTran.RefNbr = gl.RefNbr)
-AND gl.CompanyID = 2 AND a.AccountCD = '1130000'
+WHERE NOT EXISTS (SELECT * FROM INTran WHERE INTran.TranType = gl.TranType AND INTran.RefNbr = gl.RefNbr) AND gl.CompanyID > 0 AND a.AccountCD = '1130000' AND gl.FinPeriodID >= '202101'
 GO]]></CDATA>
 </Sql>
