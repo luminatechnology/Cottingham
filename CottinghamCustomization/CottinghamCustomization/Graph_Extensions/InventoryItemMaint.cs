@@ -22,7 +22,7 @@ namespace PX.Objects.IN
                 if (invaild == true) { break; }
             }
         
-            if (invaild == false)
+            if (invaild == false && (e.Operation == PXDBOperation.Insert || e.Operation == PXDBOperation.Update) && Base.IsImport == false)
             {
                 throw new PXSetPropertyException(VendInvtNonExist);
             }
