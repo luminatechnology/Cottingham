@@ -137,7 +137,7 @@ namespace CottinghamCustomization
                                                                                    InnerJoin<MasterFinPeriod, On<True, Equal<True>,
                                                                                                                  And<GLHistory.finPeriodID, Equal<MasterFinPeriod.finPeriodID>>>>>>,
                                                                                    Where<MasterFinPeriod.finPeriodID, GreaterEqual<Required<MasterFinPeriod.finPeriodID>>,
-                                                                                         And<MasterFinPeriod.finPeriodID, Less<Required<MasterFinPeriod.finPeriodID>>,
+                                                                                         And<MasterFinPeriod.finPeriodID, LessEqual<Required<MasterFinPeriod.finPeriodID>>,
                                                                                              And<GLHistory.balanceType, Equal<LedgerBalanceType.actual>,
                                                                                                  And<GLHistory.branchID, Equal<Required<GLHistory.branchID>>>>>>,
                                                                                    OrderBy<Asc<GLHistory.accountID,
