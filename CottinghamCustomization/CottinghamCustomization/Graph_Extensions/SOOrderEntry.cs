@@ -5,14 +5,6 @@ namespace PX.Objects.SO
 {
     public class SOOrderEntry_Extension : PXGraphExtension<SOOrderEntry>
     {
-        #region Cache Attached
-        //[PXMergeAttributes(Method = MergeMethod.Merge)]
-        //[PXDefault(typeof(Search<EPEmployee.salesPersonID, Where<EPEmployee.userID, Equal<Current<SOOrder.ownerID>>, 
-        //                                                         And<EPEmployee.status, Equal<PX.Objects.AP.Vendor.status.active>>>>), 
-        //           PersistingCheck = PXPersistingCheck.Nothing)]
-        //protected void _(Events.CacheAttached<SOOrder.salesPersonID> e) { }
-        #endregion
-
         #region Event Handlers
         protected void _(Events.RowPersisting<SOLine> e, PXRowPersisting baseHandler)
         {
@@ -39,7 +31,7 @@ namespace PX.Objects.SO
             if (row != null && e.NewValue != null)
             {
                 row.SalesPersonID = PXSelectReadonly<EPEmployee, Where<EPEmployee.userID, Equal<Required<SOOrder.ownerID>>,
-                                                                                   And<EPEmployee.status, Equal<PX.Objects.AP.Vendor.status.active>>>>.Select(Base, e.NewValue).TopFirst?.SalesPersonID;
+                                                                       And<EPEmployee.status, Equal<PX.Objects.AP.Vendor.status.active>>>>.Select(Base, e.NewValue).TopFirst?.SalesPersonID;
             }
         }
         #endregion
