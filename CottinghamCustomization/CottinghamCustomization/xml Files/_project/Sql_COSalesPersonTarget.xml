@@ -1,0 +1,32 @@
+﻿<Sql TableName="COSalesPersonTarget" TableSchemaXml="#CDATA">
+    <CDATA name="TableSchemaXml"><![CDATA[<table name="COSalesPersonTarget">
+  <col name="CompanyID" type="Int" default="Zero" />
+  <col name="SalespersonID" type="Int" />
+  <col name="Year" type="Char(4)" />
+  <col name="Period01" type="Decimal(25,6)" nullable="true" />
+  <col name="Period02" type="Decimal(25,6)" nullable="true" />
+  <col name="Period03" type="Decimal(25,6)" nullable="true" />
+  <col name="Period04" type="Decimal(25,6)" nullable="true" />
+  <col name="Period05" type="Decimal(25,6)" nullable="true" />
+  <col name="Period06" type="Decimal(25,6)" nullable="true" />
+  <col name="Period07" type="Decimal(25,6)" nullable="true" />
+  <col name="Period08" type="Decimal(25,6)" nullable="true" />
+  <col name="Period09" type="Decimal(25,6)" nullable="true" />
+  <col name="Period10" type="Decimal(25,6)" nullable="true" />
+  <col name="Period11" type="Decimal(25,6)" nullable="true" />
+  <col name="Period12" type="Decimal(25,6)" nullable="true" />
+  <col name="CreatedByID" type="UniqueIdentifier" />
+  <col name="CreatedByScreenID" type="Char(8)" />
+  <col name="CreatedDateTime" type="DateTime" />
+  <col name="LastModifiedByID" type="UniqueIdentifier" />
+  <col name="LastModifiedByScreenID" type="Char(8)" />
+  <col name="LastModifiedDateTime" type="DateTime" />
+  <col name="NoteID" type="UniqueIdentifier" nullable="true" />
+  <col name="tstamp" type="Timestamp" />
+  <index name="PK_COSalesPersonTarget" clustered="true" primary="true" unique="true">
+    <col name="CompanyID" />
+    <col name="SalespersonID" />
+    <col name="Year" />
+  </index>
+</table>]]></CDATA>
+</Sql>
