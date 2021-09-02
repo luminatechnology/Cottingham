@@ -173,7 +173,7 @@ namespace CottinghamCustomization
                         AcctGroup = acctGrop?.GroupCD,
                         BudgetAmt = 0m,
                         ActualPtdAmt = 0m,
-                        ActualYtdAmt = Math.Abs(histAggr.CuryFinPtdCredit.Value + histAggr.CuryFinPtdDebit.Value)
+                        ActualYtdAmt = Math.Abs(histAggr.CuryFinPtdCredit.Value - histAggr.CuryFinPtdDebit.Value)
                     };
 
                     records.Add(contribData);
