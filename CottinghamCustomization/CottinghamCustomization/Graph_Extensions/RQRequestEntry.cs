@@ -1,4 +1,5 @@
-﻿using PX.Data;
+﻿using System.Linq;
+using PX.Data;
 using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
 using PX.Objects.PO;
@@ -14,7 +15,7 @@ namespace PX.Objects.RQ
 
             var vi = SelectFrom<POVendorInventory>.Where<POVendorInventory.active.IsEqual<True>.And<POVendorInventory.inventoryID.IsEqual<@P.AsInt>>>.View.Select(Base, e.NewValue).TopFirst;
 
-            Base.Document.Cache.SetValueExt<RQRequest.vendorID>(Base.Document.Current, vi?.VendorID ?? Base.reqclass.Current.GetExtension<RQRequestClassExt>().UsrVendor);
+            Base.Document.Cache.SetValueExt<RQRequest.vendorID>(Base.Document.Current, vi?.IsDefault == true ? vi?.VendorID : Base.reqclass.Current.GetExtension<RQRequestClassExt>().UsrVendor);
 
             if (Base.vendor.Current != null)
             {
