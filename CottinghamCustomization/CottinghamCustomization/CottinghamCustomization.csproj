@@ -63,7 +63,6 @@
     <Compile Include="DAC_Extensions\POLineExtensions.cs" />
     <Compile Include="DAC_Extensions\POReceiptLineExtensions.cs" />
     <Compile Include="DAC_Extensions\RQRequestClassExtensions.cs" />
-    <Compile Include="DAC_Extensions\RQRequestExtensions.cs" />
     <Compile Include="DAC_Extensions\SOLineExtensions.cs" />
     <Compile Include="DAC_Extensions\SOOrderExtensions.cs" />
     <Compile Include="Graph_Extensions\POOrderEntry.cs" />
