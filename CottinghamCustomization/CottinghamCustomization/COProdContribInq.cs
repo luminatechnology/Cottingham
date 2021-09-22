@@ -97,7 +97,7 @@ namespace CottinghamCustomization
 
             if (filter.SubIDFilter != null)
             {
-                cmdHistory.WhereAnd<Where<Sub.subCD, Contains<Current<BudgetFilter.subCDWildcard>>>>();
+                cmdHistory.WhereAnd<Where<Sub.subCD, StartsWith<Current<BudgetFilter.subCDWildcard>>>>();
             }
 
             foreach (PXResult<GLHistory, Account, Sub, MasterFinPeriod> aggregatingResult in cmdHistory.Select(filterExt.UsrFinPeriodID, filter.BranchID))
@@ -146,7 +146,7 @@ namespace CottinghamCustomization
 
             if (filter.SubIDFilter != null)
             {
-                cmdHistory2.WhereAnd<Where<Sub.subCD, Contains<Current<BudgetFilter.subCDWildcard>>>>();
+                cmdHistory2.WhereAnd<Where<Sub.subCD, StartsWith<Current<BudgetFilter.subCDWildcard>>>>();
             }
 
             foreach (PXResult<GLHistory, Account, Sub, MasterFinPeriod> aggregatingResult in cmdHistory2.Select(yearStart, filterExt.UsrFinPeriodID, filter.BranchID))
@@ -192,7 +192,7 @@ namespace CottinghamCustomization
                                                                                                          And<Match<Current<AccessInfo.userName>>>>>>>(this);
             if (filter.SubIDFilter != null)
             {
-                cmdBudgetLine.WhereAnd<Where<Sub.subCD, Contains<Current<BudgetFilter.subCDWildcard>>>>();
+                cmdBudgetLine.WhereAnd<Where<Sub.subCD, StartsWith<Current<BudgetFilter.subCDWildcard>>>>();
             }
 
             foreach (PXResult<GLBudgetLine, MasterFinPeriod, Account, Sub, GLBudgetLineDetail> result in cmdBudgetLine.Select(filter.LedgerID, filter.BranchID, filterExt.UsrFinPeriodID))
