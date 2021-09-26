@@ -1,0 +1,6 @@
+﻿<DAC type="PX.Objects.RQ.RQRequestLine">
+    <Field FieldName="PromisedDate" TypeName="date" TextAttributes="#CDATA" OverrideClassName="PX.Objects.RQ.RQRequestLine" StorageName="ExistingColumn">
+        <CDATA name="TextAttributes"><![CDATA[
+[PXCustomizeBaseAttribute(typeof(PXUIFieldAttribute), "DisplayName", "Expected Date")]]]></CDATA>
+    </Field>
+</DAC>
