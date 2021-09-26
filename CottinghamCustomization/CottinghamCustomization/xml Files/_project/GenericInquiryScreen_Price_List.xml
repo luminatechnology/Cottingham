@@ -152,8 +152,10 @@
                         <GIResult LineNbr="1" SortOrder="1" IsActive="1" Field="priceType" IsVisible="1" DefaultNav="1" QuickFilter="0" FastFilter="1" RowID="41b29587-2a7d-432a-8504-42c64e5c3c15" />
                     </GITable>
                     <SiteMap linkname="toDesignById">
-                        <row Title="Price List" Url="~/GenericInquiry/GenericInquiry.aspx?id=5f32024b-9fe9-431a-94cc-0bd7ed56c2bc" ScreenID="GI000068" NodeID="4d1dc08a-b4db-42cd-9636-fdb1361a250a" ParentID="00000000-0000-0000-0000-000000000000">
-                            <MUIScreen IsPortal="0" WorkspaceID="bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb" Order="6574" SubcategoryID="98e86774-69e3-41ea-b94f-eb2c7a8426d4" />
+                        <row Title="Price List" Url="~/GenericInquiry/GenericInquiry.aspx?id=5f32024b-9fe9-431a-94cc-0bd7ed56c2bc" ScreenID="GI000073" NodeID="b10272b7-f84e-4400-beba-44a1a13d67ea" ParentID="00000000-0000-0000-0000-000000000000">
+                            <MUIScreen IsPortal="0" WorkspaceID="bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb" Order="6604" SubcategoryID="98e86774-69e3-41ea-b94f-eb2c7a8426d4">
+                                <MUIPinnedScreen IsPortal="0" Username="" IsPinned="1" />
+                            </MUIScreen>
                         </row>
                     </SiteMap>
                 </row>
