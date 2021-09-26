@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="DAC\COSalesPersonTarget.cs" />
     <Compile Include="DAC_Extensions\BudgetFilterExtensions.cs" />
+    <Compile Include="DAC_Extensions\RQRequisitionLineExtensions.cs" />
     <Compile Include="Graph_Extensions\APInvoiceEntry.cs" />
     <Compile Include="DAC_Extensions\INTranExtensions.cs" />
     <Compile Include="DAC_Extensions\POLineExtensions.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Graph_Extensions\InventoryItemMaint.cs" />
     <Compile Include="DAC_Extensions\SOOrderTypeExtensions.cs" />
     <Compile Include="Graph_Extensions\POCreate.cs" />
+    <Compile Include="Graph_Extensions\RQRequisitionEntry.cs" />
     <Compile Include="Graph_Extensions\SalesPersonMaint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Graph_Extensions\RQRequestClassMaint.cs" />
