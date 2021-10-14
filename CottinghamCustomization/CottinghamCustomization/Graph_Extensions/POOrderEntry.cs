@@ -44,30 +44,27 @@ namespace PX.Objects.PO
         #region Static Methods        
         public static string UOMConversion(PXGraph graph, int inventoryID, decimal orderQty, string uOM)
         {
-            int num1 = 0;
-            int num2 = 0;
+            int cases   = 0;
+            int bottles = 0;
+
             INUnit inUnit = PXSelectBase<INUnit, PXSelectReadonly2<INUnit, InnerJoinSingleTable<InventoryItem, On<InventoryItem.inventoryID, Equal<INUnit.inventoryID>, 
                                                                                                                   And<InventoryItem.baseUnit, NotEqual<INUnit.fromUnit>>>>,
                                                                            Where<INUnit.inventoryID, Equal<Required<POLine.inventoryID>>>>.Config>.Select(graph, inventoryID);
             if (inUnit != null && orderQty != 0M)
             {
-                if (uOM.Equals(inUnit.FromUnit))
+                if (uOM == inUnit.FromUnit)
                 {
-                    num2 = (int) orderQty;
-                    num1 = 0;
+                    cases   = (int)orderQty;
+                    bottles = 0;
                 }
                 else
                 {
-                    Decimal num3 = orderQty;
-                    Decimal? unitRate = inUnit.UnitRate;
-                    num2 = (int) (unitRate.HasValue ? new Decimal?(num3 / unitRate.GetValueOrDefault()) : new Decimal?()).Value;
-                    Decimal num4 = orderQty;
-                    unitRate = inUnit.UnitRate;
-                    num1 = (int) (unitRate.HasValue ? new Decimal?(num4 % unitRate.GetValueOrDefault()) : new Decimal?()).Value;
+                    cases   = (int)(inUnit.UnitRate.HasValue ? new Decimal?(orderQty / inUnit.UnitRate.Value) : new Decimal?()).Value;
+                    bottles = (int)(inUnit.UnitRate.HasValue ? new Decimal?(orderQty % inUnit.UnitRate.Value) : new Decimal?()).Value;
                 }
             }
 
-            return string.Format("{0} C {1} B", num2, num1);
+            return string.Format("{0} C {1} B", cases, bottles);
         }
         #endregion
     }
