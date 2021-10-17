@@ -1,0 +1,4 @@
+﻿<Fields ScreenID="RQ301000">
+    <Field IsActive="True" DisplayName="Est. Ext. Cost" FieldName="CuryEstExtCostTotal" HideCondition="True" ObjectName="PX.Objects.RQ.RQRequest" />
+    <Field IsActive="True" DisplayName="Open Qty." FieldName="OpenOrderQty" HideCondition="True" ObjectName="PX.Objects.RQ.RQRequest" />
+</Fields>

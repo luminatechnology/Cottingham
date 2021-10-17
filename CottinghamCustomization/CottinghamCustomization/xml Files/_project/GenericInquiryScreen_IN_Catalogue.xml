@@ -164,9 +164,9 @@
                             <GIOn LineNbr="2" ParentField="itemClassID" Condition="E " ChildField="itemClassID" Operation="A" />
                             <GIOn LineNbr="1" ParentField="itemClassID" Condition="E " ChildField="itemClassID" Operation="A" />
                         </GIRelation>
-                        <GIResult LineNbr="37" SortOrder="38" IsActive="1" Field="salesSubID" IsVisible="1" DefaultNav="1" QuickFilter="0" FastFilter="1" RowID="0606359a-48c4-4aa3-aae4-9bcf931829d4" />
+                        <GIResult LineNbr="37" SortOrder="38" IsActive="1" Field="salesSubID" IsVisible="0" DefaultNav="1" QuickFilter="0" FastFilter="1" RowID="0606359a-48c4-4aa3-aae4-9bcf931829d4" />
                         <GIResult LineNbr="33" SortOrder="33" IsActive="1" Field="baseItemVolume" SchemaField="InventoryItem.InventoryID" Caption="Volume" StyleFormula="=Round( BaseItemVolume, 0)" IsVisible="1" DefaultNav="1" QuickFilter="0" FastFilter="1" RowID="7da91c42-288c-4b0b-8764-b5f5109e48c8" />
-                        <GIResult LineNbr="31" SortOrder="31" IsActive="1" Field="CHIDESCR_Attributes" IsVisible="1" DefaultNav="1" QuickFilter="0" FastFilter="1" RowID="9ce7054a-5e7d-4e0b-b86a-563575b2dee9" />
+                        <GIResult LineNbr="31" SortOrder="31" IsActive="1" Field="CHIDESCR_Attributes" IsVisible="0" DefaultNav="1" QuickFilter="0" FastFilter="1" RowID="9ce7054a-5e7d-4e0b-b86a-563575b2dee9" />
                         <GIResult LineNbr="30" SortOrder="30" IsActive="1" Field="ALCOHOL_Attributes" IsVisible="1" DefaultNav="1" QuickFilter="0" FastFilter="1" RowID="3d4f3cce-27b7-487a-bb8c-0a6514b3fbc2" />
                         <GIResult LineNbr="29" SortOrder="29" IsActive="1" Field="lastModifiedDateTime" IsVisible="0" DefaultNav="0" QuickFilter="0" FastFilter="0" RowID="13702d3b-7ccd-4961-8876-8fad12d64467" />
                         <GIResult LineNbr="28" SortOrder="28" IsActive="1" Field="lastModifiedByID" IsVisible="0" DefaultNav="0" QuickFilter="0" FastFilter="1" RowID="0f7f75b0-6c08-4ab2-aa15-d4b15a784097" />
@@ -186,15 +186,15 @@
                         <GIResult LineNbr="14" SortOrder="14" IsActive="1" Field="basePrice" IsVisible="0" DefaultNav="0" QuickFilter="0" FastFilter="1" RowID="7478a3c1-f54d-41a2-8f17-27a593c05fde" />
                         <GIResult LineNbr="13" SortOrder="13" IsActive="1" Field="purchaseUnit" IsVisible="0" DefaultNav="0" QuickFilter="0" FastFilter="1" RowID="68f09dd9-d8e3-44dd-a317-30ce1011eb28" />
                         <GIResult LineNbr="12" SortOrder="12" IsActive="1" Field="salesUnit" IsVisible="0" DefaultNav="0" QuickFilter="0" FastFilter="1" RowID="c2aef964-4fee-44ef-b07b-f9423addd636" />
-                        <GIResult LineNbr="11" SortOrder="11" IsActive="1" Field="baseUnit" IsVisible="1" DefaultNav="0" QuickFilter="0" FastFilter="1" RowID="85f1ba7e-e5ef-40ca-9c38-e6935378744d" />
+                        <GIResult LineNbr="11" SortOrder="11" IsActive="1" Field="baseUnit" IsVisible="0" DefaultNav="0" QuickFilter="0" FastFilter="1" RowID="85f1ba7e-e5ef-40ca-9c38-e6935378744d" />
                         <GIResult LineNbr="10" SortOrder="10" IsActive="1" Field="dfltSiteID" IsVisible="1" DefaultNav="0" QuickFilter="0" FastFilter="1" RowID="773e1968-3df0-4623-90df-c8a8d531da91" />
                         <GIResult LineNbr="9" SortOrder="9" IsActive="1" Field="valMethod" IsVisible="0" DefaultNav="0" QuickFilter="0" FastFilter="1" RowID="716c282e-ea33-4d96-a162-8752fee23108" />
                         <GIResult LineNbr="8" SortOrder="8" IsActive="1" Field="lotSerClassID" IsVisible="0" DefaultNav="0" QuickFilter="0" FastFilter="1" RowID="52a1503d-6cf6-4665-b6b3-071e3ca9bd33" />
-                        <GIResult LineNbr="7" SortOrder="7" IsActive="1" Field="taxCategoryID" IsVisible="1" DefaultNav="0" QuickFilter="0" FastFilter="1" RowID="f8a0f533-9a20-48b9-89b2-7d6e988c93cb" />
-                        <GIResult LineNbr="6" SortOrder="6" IsActive="1" Field="postClassID" IsVisible="1" DefaultNav="0" QuickFilter="0" FastFilter="1" RowID="0b2a19d1-ac9c-450d-bf49-1bb9dcb8b64f" />
-                        <GIResult LineNbr="5" SortOrder="5" IsActive="1" Field="itemClassID" IsVisible="1" DefaultNav="0" QuickFilter="1" FastFilter="1" RowID="c506ce44-c874-40e5-a902-61f5662897cf" />
+                        <GIResult LineNbr="7" SortOrder="7" IsActive="1" Field="taxCategoryID" IsVisible="0" DefaultNav="0" QuickFilter="0" FastFilter="1" RowID="f8a0f533-9a20-48b9-89b2-7d6e988c93cb" />
+                        <GIResult LineNbr="6" SortOrder="6" IsActive="1" Field="postClassID" IsVisible="0" DefaultNav="0" QuickFilter="0" FastFilter="1" RowID="0b2a19d1-ac9c-450d-bf49-1bb9dcb8b64f" />
+                        <GIResult LineNbr="5" SortOrder="5" IsActive="1" Field="itemClassID" IsVisible="0" DefaultNav="0" QuickFilter="1" FastFilter="1" RowID="c506ce44-c874-40e5-a902-61f5662897cf" />
                         <GIResult LineNbr="4" SortOrder="4" IsActive="1" Field="kitItem" IsVisible="0" DefaultNav="0" QuickFilter="0" FastFilter="1" RowID="13395517-c340-4ee0-abe1-208a96cdafef" />
-                        <GIResult LineNbr="3" SortOrder="3" IsActive="1" Field="itemType" IsVisible="1" DefaultNav="0" QuickFilter="1" FastFilter="1" RowID="c13dc1c6-cd8f-4ed0-b286-65b31c1b2a54" />
+                        <GIResult LineNbr="3" SortOrder="3" IsActive="1" Field="itemType" IsVisible="0" DefaultNav="0" QuickFilter="1" FastFilter="1" RowID="c13dc1c6-cd8f-4ed0-b286-65b31c1b2a54" />
                         <GIResult LineNbr="2" SortOrder="2" IsActive="1" Field="descr" IsVisible="1" DefaultNav="0" QuickFilter="0" FastFilter="1" RowID="73c26b4e-5074-4461-aef3-bdb2371b7027" />
                         <GIResult LineNbr="1" SortOrder="1" IsActive="1" Field="inventoryCD" IsVisible="1" DefaultNav="0" QuickFilter="0" FastFilter="1" RowID="ec0083e9-99db-432d-9cc1-be1cbfe6b999" />
                     </GITable>
@@ -218,16 +218,37 @@
                     <GIWhere LineNbr="2" IsActive="1" DataFieldName="InventoryItem.itemStatus" Condition="NE" IsExpression="0" Value1="XX" Operation="A" />
                     <GIWhere LineNbr="1" IsActive="1" DataFieldName="InventoryItem.stkItem" Condition="E " IsExpression="0" Value1="1" Operation="A" />
                     <SiteMap linkname="toDesignById">
-                        <row Title="Sales Catalogue" Url="~/genericinquiry/genericinquiry.aspx?id=029f84d0-92dd-4a4d-b79a-7361bbb61e5f" ScreenID="GI000072" NodeID="f80b02f5-409c-4891-8687-910e43de1186" ParentID="00000000-0000-0000-0000-000000000000">
-                            <FilterHeader FilterID="54345" UserName="adam.pai" ViewName="Results" FilterName="No Sales Price" IsDefault="0" IsShared="1" IsShortcut="0" IsSystem="0" IsHidden="0">
-                                <FilterRow FilterRowNbr="2" OpenBrackets="0" DataField="ARSalesPrice_salesPrice" Condition="11" ValueSt="0" ValueSt2="0" CloseBrackets="1" Operator="0" IsUsed="1" FilterType="0" />
-                                <FilterRow FilterRowNbr="1" OpenBrackets="1" DataField="ARSalesPrice_salesPrice" Condition="5" ValueSt="0" ValueSt2="0" CloseBrackets="0" Operator="1" IsUsed="1" FilterType="0" />
-                            </FilterHeader>
-                            <FilterHeader FilterID="54343" UserName="adam.pai" ViewName="Results" FilterName="Monthly Release" IsDefault="0" IsShared="1" IsShortcut="0" IsSystem="0" IsHidden="0">
+                        <row Title="Monthly Release" Url="~/genericinquiry/genericinquiry.aspx?id=029f84d0-92dd-4a4d-b79a-7361bbb61e5f" ScreenID="GI000072" NodeID="f80b02f5-409c-4891-8687-910e43de1186" ParentID="00000000-0000-0000-0000-000000000000">
+                            <FilterHeader FilterID="54357" UserName="adam.pai" ViewName="Results" FilterName="GC" IsDefault="0" IsShared="1" IsShortcut="0" IsSystem="0" IsHidden="0">
+                                <FilterRow FilterRowNbr="2" OpenBrackets="0" DataField="InventoryItem_inventoryCD" Condition="7" ValueSt="GC" ValueSt2="" CloseBrackets="0" Operator="0" IsUsed="1" FilterType="0" />
                                 <FilterRow FilterRowNbr="1" OpenBrackets="0" DataField="InventoryItem_itemStatus" Condition="0" ValueSt="AC" ValueSt2="" CloseBrackets="0" Operator="0" IsUsed="1" FilterType="0" />
                             </FilterHeader>
-                            <FilterHeader FilterID="54342" UserName="adam.pai" ViewName="Results" FilterName="Sales Catalogue" IsDefault="0" IsShared="1" IsShortcut="0" IsSystem="0" IsHidden="0">
-                                <FilterRow FilterRowNbr="1" OpenBrackets="0" DataField="InventoryItem_itemStatus" Condition="1" ValueSt="IN" ValueSt2="" CloseBrackets="0" Operator="0" IsUsed="1" FilterType="0" />
+                            <FilterHeader FilterID="54356" UserName="adam.pai" ViewName="Results" FilterName="DC" IsDefault="0" IsShared="0" IsShortcut="0" IsSystem="0" IsHidden="0">
+                                <FilterRow FilterRowNbr="2" OpenBrackets="0" DataField="InventoryItem_inventoryCD" Condition="7" ValueSt="DC" ValueSt2="" CloseBrackets="0" Operator="0" IsUsed="1" FilterType="0" />
+                                <FilterRow FilterRowNbr="1" OpenBrackets="0" DataField="InventoryItem_itemStatus" Condition="0" ValueSt="AC" ValueSt2="" CloseBrackets="0" Operator="0" IsUsed="1" FilterType="0" />
+                            </FilterHeader>
+                            <FilterHeader FilterID="54355" UserName="adam.pai" ViewName="Results" FilterName="BE" IsDefault="0" IsShared="1" IsShortcut="0" IsSystem="0" IsHidden="0">
+                                <FilterRow FilterRowNbr="2" OpenBrackets="0" DataField="InventoryItem_inventoryCD" Condition="7" ValueSt="BE" ValueSt2="" CloseBrackets="0" Operator="0" IsUsed="1" FilterType="0" />
+                                <FilterRow FilterRowNbr="1" OpenBrackets="0" DataField="InventoryItem_itemStatus" Condition="0" ValueSt="AC" ValueSt2="" CloseBrackets="0" Operator="0" IsUsed="1" FilterType="0" />
+                            </FilterHeader>
+                            <FilterHeader FilterID="54354" UserName="adam.pai" ViewName="Results" FilterName="ED" IsDefault="0" IsShared="1" IsShortcut="0" IsSystem="0" IsHidden="0">
+                                <FilterRow FilterRowNbr="2" OpenBrackets="0" DataField="InventoryItem_inventoryCD" Condition="7" ValueSt="ED" ValueSt2="" CloseBrackets="0" Operator="0" IsUsed="1" FilterType="0" />
+                                <FilterRow FilterRowNbr="1" OpenBrackets="0" DataField="InventoryItem_itemStatus" Condition="0" ValueSt="AC" ValueSt2="" CloseBrackets="0" Operator="0" IsUsed="1" FilterType="0" />
+                            </FilterHeader>
+                            <FilterHeader FilterID="54353" UserName="adam.pai" ViewName="Results" FilterName="SG" IsDefault="0" IsShared="1" IsShortcut="0" IsSystem="0" IsHidden="0">
+                                <FilterRow FilterRowNbr="2" OpenBrackets="0" DataField="InventoryItem_inventoryCD" Condition="7" ValueSt="SG" ValueSt2="" CloseBrackets="0" Operator="0" IsUsed="1" FilterType="0" />
+                                <FilterRow FilterRowNbr="1" OpenBrackets="0" DataField="InventoryItem_itemStatus" Condition="0" ValueSt="AC" ValueSt2="" CloseBrackets="0" Operator="0" IsUsed="1" FilterType="0" />
+                            </FilterHeader>
+                            <FilterHeader FilterID="54352" UserName="adam.pai" ViewName="Results" FilterName="DL" IsDefault="0" IsShared="1" IsShortcut="0" IsSystem="0" IsHidden="0">
+                                <FilterRow FilterRowNbr="2" OpenBrackets="0" DataField="InventoryItem_inventoryCD" Condition="7" ValueSt="DL" ValueSt2="" CloseBrackets="0" Operator="0" IsUsed="1" FilterType="0" />
+                                <FilterRow FilterRowNbr="1" OpenBrackets="0" DataField="InventoryItem_itemStatus" Condition="0" ValueSt="AC" ValueSt2="" CloseBrackets="0" Operator="0" IsUsed="1" FilterType="0" />
+                            </FilterHeader>
+                            <FilterHeader FilterID="54349" UserName="adam.pai" ViewName="Results" FilterName="GM" IsDefault="0" IsShared="1" IsShortcut="0" IsSystem="0" IsHidden="0">
+                                <FilterRow FilterRowNbr="2" OpenBrackets="0" DataField="InventoryItem_inventoryCD" Condition="7" ValueSt="GM" ValueSt2="" CloseBrackets="0" Operator="0" IsUsed="1" FilterType="0" />
+                                <FilterRow FilterRowNbr="1" OpenBrackets="0" DataField="InventoryItem_itemStatus" Condition="0" ValueSt="AC" ValueSt2="" CloseBrackets="0" Operator="0" IsUsed="1" FilterType="0" />
+                            </FilterHeader>
+                            <FilterHeader FilterID="54343" UserName="adam.pai" ViewName="Results" FilterName="Monthly Release" IsDefault="1" IsShared="1" IsShortcut="0" IsSystem="0" IsHidden="0">
+                                <FilterRow FilterRowNbr="1" OpenBrackets="0" DataField="InventoryItem_itemStatus" Condition="0" ValueSt="AC" ValueSt2="" CloseBrackets="0" Operator="0" IsUsed="1" FilterType="0" />
                             </FilterHeader>
                             <MUIScreen IsPortal="0" WorkspaceID="bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb" Order="6594" SubcategoryID="98e86774-69e3-41ea-b94f-eb2c7a8426d4">
                                 <MUIPinnedScreen IsPortal="0" Username="" IsPinned="1" />
