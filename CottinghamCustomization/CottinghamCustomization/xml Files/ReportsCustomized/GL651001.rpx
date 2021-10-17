@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report Name="report1">
+  <PageSettings>
+    <Landscape>True</Landscape>
+  </PageSettings>
+  <SchemaUrl>http://localhost/Cottingham</SchemaUrl>
+  <StylesTemplate>TemplateForm.rpx</StylesTemplate>
+  <Tables>
+    <ReportTable Name="ProductContributionData">
+      <Fields>
+        <ReportField Name="AccountCD"></ReportField>
+        <ReportField Name="AccountID"></ReportField>
+        <ReportField Name="AccountID_Account_description"></ReportField>
+        <ReportField Name="AccountID_description"></ReportField>
+        <ReportField Name="AccountID_Segment1"></ReportField>
+        <ReportField Name="AcctGroup"></ReportField>
+        <ReportField Name="AcctGroup_description"></ReportField>
+        <ReportField Name="AcctGroup_PMAccountGroup_description"></ReportField>
+        <ReportField Name="AcctGroup_Segment1"></ReportField>
+        <ReportField Name="AcctName"></ReportField>
+        <ReportField Name="AcctType"></ReportField>
+        <ReportField Name="ActualPtdAmt">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="ActualYtdAmt">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="BottomSold">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="BranchID"></ReportField>
+        <ReportField Name="BranchID_Branch_acctName"></ReportField>
+        <ReportField Name="BranchID_description"></ReportField>
+        <ReportField Name="BranchID_Segment1"></ReportField>
+        <ReportField Name="BranchID_Segment2"></ReportField>
+        <ReportField Name="BranchID_Segment3"></ReportField>
+        <ReportField Name="BudgetAmt">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="CompltRate">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="Estimated">
+          <DataType>Boolean</DataType>
+        </ReportField>
+        <ReportField Name="FinYear"></ReportField>
+        <ReportField Name="LogoNameRpt"></ReportField>
+        <ReportField Name="PeriodNbr"></ReportField>
+        <ReportField Name="SortOrder">
+          <DataType>Int32</DataType>
+        </ReportField>
+        <ReportField Name="SubCDWildcard"></ReportField>
+        <ReportField Name="SubID"></ReportField>
+        <ReportField Name="SubID_description"></ReportField>
+        <ReportField Name="SubID_Segment1"></ReportField>
+        <ReportField Name="SubID_Segment2"></ReportField>
+        <ReportField Name="SubID_Segment3"></ReportField>
+        <ReportField Name="SubID_Segment4"></ReportField>
+        <ReportField Name="SubID_Sub_description"></ReportField>
+      </Fields>
+      <FullName>CottinghamCustomization.ProductContributionData</FullName>
+    </ReportTable>
+  </Tables>
+  <TabularFreeze>170px</TabularFreeze>
+  <TabularReport>True</TabularReport>
+  <Width>8.25397cm</Width>
+  <Sections>
+    <PageHeader Name="pageHeaderSection1">
+      <Height>2.32804cm</Height>
+      <Items>
+        <PictureBox Name="pictureBox1">
+          <Location>0px, 0px</Location>
+          <MimeType>image/png</MimeType>
+          <QRCodeSettings />
+          <Size>152px, 80px</Size>
+          <Source>Database</Source>
+          <Value>=[ProductContributionData.LogoNameRpt]</Value>
+        </PictureBox>
+        <TextBox Name="textBox1">
+          <CanGrow>True</CanGrow>
+          <Location>160px, 0px</Location>
+          <Size>152px, 24px</Size>
+          <StyleName>Heading 2</StyleName>
+          <Value>=[ProductContributionData.AcctName]</Value>
+        </TextBox>
+        <TextBox Name="textBox10">
+          <Format>MMM, yyyy</Format>
+          <Location>168px, 64px</Location>
+          <Size>144px, 0.16667in</Size>
+          <StyleName>Heading 1</StyleName>
+          <Value>=CDate(Format('{0}/{1}/{2}', [ProductContributionData.PeriodNbr], 1, [ProductContributionData.FinYear]) )</Value>
+        </TextBox>
+        <TextBox Name="textBox8">
+          <Location>168px, 48px</Location>
+          <Size>144px, 0.16667in</Size>
+          <StyleName>Heading 1</StyleName>
+          <Value>P&amp;L By Brand</Value>
+        </TextBox>
+      </Items>
+    </PageHeader>
+    <Detail Name="detailSection1">
+      <Height>0in</Height>
+      <Visible>False</Visible>
+      <Items>
+        <Line Name="line2">
+          <Location>472px, 20px</Location>
+          <Size>1.25in, 0.03in</Size>
+          <VisibleExpr>=[ProductContributionData.BottomSold]</VisibleExpr>
+        </Line>
+        <Line Name="line3">
+          <Location>344px, 20px</Location>
+          <Size>1.25in, 0.03in</Size>
+          <VisibleExpr>=[ProductContributionData.BottomSold]</VisibleExpr>
+        </Line>
+        <Line Name="line5">
+          <Location>344px, 22px</Location>
+          <Size>1.25in, 0.02in</Size>
+          <VisibleExpr>=Trim([ProductContributionData.AcctType]) = 'Net Profile' And [ProductContributionData.BottomSold] = True</VisibleExpr>
+        </Line>
+        <Line Name="line6">
+          <Location>472px, 22px</Location>
+          <Size>1.25in, 0.02in</Size>
+          <VisibleExpr>=Trim([ProductContributionData.AcctType]) = 'Net Profile' And [ProductContributionData.BottomSold] = True</VisibleExpr>
+        </Line>
+        <TextBox Name="textBox7">
+          <Format>N0</Format>
+          <Location>472px, 2px</Location>
+          <Size>1.25in, 0.18in</Size>
+          <Style>
+            <TextAlign>Right</TextAlign>
+          </Style>
+          <StyleName>Normal</StyleName>
+          <Value>=IIf([ProductContributionData.CompltRate] = Null, '', Format('{0} %', [ProductContributionData.CompltRate]))</Value>
+        </TextBox>
+        <TextBox Name="textBox9">
+          <Format>N0</Format>
+          <Location>344px, 2px</Location>
+          <Size>1.25in, 0.18in</Size>
+          <Style>
+            <TextAlign>Right</TextAlign>
+          </Style>
+          <StyleName>Normal</StyleName>
+          <Value>=[ProductContributionData.ActualAmt]</Value>
+        </TextBox>
+      </Items>
+    </Detail>
+  </Sections>
+  <Items />
+  <Groups>
+    <Group Name="SubCDGrp">
+      <Grouping>
+        <GroupExp>
+          <DataField>=[ProductContributionData.SubCDWildcard]</DataField>
+        </GroupExp>
+      </Grouping>
+      <Headers>
+        <Header Name="groupHeaderSection1">
+          <Height>0.42328cm</Height>
+          <Items>
+            <TextBox Name="textBox17">
+              <Location>176px, 0px</Location>
+              <Size>136px, 0.16667in</Size>
+              <Style>
+                <BorderStyle>
+                  <Bottom>Solid</Bottom>
+                </BorderStyle>
+                <BorderWidth>
+                  <Bottom>1px</Bottom>
+                </BorderWidth>
+                <TextAlign>Center</TextAlign>
+              </Style>
+              <StyleName>Heading 1</StyleName>
+              <Value>=[ProductContributionData.SubCDWildcard]</Value>
+            </TextBox>
+            <TextBox Name="textBox19">
+              <Location>16px, 0px</Location>
+              <Size>1.25in, 0.16667in</Size>
+              <StyleName>Heading 1</StyleName>
+              <Value>Revenue :</Value>
+            </TextBox>
+          </Items>
+        </Header>
+      </Headers>
+      <Footers>
+        <Footer Name="groupFooterSection1">
+          <Height>0in</Height>
+          <Visible>False</Visible>
+        </Footer>
+      </Footers>
+    </Group>
+    <Group Name="SortOrderGrp">
+      <Grouping>
+        <GroupExp>
+          <DataField>=[ProductContributionData.SortOrder]</DataField>
+        </GroupExp>
+      </Grouping>
+      <Headers>
+        <Header Name="groupHeaderSection2">
+          <Height>0.63492cm</Height>
+          <Items>
+            <TextBox Name="textBox11">
+              <Format>N0</Format>
+              <Location>176px, 2px</Location>
+              <Size>136px, 0.18in</Size>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+              <StyleName>Normal</StyleName>
+              <Value>=[ProductContributionData.ActualPtdAmt]</Value>
+            </TextBox>
+            <TextBox Name="textBox15">
+              <Location>16px, 2px</Location>
+              <Size>152px, 0.18in</Size>
+              <StyleName>Normal</StyleName>
+              <Value>=[ProductContributionData.AcctType]</Value>
+            </TextBox>
+          </Items>
+        </Header>
+      </Headers>
+      <Footers>
+        <Footer Name="groupFooterSection2">
+          <Height>0cm</Height>
+          <Visible>False</Visible>
+        </Footer>
+      </Footers>
+    </Group>
+  </Groups>
+</Report>

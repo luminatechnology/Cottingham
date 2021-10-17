@@ -13,8 +13,9 @@ namespace CottinghamCustomization
 {
     public class COProdContribInq : PXGraph<COProdContribInq>
     {
+        public string ContribReportID = null;
+
         #region Constant string Variables
-        public const string ContribReportID = "GL651000";
         public const string AcctGrp_Sales   = "SALES";
         public const string AcctGrp_COGS    = "COGS";
         public const string AcctGrp_ATL     = "ATL";
@@ -61,6 +62,20 @@ namespace CottinghamCustomization
         [PXButton(CommitChanges = true)]
         protected virtual IEnumerable ContribReport(PXAdapter adapter)
         {
+            ContribReportID = "GL651000";
+
+            PXLongOperation.StartOperation(this, () => { throw RunReport(); });
+
+            return adapter.Get();
+        }
+
+        public PXAction<BudgetFilter> pLBrandReport;
+        [PXUIField(DisplayName = "P&L By Brand", MapEnableRights = PXCacheRights.Select, MapViewRights = PXCacheRights.Select)]
+        [PXButton(CommitChanges = true)]
+        protected virtual IEnumerable PLBrandReport(PXAdapter adapter)
+        {
+            ContribReportID = "GL651001";
+
             PXLongOperation.StartOperation(this, () => { throw RunReport(); });
 
             return adapter.Get();
@@ -81,8 +96,11 @@ namespace CottinghamCustomization
             var filterExt = filter.GetExtension<BudgetFilterExt>();
             var records   = new List<ProductContributionData>();
 
+            bool isPLByBrand = ContribReportID == "GL651001";
+
             string yearStart = filterExt.UsrFinPeriodID.Substring(0, 4) + "01";
 
+            #region MTD
             /// <summary> Generate MTD GLHistrory records. </summary>
             PXSelectBase<GLHistory> cmdHistory = new PXSelectReadonly2<GLHistory, LeftJoin<Account, On<GLHistory.accountID, Equal<Account.accountID>>,
                                                                                   LeftJoin<Sub, On<Sub.subID, Equal<GLHistory.subID>>,
@@ -108,123 +126,136 @@ namespace CottinghamCustomization
                 MasterFinPeriod histperd = aggregatingResult;
                 PMAccountGroup  acctGrop = PXSelectReadonly<PMAccountGroup, Where<PMAccountGroup.groupID, Equal<Required<Account.accountGroupID>>>>.Select(this, histAcct.AccountGroupID);
 
-                if (acctGrop != null && acctGrop.GroupCD.Trim().IsIn(AcctGrp_Sales, AcctGrp_COGS, AcctGrp_ATL, AcctGrp_BTL, AcctGrp_Prin))
-                {
-                    ProductContributionData contribData = new ProductContributionData()
-                    {
-                        PeriodNbr = histperd.PeriodNbr,
-                        FinYear = histperd.FinYear,
-                        SubCDWildcard = GetSubCDSegmentDescr(this, filter.SubIDFilter),
-                        BranchID = histAggr.BranchID,
-                        AcctName = histBran.AcctName,
-                        LogoNameRpt = histBran.BranchOrOrganizationLogoNameReport,
-                        AccountID = histAggr.AccountID,
-                        AccountCD = histAcct.AccountCD,
-                        SubID = histAggr.SubID,
-                        AcctGroup = acctGrop?.GroupCD,
-                        BudgetAmt = 0m,
-                        ActualPtdAmt = Math.Abs(histAggr.CuryFinPtdCredit.Value - histAggr.CuryFinPtdDebit.Value),
-                        ActualYtdAmt = 0m
-                    };
-
-                    records.Add(contribData);
-                }
-            }
-
-            /// <summary> Generate YTD GLHistrory records. </summary>
-            PXSelectBase<GLHistory> cmdHistory2 = new PXSelectReadonly2<GLHistory, LeftJoin<Account, On<GLHistory.accountID, Equal<Account.accountID>>,
-                                                                                   LeftJoin<Sub, On<Sub.subID, Equal<GLHistory.subID>>,
-                                                                                   InnerJoin<MasterFinPeriod, On<True, Equal<True>,
-                                                                                                                 And<GLHistory.finPeriodID, Equal<MasterFinPeriod.finPeriodID>>>>>>,
-                                                                                   Where<MasterFinPeriod.finPeriodID, GreaterEqual<Required<MasterFinPeriod.finPeriodID>>,
-                                                                                         And<MasterFinPeriod.finPeriodID, LessEqual<Required<MasterFinPeriod.finPeriodID>>,
-                                                                                             And<GLHistory.balanceType, Equal<LedgerBalanceType.actual>,
-                                                                                                 And<GLHistory.branchID, Equal<Required<GLHistory.branchID>>>>>>,
-                                                                                   OrderBy<Asc<GLHistory.accountID,
-                                                                                               Asc<GLHistory.subID,
-                                                                                                   Asc<MasterFinPeriod.periodNbr>>>>>(this);
-
-            if (filter.SubIDFilter != null)
-            {
-                cmdHistory2.WhereAnd<Where<Sub.subCD, StartsWith<Current<BudgetFilter.subCDWildcard>>>>();
-            }
-
-            foreach (PXResult<GLHistory, Account, Sub, MasterFinPeriod> aggregatingResult in cmdHistory2.Select(yearStart, filterExt.UsrFinPeriodID, filter.BranchID))
-            {
-                GLHistory       histAggr = aggregatingResult;
-                Account         histAcct = aggregatingResult;
-                Branch          histBran = Branch.PK.Find(this, histAggr.BranchID);
-                MasterFinPeriod histperd = aggregatingResult;
-                PMAccountGroup  acctGrop = PXSelectReadonly<PMAccountGroup, Where<PMAccountGroup.groupID, Equal<Required<Account.accountGroupID>>>>.Select(this, histAcct.AccountGroupID);
+                Sub histSub = aggregatingResult;
 
                 if (acctGrop != null && acctGrop.GroupCD.Trim().IsIn(AcctGrp_Sales, AcctGrp_COGS, AcctGrp_ATL, AcctGrp_BTL, AcctGrp_Prin))
                 {
                     ProductContributionData contribData = new ProductContributionData()
                     {
-                        PeriodNbr = filterExt.UsrFinPeriodID.Substring(4, 2),
-                        FinYear = filterExt.UsrFinPeriodID.Substring(0, 4),
-                        SubCDWildcard = GetSubCDSegmentDescr(this, filter.SubIDFilter),
-                        BranchID = histAggr.BranchID,
-                        AcctName = histBran.AcctName,
-                        LogoNameRpt = histBran.BranchOrOrganizationLogoNameReport,
-                        AccountID = histAggr.AccountID,
-                        AccountCD = histAcct.AccountCD,
-                        SubID = histAggr.SubID,
-                        AcctGroup = acctGrop?.GroupCD,
-                        BudgetAmt = 0m,
-                        ActualPtdAmt = 0m,
-                        ActualYtdAmt = Math.Abs(histAggr.CuryFinPtdCredit.Value - histAggr.CuryFinPtdDebit.Value)
+                        PeriodNbr     = histperd.PeriodNbr,
+                        FinYear       = histperd.FinYear,
+                        SubCDWildcard = isPLByBrand == false ? GetSubCDSegmentDescr(this, filter.SubIDFilter) : PXSelect<SegmentValue, Where<SegmentValue.dimensionID, Equal<Required<Segment.dimensionID>>,
+                                                                                                                                             And<SegmentValue.segmentID, Equal<Required<Segment.segmentID>>,
+                                                                                                                                                 And<SegmentValue.value, Equal<Required<SegmentValue.value>>>>>>
+                                                                                                                         .SelectSingleBound(this, null, "SUBACCOUNT", 1, histSub.SubCD.Substring(0, 2)).TopFirst?.Descr,
+                        BranchID      = histAggr.BranchID,
+                        AcctName      = histBran.AcctName,
+                        LogoNameRpt   = histBran.BranchOrOrganizationLogoNameReport,
+                        AccountID     = histAggr.AccountID,
+                        AccountCD     = histAcct.AccountCD,
+                        SubID         = histAggr.SubID,
+                        AcctGroup     = acctGrop?.GroupCD,
+                        BudgetAmt     = 0m,
+                        ActualPtdAmt  = Math.Abs(histAggr.CuryFinPtdCredit.Value - histAggr.CuryFinPtdDebit.Value),
+                        ActualYtdAmt  = 0m
                     };
 
                     records.Add(contribData);
                 }
             }
+            #endregion
 
-            /// <summary> Generate budget line detail records. </summary>
-            PXSelectBase<GLBudgetLine> cmdBudgetLine = new PXSelectReadonly2<GLBudgetLine, InnerJoin<MasterFinPeriod, On<True, Equal<True>>,
-                                                                                           InnerJoin<Account, On<Account.accountID, Equal<GLBudgetLine.accountID>>,
-                                                                                           LeftJoin<Sub, On<Sub.subID, Equal<GLBudgetLine.subID>>,
-                                                                                           InnerJoin<GLBudgetLineDetail, On<GLBudgetLineDetail.groupID, Equal<GLBudgetLine.groupID>,
-                                                                                                                            And<GLBudgetLineDetail.finPeriodID, Equal<MasterFinPeriod.finPeriodID>>>>>>>,
-                                                                                           Where<GLBudgetLine.ledgerID, Equal<Required<BudgetFilter.ledgerID>>,
-                                                                                                 And<GLBudgetLine.branchID, Equal<Required<BudgetFilter.branchID>>,
-                                                                                                     And<MasterFinPeriod.finPeriodID, Equal<Required<MasterFinPeriod.finPeriodID>>,
-                                                                                                         And<Match<Current<AccessInfo.userName>>>>>>>(this);
-            if (filter.SubIDFilter != null)
+            if (isPLByBrand == false)
             {
-                cmdBudgetLine.WhereAnd<Where<Sub.subCD, StartsWith<Current<BudgetFilter.subCDWildcard>>>>();
-            }
+                #region YTD
+                /// <summary> Generate YTD GLHistrory records. </summary>
+                PXSelectBase<GLHistory> cmdHistory2 = new PXSelectReadonly2<GLHistory, LeftJoin<Account, On<GLHistory.accountID, Equal<Account.accountID>>,
+                                                                                       LeftJoin<Sub, On<Sub.subID, Equal<GLHistory.subID>>,
+                                                                                       InnerJoin<MasterFinPeriod, On<True, Equal<True>,
+                                                                                                                     And<GLHistory.finPeriodID, Equal<MasterFinPeriod.finPeriodID>>>>>>,
+                                                                                       Where<MasterFinPeriod.finPeriodID, GreaterEqual<Required<MasterFinPeriod.finPeriodID>>,
+                                                                                             And<MasterFinPeriod.finPeriodID, LessEqual<Required<MasterFinPeriod.finPeriodID>>,
+                                                                                                 And<GLHistory.balanceType, Equal<LedgerBalanceType.actual>,
+                                                                                                     And<GLHistory.branchID, Equal<Required<GLHistory.branchID>>>>>>,
+                                                                                       OrderBy<Asc<GLHistory.accountID,
+                                                                                                   Asc<GLHistory.subID,
+                                                                                                       Asc<MasterFinPeriod.periodNbr>>>>>(this);
 
-            foreach (PXResult<GLBudgetLine, MasterFinPeriod, Account, Sub, GLBudgetLineDetail> result in cmdBudgetLine.Select(filter.LedgerID, filter.BranchID, filterExt.UsrFinPeriodID))
-            {
-                Account            acct     = result;
-                GLBudgetLine       budLine  = result;
-                MasterFinPeriod    period   = result;
-                GLBudgetLineDetail lineDtl  = result;
-                Branch             branch   = Branch.PK.Find(this, budLine.BranchID);
-                PMAccountGroup     acctGrop = PXSelectReadonly<PMAccountGroup, Where<PMAccountGroup.groupID, Equal<Required<Account.accountGroupID>>>>.Select(this, acct.AccountGroupID);
-
-                if (acctGrop != null && acctGrop.GroupCD.Trim().IsIn(AcctGrp_Sales, AcctGrp_COGS, AcctGrp_ATL, AcctGrp_BTL, AcctGrp_Prin))
+                if (filter.SubIDFilter != null)
                 {
-                    ProductContributionData contribData = new ProductContributionData()
-                    {
-                        PeriodNbr = period.PeriodNbr,
-                        FinYear = period.FinYear,
-                        SubCDWildcard = GetSubCDSegmentDescr(this, filter.SubIDFilter),
-                        BranchID = branch.BranchID,
-                        AcctName = branch.AcctName,
-                        LogoNameRpt = branch.BranchOrOrganizationLogoNameReport,
-                        AccountID = acct.AccountID,
-                        AccountCD = acct.AccountCD,
-                        SubID = lineDtl.SubID,
-                        AcctGroup = acctGrop?.GroupCD,
-                        BudgetAmt = lineDtl.Amount,
-                        ActualPtdAmt = 0m,
-                        ActualYtdAmt = 0m
-                    };
-
-                    records.Add(contribData);
+                    cmdHistory2.WhereAnd<Where<Sub.subCD, StartsWith<Current<BudgetFilter.subCDWildcard>>>>();
                 }
+
+                foreach (PXResult<GLHistory, Account, Sub, MasterFinPeriod> aggregatingResult in cmdHistory2.Select(yearStart, filterExt.UsrFinPeriodID, filter.BranchID))
+                {
+                    GLHistory histAggr = aggregatingResult;
+                    Account histAcct = aggregatingResult;
+                    Branch histBran = Branch.PK.Find(this, histAggr.BranchID);
+                    MasterFinPeriod histperd = aggregatingResult;
+                    PMAccountGroup acctGrop = PXSelectReadonly<PMAccountGroup, Where<PMAccountGroup.groupID, Equal<Required<Account.accountGroupID>>>>.Select(this, histAcct.AccountGroupID);
+
+                    if (acctGrop != null && acctGrop.GroupCD.Trim().IsIn(AcctGrp_Sales, AcctGrp_COGS, AcctGrp_ATL, AcctGrp_BTL, AcctGrp_Prin))
+                    {
+                        ProductContributionData contribData = new ProductContributionData()
+                        {
+                            PeriodNbr = filterExt.UsrFinPeriodID.Substring(4, 2),
+                            FinYear = filterExt.UsrFinPeriodID.Substring(0, 4),
+                            SubCDWildcard = GetSubCDSegmentDescr(this, filter.SubIDFilter),
+                            BranchID = histAggr.BranchID,
+                            AcctName = histBran.AcctName,
+                            LogoNameRpt = histBran.BranchOrOrganizationLogoNameReport,
+                            AccountID = histAggr.AccountID,
+                            AccountCD = histAcct.AccountCD,
+                            SubID = histAggr.SubID,
+                            AcctGroup = acctGrop?.GroupCD,
+                            BudgetAmt = 0m,
+                            ActualPtdAmt = 0m,
+                            ActualYtdAmt = Math.Abs(histAggr.CuryFinPtdCredit.Value - histAggr.CuryFinPtdDebit.Value)
+                        };
+
+                        records.Add(contribData);
+                    }
+                }
+                #endregion
+
+                #region Budget Line
+                /// <summary> Generate budget line detail records. </summary>
+                PXSelectBase<GLBudgetLine> cmdBudgetLine = new PXSelectReadonly2<GLBudgetLine, InnerJoin<MasterFinPeriod, On<True, Equal<True>>,
+                                                                                               InnerJoin<Account, On<Account.accountID, Equal<GLBudgetLine.accountID>>,
+                                                                                               LeftJoin<Sub, On<Sub.subID, Equal<GLBudgetLine.subID>>,
+                                                                                               InnerJoin<GLBudgetLineDetail, On<GLBudgetLineDetail.groupID, Equal<GLBudgetLine.groupID>,
+                                                                                                                                And<GLBudgetLineDetail.finPeriodID, Equal<MasterFinPeriod.finPeriodID>>>>>>>,
+                                                                                               Where<GLBudgetLine.ledgerID, Equal<Required<BudgetFilter.ledgerID>>,
+                                                                                                     And<GLBudgetLine.branchID, Equal<Required<BudgetFilter.branchID>>,
+                                                                                                         And<MasterFinPeriod.finPeriodID, Equal<Required<MasterFinPeriod.finPeriodID>>,
+                                                                                                             And<Match<Current<AccessInfo.userName>>>>>>>(this);
+                if (filter.SubIDFilter != null)
+                {
+                    cmdBudgetLine.WhereAnd<Where<Sub.subCD, StartsWith<Current<BudgetFilter.subCDWildcard>>>>();
+                }
+
+                foreach (PXResult<GLBudgetLine, MasterFinPeriod, Account, Sub, GLBudgetLineDetail> result in cmdBudgetLine.Select(filter.LedgerID, filter.BranchID, filterExt.UsrFinPeriodID))
+                {
+                    Account acct = result;
+                    GLBudgetLine budLine = result;
+                    MasterFinPeriod period = result;
+                    GLBudgetLineDetail lineDtl = result;
+                    Branch branch = Branch.PK.Find(this, budLine.BranchID);
+                    PMAccountGroup acctGrop = PXSelectReadonly<PMAccountGroup, Where<PMAccountGroup.groupID, Equal<Required<Account.accountGroupID>>>>.Select(this, acct.AccountGroupID);
+
+                    if (acctGrop != null && acctGrop.GroupCD.Trim().IsIn(AcctGrp_Sales, AcctGrp_COGS, AcctGrp_ATL, AcctGrp_BTL, AcctGrp_Prin))
+                    {
+                        ProductContributionData contribData = new ProductContributionData()
+                        {
+                            PeriodNbr = period.PeriodNbr,
+                            FinYear = period.FinYear,
+                            SubCDWildcard = GetSubCDSegmentDescr(this, filter.SubIDFilter),
+                            BranchID = branch.BranchID,
+                            AcctName = branch.AcctName,
+                            LogoNameRpt = branch.BranchOrOrganizationLogoNameReport,
+                            AccountID = acct.AccountID,
+                            AccountCD = acct.AccountCD,
+                            SubID = lineDtl.SubID,
+                            AcctGroup = acctGrop?.GroupCD,
+                            BudgetAmt = lineDtl.Amount,
+                            ActualPtdAmt = 0m,
+                            ActualYtdAmt = 0m
+                        };
+
+                        records.Add(contribData);
+                    }
+                }
+                #endregion
             }
 
             var recordAggr = records.OrderBy(data => data.PeriodNbr).ThenBy(data => data.AccountCD)
@@ -255,100 +286,223 @@ namespace CottinghamCustomization
             decimal? totNetActYtd = 0m;
 
             // Insert "Fixed Number" record into temp table.
-            do
+            if (isPLByBrand == false)
             {
                 ProductContributionData contribData = null;
 
-                switch (recCount)
+                do
                 {
-                    case (int)GLAccountType.Sales:
-                        var row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_Sales);
+                    switch (recCount)
+                    {
+                        case (int)GLAccountType.Sales:
+                            var row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_Sales);
 
-                        contribData = CreateDetailRecord(AcctTyp_Sales, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualPtdAmt, row?.ActualYtdAmt);
-                        
-                        totalBudAmt  = row?.BudgetAmt;
-                        totActPtdAmt = row?.ActualPtdAmt;
-                        totActYtdAmt = row?.ActualYtdAmt;
-                        break;
+                            contribData = CreateDetailRecord(AcctTyp_Sales, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualPtdAmt, row?.ActualYtdAmt);
 
-                    case (int)GLAccountType.COGS:
-                        row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_COGS);
+                            totalBudAmt = row?.BudgetAmt;
+                            totActPtdAmt = row?.ActualPtdAmt;
+                            totActYtdAmt = row?.ActualYtdAmt;
+                            break;
 
-                        contribData = CreateDetailRecord(AcctTyp_COGS, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualPtdAmt, row?.ActualYtdAmt, true);
-                        
-                        totalBudAmt  -= row?.BudgetAmt;
-                        totActPtdAmt -= row?.ActualPtdAmt;
-                        totActYtdAmt -= row?.ActualYtdAmt;
-                        break;
+                        case (int)GLAccountType.COGS:
+                            row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_COGS);
 
-                    case (int)GLAccountType.GrossProfile:
-                        contribData = CreateDetailRecord(AcctTyp_GrProf, null, null, null, null, null, null, null, totalBudAmt, totActPtdAmt, totActYtdAmt);
+                            contribData = CreateDetailRecord(AcctTyp_COGS, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualPtdAmt, row?.ActualYtdAmt, true);
 
-                        totalNetBud  = totalBudAmt ?? 0m;
-                        totNetActPtd = totActPtdAmt ?? 0m;
-                        totNetActYtd = totActYtdAmt ?? 0m;
-                        break;
+                            totalBudAmt -= row?.BudgetAmt;
+                            totActPtdAmt -= row?.ActualPtdAmt;
+                            totActYtdAmt -= row?.ActualYtdAmt;
+                            break;
 
-                    case (int)GLAccountType.Martketing:
-                        contribData = CreateDetailRecord(AcctTyp_Matg, null, null, null, null, null, null, null, null, null, null);
-                        break;
+                        case (int)GLAccountType.GrossProfile:
+                            contribData = CreateDetailRecord(AcctTyp_GrProf, null, null, null, null, null, null, null, totalBudAmt, totActPtdAmt, totActYtdAmt);
 
-                    case (int)GLAccountType.ATL:
-                        row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_ATL);
+                            totalNetBud = totalBudAmt ?? 0m;
+                            totNetActPtd = totActPtdAmt ?? 0m;
+                            totNetActYtd = totActYtdAmt ?? 0m;
+                            break;
 
+                        case (int)GLAccountType.Martketing:
+                            contribData = CreateDetailRecord(AcctTyp_Matg, null, null, null, null, null, null, null, null, null, null);
+                            break;
+
+                        case (int)GLAccountType.ATL:
+                            row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_ATL);
+
+                            contribData = CreateDetailRecord(AcctGrp_ATL, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualPtdAmt, row?.ActualYtdAmt);
+
+                            totalBudAmt = row?.BudgetAmt;
+                            totActPtdAmt = row?.ActualPtdAmt;
+                            totActYtdAmt = row?.ActualYtdAmt;
+                            break;
+
+                        case (int)GLAccountType.BTL:
+                            row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_BTL);
+
+                            contribData = CreateDetailRecord(AcctGrp_BTL, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualPtdAmt, row?.ActualYtdAmt, true);
+
+                            totalBudAmt += row?.BudgetAmt;
+                            totActPtdAmt += row?.ActualPtdAmt;
+                            totActYtdAmt += row?.ActualYtdAmt;
+                            break;
+
+                        case (int)GLAccountType.TotalMatg:
+                            contribData = CreateDetailRecord(AcctTyp_ToMatg, null, null, null, null, null, null, null, totalBudAmt, totActPtdAmt, totActYtdAmt);
+
+                            totalNetBud -= totalBudAmt ?? 0m;
+                            totNetActPtd -= totActPtdAmt ?? 0m;
+                            totNetActYtd -= totActYtdAmt ?? 0m;
+                            break;
+
+                        case (int)GLAccountType.SupFmPrin:
+                            row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_Prin);
+
+                            var rowATL = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_ATL);
+                            var rowBTL = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_BTL);
+
+                            decimal? actualPtdAmt = row == null ? 0 : (row.ActualYtdAmt - (rowATL.ActualYtdAmt + rowBTL.ActualYtdAmt) + (rowATL.ActualPtdAmt + rowBTL.ActualPtdAmt)) / 12;
+
+                            contribData = CreateDetailRecord(AcctTyp_SupPrin, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, actualPtdAmt, row?.ActualYtdAmt, true, true);
+
+                            totalBudAmt = row?.BudgetAmt;
+                            totActPtdAmt = actualPtdAmt;
+                            totActYtdAmt = row?.ActualYtdAmt;
+
+                            totalNetBud += totalBudAmt ?? 0m;
+                            totNetActPtd += totActPtdAmt ?? 0m;
+                            totNetActYtd += totActYtdAmt ?? 0m;
+                            break;
+
+                        case (int)GLAccountType.NetProfile:
+                            contribData = CreateDetailRecord(AcctTyp_NetProf, null, null, null, null, null, null, null, totalNetBud, totNetActPtd, totNetActYtd, true, true);
+                            break;
+                    }
+
+                    records.Add(contribData);
+
+                    recCount++;
+                }
+                while (recCount <= (int)GLAccountType.NetProfile);
+            }
+            else
+            {
+                ProductContributionData contribData = null;
+
+                for (int i = 0; i < recordAggr.FindAll(x => x.AcctGroup.Trim() == AcctGrp_Sales).Count; i++)
+                {
+                    var row = recordAggr[i];
+
+                    contribData = CreateDetailRecord(AcctTyp_Sales, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualPtdAmt, row?.ActualYtdAmt);
+                    contribData.SortOrder = 1;
+
+                    totalBudAmt  = row?.BudgetAmt;
+                    totActPtdAmt = row?.ActualPtdAmt;
+                    totActYtdAmt = row?.ActualYtdAmt;
+
+                    records.Add(contribData);
+
+                    row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctTyp_COGS && f.SubCD == row.SubCD);
+
+                    contribData = CreateDetailRecord(AcctTyp_COGS, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualPtdAmt, row?.ActualYtdAmt);
+                    contribData.SortOrder = 2;
+
+                    totalBudAmt  -= row?.BudgetAmt;
+                    totActPtdAmt -= row?.ActualPtdAmt;
+                    totActYtdAmt -= row?.ActualYtdAmt;
+
+                    records.Add(contribData);
+
+                    contribData = CreateDetailRecord(AcctTyp_GrProf, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, totalBudAmt, totActPtdAmt, totActYtdAmt);
+                    contribData.SortOrder = 3;
+
+                    totalNetBud  = totalBudAmt ?? 0m;
+                    totNetActPtd = totActPtdAmt ?? 0m;
+                    totNetActYtd = totActYtdAmt ?? 0m;
+
+                    records.Add(contribData);
+
+                    contribData = CreateDetailRecord(AcctTyp_Matg, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, null, null, null);
+                    contribData.SortOrder = 4;
+
+                    records.Add(contribData);
+
+                    row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_ATL && f.SubCD == row?.SubCD);
+
+                    if (row == null)
+                    {
+                        row = recordAggr[i];
+                        contribData = CreateDetailRecord(AcctGrp_ATL, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, null, null, null);
+                        totalBudAmt = totActPtdAmt = totActYtdAmt = 0;
+                    }
+                    else
+                    {
                         contribData = CreateDetailRecord(AcctGrp_ATL, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualPtdAmt, row?.ActualYtdAmt);
-                        
+
                         totalBudAmt  = row?.BudgetAmt;
                         totActPtdAmt = row?.ActualPtdAmt;
                         totActYtdAmt = row?.ActualYtdAmt;
-                        break;
+                    }
+                    contribData.SortOrder = 5;
 
-                    case (int)GLAccountType.BTL:
-                        row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_BTL);
+                    records.Add(contribData);
 
-                        contribData = CreateDetailRecord(AcctGrp_BTL, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualPtdAmt, row?.ActualYtdAmt, true);
-                        
+                    row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_BTL && f.SubCD == row?.SubCD);
+
+                    if (row == null)
+                    {
+                        row = recordAggr[i];
+                        contribData = CreateDetailRecord(AcctGrp_BTL, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, null, null, null);
+                        totalBudAmt = totActPtdAmt = totActYtdAmt = 0;
+                    }
+                    else
+                    {
+                        contribData = CreateDetailRecord(AcctGrp_BTL, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualPtdAmt, row?.ActualYtdAmt);
+
                         totalBudAmt  += row?.BudgetAmt;
                         totActPtdAmt += row?.ActualPtdAmt;
                         totActYtdAmt += row?.ActualYtdAmt;
-                        break;
+                    }
+                    contribData.SortOrder = 6;
 
-                    case (int)GLAccountType.TotalMatg:
-                        contribData = CreateDetailRecord(AcctTyp_ToMatg, null, null, null, null, null, null, null, totalBudAmt, totActPtdAmt, totActYtdAmt);
+                    records.Add(contribData);
 
-                        totalNetBud  -= totalBudAmt ?? 0m;
-                        totNetActPtd -= totActPtdAmt ?? 0m;
-                        totNetActYtd -= totActYtdAmt ?? 0m;
-                        break;
+                    contribData = CreateDetailRecord(AcctTyp_ToMatg, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, totalBudAmt, totActPtdAmt, totActYtdAmt);
+                    contribData.SortOrder = 7;
 
-                    case (int)GLAccountType.SupFmPrin:
-                        row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_Prin);
+                    totalNetBud  -= totalBudAmt ?? 0m;
+                    totNetActPtd -= totActPtdAmt ?? 0m;
+                    totNetActYtd -= totActYtdAmt ?? 0m;
 
-                        var rowATL = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_ATL);
-                        var rowBTL = recordAggr.Find(f => f.AcctGroup.Trim() == AcctGrp_BTL);
+                    records.Add(contribData);
 
-                        decimal? actualPtdAmt = row == null ? 0 : (row.ActualYtdAmt - (rowATL.ActualYtdAmt + rowBTL.ActualYtdAmt) + (rowATL.ActualPtdAmt + rowBTL.ActualPtdAmt) ) / 12;
+                    row = recordAggr.Find(f => f.AcctGroup.Trim() == AcctTyp_SupPrin && f.SubCD == row?.SubCD);
 
-                        contribData = CreateDetailRecord(AcctTyp_SupPrin, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, actualPtdAmt, row?.ActualYtdAmt, true, true);
-
-                        totalBudAmt  = row?.BudgetAmt;
-                        totActPtdAmt = actualPtdAmt;
-                        totActYtdAmt = row?.ActualYtdAmt;
+                    if (row == null)
+                    {
+                        row = recordAggr[i];
+                        contribData = CreateDetailRecord(AcctTyp_SupPrin, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, null, null, null);
+                        totalBudAmt = totActPtdAmt = totActYtdAmt = 0;
+                    }
+                    else
+                    {
+                        contribData = CreateDetailRecord(AcctTyp_SupPrin, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, row?.BudgetAmt, row?.ActualPtdAmt, row?.ActualYtdAmt);
 
                         totalNetBud  += totalBudAmt ?? 0m;
                         totNetActPtd += totActPtdAmt ?? 0m;
                         totNetActYtd += totActYtdAmt ?? 0m;
-                        break;
+                    }
+                    contribData.SortOrder = 8;
 
-                    case (int)GLAccountType.NetProfile:
-                        contribData = CreateDetailRecord(AcctTyp_NetProf, null, null, null, null, null, null, null, totalNetBud, totNetActPtd, totNetActYtd, true, true);
-                        break;
+                    records.Add(contribData);
+
+                    contribData = CreateDetailRecord(AcctTyp_NetProf, row?.BranchID, row?.AcctName, row?.Logo, row?.PeriodNbr, row?.FinYear, row?.SubCD, row?.AcctGroup, totalNetBud, totNetActPtd, totNetActYtd);
+                    contribData.SortOrder = 9;
+
+                    records.Add(contribData);
                 }
-                records.Add(contribData);
 
-                recCount++;
+                records.RemoveAll(x => x.SubCDWildcard == null);
             }
-            while (recCount <= (int)GLAccountType.NetProfile);
 
             return records;
         }
@@ -453,6 +607,12 @@ namespace CottinghamCustomization
     [PXCacheName("Temp Product Contribution")]
     public class ProductContributionData : PX.Data.IBqlTable
     {
+        #region SortOrder
+        [PXInt()]
+        public virtual int? SortOrder { get; set; }
+        public abstract class sortOrder : PX.Data.BQL.BqlInt.Field<sortOrder> { }
+        #endregion
+
         #region BranchID
         [Branch()]
         public virtual int? BranchID { get; set; }
