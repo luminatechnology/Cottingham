@@ -164,10 +164,13 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
   <LayoutUnit>Inch</LayoutUnit>
   <MailSettings>
     <ActivitySource>RQRequisition.ReqNbr</ActivitySource>
+    <Bcc></Bcc>
     <Body>='Request for Proposal'</Body>
+    <Cc></Cc>
     <Format>='PDF'</Format>
     <ParentSource>Vendor.NoteID</ParentSource>
     <Subject>=[CompanyContact.FullName]+':'+' '+'Requisition #'+' '+[RQRequisition.ReqNbr]</Subject>
+    <TemplateID></TemplateID>
     <To>=[RemitContact.Email]</To>
   </MailSettings>
   <PageSettings>
@@ -403,6 +406,7 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
         </RelationRow>
         <RelationRow>
           <ChildField>FromUnit</ChildField>
+          <Condition>NotEqual</Condition>
           <ParentField>BaseUnit</ParentField>
         </RelationRow>
       </Links>
@@ -584,6 +588,9 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
         <ReportField Name="BranchID"></ReportField>
         <ReportField Name="BranchID_Branch_acctName"></ReportField>
         <ReportField Name="BranchID_description"></ReportField>
+        <ReportField Name="BranchID_Segment1"></ReportField>
+        <ReportField Name="BranchID_Segment2"></ReportField>
+        <ReportField Name="BranchID_Segment3"></ReportField>
         <ReportField Name="ByRequest">
           <DataType>Boolean</DataType>
         </ReportField>
@@ -591,12 +598,17 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
           <DataType>Boolean</DataType>
         </ReportField>
         <ReportField Name="CreatedByID"></ReportField>
-        <ReportField Name="CreatedByID_Creator_username"></ReportField>
+        <ReportField Name="CreatedByID_Creator_displayName"></ReportField>
+        <ReportField Name="CreatedByID_Creator_Username"></ReportField>
         <ReportField Name="CreatedByID_description"></ReportField>
         <ReportField Name="CreatedByScreenID"></ReportField>
         <ReportField Name="CreatedDateTime">
           <DataType>DateTime</DataType>
         </ReportField>
+        <ReportField Name="CreatedDateTime_Day"></ReportField>
+        <ReportField Name="CreatedDateTime_Hour"></ReportField>
+        <ReportField Name="CreatedDateTime_Month"></ReportField>
+        <ReportField Name="CreatedDateTime_Quarter"></ReportField>
         <ReportField Name="CuryEstExtCost">
           <DataType>Decimal</DataType>
         </ReportField>
@@ -605,6 +617,12 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
         </ReportField>
         <ReportField Name="CuryInfoID">
           <DataType>Int64</DataType>
+        </ReportField>
+        <ReportField Name="CuryRate">
+          <DataType>Decimal</DataType>
+        </ReportField>
+        <ReportField Name="CuryViewState">
+          <DataType>Boolean</DataType>
         </ReportField>
         <ReportField Name="Description"></ReportField>
         <ReportField Name="EstExtCost">
@@ -616,34 +634,50 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
         <ReportField Name="ExpenseAcctID"></ReportField>
         <ReportField Name="ExpenseAcctID_Account_description"></ReportField>
         <ReportField Name="ExpenseAcctID_description"></ReportField>
+        <ReportField Name="ExpenseAcctID_Segment1"></ReportField>
         <ReportField Name="ExpenseSubID"></ReportField>
         <ReportField Name="ExpenseSubID_description"></ReportField>
+        <ReportField Name="ExpenseSubID_Segment1"></ReportField>
+        <ReportField Name="ExpenseSubID_Segment2"></ReportField>
+        <ReportField Name="ExpenseSubID_Segment3"></ReportField>
+        <ReportField Name="ExpenseSubID_Segment4"></ReportField>
         <ReportField Name="ExpenseSubID_Sub_description"></ReportField>
         <ReportField Name="InventoryID"></ReportField>
         <ReportField Name="InventoryID_description"></ReportField>
         <ReportField Name="InventoryID_InventoryItem_descr"></ReportField>
+        <ReportField Name="InventoryID_Segment1"></ReportField>
+        <ReportField Name="InventoryID_Segment2"></ReportField>
+        <ReportField Name="InventoryID_Segment3"></ReportField>
         <ReportField Name="IsUseMarkup">
           <DataType>Boolean</DataType>
         </ReportField>
         <ReportField Name="LastModifiedByID"></ReportField>
         <ReportField Name="LastModifiedByID_description"></ReportField>
-        <ReportField Name="LastModifiedByID_Modifier_username"></ReportField>
+        <ReportField Name="LastModifiedByID_Modifier_displayName"></ReportField>
+        <ReportField Name="LastModifiedByID_Modifier_Username"></ReportField>
         <ReportField Name="LastModifiedByScreenID"></ReportField>
         <ReportField Name="LastModifiedDateTime">
           <DataType>DateTime</DataType>
         </ReportField>
+        <ReportField Name="LastModifiedDateTime_Day"></ReportField>
+        <ReportField Name="LastModifiedDateTime_Hour"></ReportField>
+        <ReportField Name="LastModifiedDateTime_Month"></ReportField>
+        <ReportField Name="LastModifiedDateTime_Quarter"></ReportField>
         <ReportField Name="LineNbr">
           <DataType>Int32</DataType>
         </ReportField>
         <ReportField Name="LineSource"></ReportField>
         <ReportField Name="LineType"></ReportField>
+        <ReportField Name="ManualPrice">
+          <DataType>Boolean</DataType>
+        </ReportField>
         <ReportField Name="MarkupPct">
           <DataType>Decimal</DataType>
         </ReportField>
         <ReportField Name="NoteActivity"></ReportField>
         <ReportField Name="NoteFiles"></ReportField>
         <ReportField Name="NoteID">
-          <DataType>Int64</DataType>
+          <DataType>Object</DataType>
         </ReportField>
         <ReportField Name="NoteImages"></ReportField>
         <ReportField Name="NoteText"></ReportField>
@@ -659,8 +693,12 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
         <ReportField Name="PromisedDate">
           <DataType>DateTime</DataType>
         </ReportField>
+        <ReportField Name="PromisedDate_Day"></ReportField>
+        <ReportField Name="PromisedDate_Hour"></ReportField>
+        <ReportField Name="PromisedDate_Month"></ReportField>
+        <ReportField Name="PromisedDate_Quarter"></ReportField>
         <ReportField Name="QTLineNbr">
-          <DataType>Int16</DataType>
+          <DataType>Int32</DataType>
         </ReportField>
         <ReportField Name="QTOrderNbr"></ReportField>
         <ReportField Name="RcptQtyAction"></ReportField>
@@ -677,17 +715,23 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
         <ReportField Name="RequestedDate">
           <DataType>DateTime</DataType>
         </ReportField>
+        <ReportField Name="RequestedDate_Day"></ReportField>
+        <ReportField Name="RequestedDate_Hour"></ReportField>
+        <ReportField Name="RequestedDate_Month"></ReportField>
+        <ReportField Name="RequestedDate_Quarter"></ReportField>
         <ReportField Name="Selected">
           <DataType>Boolean</DataType>
         </ReportField>
         <ReportField Name="SiteID"></ReportField>
         <ReportField Name="SiteID_description"></ReportField>
         <ReportField Name="SiteID_INSite_descr"></ReportField>
+        <ReportField Name="SiteID_Segment1"></ReportField>
         <ReportField Name="SourceTranLineNbr">
           <DataType>Int32</DataType>
         </ReportField>
         <ReportField Name="SourceTranReqNbr"></ReportField>
         <ReportField Name="SubItemID"></ReportField>
+        <ReportField Name="SubItemID_Segment1"></ReportField>
         <ReportField Name="TransferQty">
           <DataType>Decimal</DataType>
         </ReportField>
@@ -695,10 +739,9 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
           <DataType>Boolean</DataType>
         </ReportField>
         <ReportField Name="TransferType"></ReportField>
-        <ReportField Name="tstamp">
-          <DataType>Object</DataType>
-        </ReportField>
+        <ReportField Name="tstamp"></ReportField>
         <ReportField Name="UOM"></ReportField>
+        <ReportField Name="UsrPackaging"></ReportField>
       </Fields>
       <FullName>PX.Objects.RQ.RQRequisitionLine</FullName>
     </ReportTable>
@@ -2590,46 +2633,28 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
                   <Value>No.</Value>
                 </TextBox>
                 <TextBox Name="textBox14">
-                  <Location>296px, 0px</Location>
-                  <Size>60px, 16px</Size>
+                  <Location>346px, 0px</Location>
+                  <Size>70px, 16px</Size>
                   <Style>
                     <TextAlign>Center</TextAlign>
                   </Style>
                   <StyleName>Heading1BCColoredRightBorder</StyleName>
                   <Value>PACKAGE</Value>
                 </TextBox>
-                <TextBox Name="textBox22">
-                  <Location>476px, 0px</Location>
-                  <Size>60px, 16px</Size>
-                  <Style>
-                    <TextAlign>Right</TextAlign>
-                  </Style>
-                  <StyleName>Heading1BCColoredRightBorder</StyleName>
-                  <Value>BOTTLE</Value>
-                </TextBox>
                 <TextBox Name="textBox26">
                   <Location>24px, 0px</Location>
-                  <Size>212px, 16px</Size>
+                  <Size>262px, 16px</Size>
                   <StyleName>Heading1BCColoredRightBorder</StyleName>
                   <Value>ITEM</Value>
                 </TextBox>
-                <TextBox Name="textBox30">
-                  <Location>356px, 0px</Location>
-                  <Size>60px, 16px</Size>
-                  <Style>
-                    <TextAlign>Right</TextAlign>
-                  </Style>
-                  <StyleName>Heading1BCColoredR</StyleName>
-                  <Value>QTY</Value>
-                </TextBox>
                 <TextBox Name="textBox37">
                   <Location>416px, 0px</Location>
-                  <Size>60px, 16px</Size>
+                  <Size>120px, 16px</Size>
                   <Style>
                     <TextAlign>Center</TextAlign>
                   </Style>
                   <StyleName>Heading1BCColoredRightBorder</StyleName>
-                  <Value>UOM</Value>
+                  <Value>Order Qty.</Value>
                 </TextBox>
                 <TextBox Name="textBox4">
                   <Location>616px, 0px</Location>
@@ -2650,7 +2675,7 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
                   <Value>EST.U COST</Value>
                 </TextBox>
                 <TextBox Name="textBox8">
-                  <Location>236px, 0px</Location>
+                  <Location>286px, 0px</Location>
                   <Size>60px, 16px</Size>
                   <Style>
                     <TextAlign>Right</TextAlign>
@@ -2691,7 +2716,7 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
                   <Location>0px, 0px</Location>
                   <Size>174px, 16px</Size>
                   <StyleName>Heading1BCColored</StyleName>
-                  <Value>PROMISED DATE</Value>
+                  <Value>EXPECTED DATE</Value>
                 </TextBox>
                 <TextBox Name="textBox34">
                   <Location>522px, 0px</Location>
@@ -2995,25 +3020,16 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
                 <TextAlign>Right</TextAlign>
               </Style>
               <StyleName>Normal</StyleName>
-              <Value>=Sum([RQRequisitionLine.CuryEstExtCost])</Value>
+              <Value>=[RQRequisitionLine.CuryEstExtCost]</Value>
             </TextBox>
             <TextBox Name="textBox13">
               <Location>416px, 0px</Location>
-              <Size>60px, 14px</Size>
+              <Size>120px, 14px</Size>
               <Style>
                 <TextAlign>Center</TextAlign>
               </Style>
               <StyleName>Normal</StyleName>
-              <Value>=[RQRequisitionLine.UOM]</Value>
-            </TextBox>
-            <TextBox Name="textBox23">
-              <Location>356px, 0px</Location>
-              <Size>60px, 14px</Size>
-              <Style>
-                <TextAlign>Right</TextAlign>
-              </Style>
-              <StyleName>Normal</StyleName>
-              <Value>=Sum([RQRequisitionLine.OrderQty])</Value>
+              <Value>=Format('{0} Case {1} Bottle', PadLeft(CInt([RQRequisitionLine.OrderQty]) / CInt([INUnit.UnitRate]), 4, ' '), CInt([RQRequisitionLine.OrderQty]) % CInt([INUnit.UnitRate]))</Value>
             </TextBox>
             <TextBox Name="textBox3">
               <Location>0px, 0px</Location>
@@ -3022,7 +3038,7 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
               <Value>=$No</Value>
             </TextBox>
             <TextBox Name="textBox38">
-              <Location>236px, 0px</Location>
+              <Location>286px, 0px</Location>
               <Size>60px, 14px</Size>
               <Style>
                 <TextAlign>Right</TextAlign>
@@ -3031,41 +3047,31 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
               <Value>=[InventoryItem.ALCOHOL_Attributes]</Value>
             </TextBox>
             <TextBox Name="textBox41">
-              <Location>296px, 0px</Location>
-              <Size>60px, 14px</Size>
+              <Location>346px, 0px</Location>
+              <Size>70px, 14px</Size>
               <Style>
                 <TextAlign>Center</TextAlign>
               </Style>
               <StyleName>Normal</StyleName>
-              <Value>=Round([INUnit.UnitRate], 0) + 'x' + Round([InventoryItem.BaseVolume], 0) + 'ml'</Value>
-            </TextBox>
-            <TextBox Name="textBox48">
-              <Format>##0</Format>
-              <Location>476px, 0px</Location>
-              <Size>60px, 14px</Size>
-              <Style>
-                <Font>
-                  <Size>7pt</Size>
-                </Font>
-                <TextAlign>Right</TextAlign>
-              </Style>
-              <StyleName>Normal</StyleName>
-              <Value>=IIF([RQRequisitionLine.UOM] = 'BOTTLE', [RQRequisitionLine.BaseOrderQty], [INUnit.UnitRate] * [RQRequisitionLine.OrderQty])</Value>
+              <Value>=CInt([INUnit.UnitRate]) + 'x' + CInt([InventoryItem.BaseVolume]) + 'ml'</Value>
             </TextBox>
             <TextBox Name="textBox6">
+              <CanGrow>True</CanGrow>
+              <CanSplit>True</CanSplit>
               <Location>24px, 0px</Location>
-              <Size>192px, 14px</Size>
+              <Size>262px, 14px</Size>
               <StyleName>Normal</StyleName>
               <Value>=IIf([INItemXRef.AlternateID]&lt;&gt; null,[INItemXRef.AlternateID], [RQRequisitionLine.InventoryID] +',' + [RQRequisitionLine.SubItemID])#010;+IIF([INItemXRef.Descr]&lt;&gt;null, [INItemXRef.Descr], [RQRequisitionLine.Description])</Value>
             </TextBox>
             <TextBox Name="textBox7">
+              <Format>N2</Format>
               <Location>536px, 0px</Location>
               <Size>80px, 14px</Size>
               <Style>
                 <TextAlign>Right</TextAlign>
               </Style>
               <StyleName>Normal</StyleName>
-              <Value>=Sum([RQRequisitionLine.CuryEstUnitCost])</Value>
+              <Value>=[RQRequisitionLine.CuryEstUnitCost]</Value>
             </TextBox>
           </Items>
         </Header>
