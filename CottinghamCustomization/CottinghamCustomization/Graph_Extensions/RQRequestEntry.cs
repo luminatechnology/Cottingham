@@ -44,7 +44,7 @@ namespace PX.Objects.RQ
                 decimal? vendorUnitCost = APVendorPriceMaint.CalculateUnitCost(e.Cache, row.VendorID, row.VendorLocationID, row.InventoryID, Base.Document.Current.SiteID,
                                                                                curyInfo, row.UOM, row.OrderQty, Base.Document.Current.OrderDate.Value, row.CuryEstUnitCost);
 
-                e.NewValue = vendorUnitCost;
+                e.NewValue = vendorUnitCost ?? 0m;
             }
         }
         #endregion
