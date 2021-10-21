@@ -125,8 +125,7 @@ namespace CottinghamCustomization
                 Branch          histBran = Branch.PK.Find(this, histAggr.BranchID);
                 MasterFinPeriod histperd = aggregatingResult;
                 PMAccountGroup  acctGrop = PXSelectReadonly<PMAccountGroup, Where<PMAccountGroup.groupID, Equal<Required<Account.accountGroupID>>>>.Select(this, histAcct.AccountGroupID);
-
-                Sub histSub = aggregatingResult;
+                Sub             histSub  = aggregatingResult;
 
                 if (acctGrop != null && acctGrop.GroupCD.Trim().IsIn(AcctGrp_Sales, AcctGrp_COGS, AcctGrp_ATL, AcctGrp_BTL, AcctGrp_Prin))
                 {
@@ -136,7 +135,8 @@ namespace CottinghamCustomization
                         FinYear       = histperd.FinYear,
                         SubCDWildcard = isPLByBrand == false ? GetSubCDSegmentDescr(this, filter.SubIDFilter) : PXSelect<SegmentValue, Where<SegmentValue.dimensionID, Equal<Required<Segment.dimensionID>>,
                                                                                                                                              And<SegmentValue.segmentID, Equal<Required<Segment.segmentID>>,
-                                                                                                                                                 And<SegmentValue.value, Equal<Required<SegmentValue.value>>>>>>
+                                                                                                                                                 And<SegmentValue.value, Equal<Required<SegmentValue.value>>,
+                                                                                                                                                     And<SegmentValue.active, Equal<True>>>>>>
                                                                                                                          .SelectSingleBound(this, null, "SUBACCOUNT", 1, histSub.SubCD.Substring(0, 2)).TopFirst?.Descr,
                         BranchID      = histAggr.BranchID,
                         AcctName      = histBran.AcctName,
