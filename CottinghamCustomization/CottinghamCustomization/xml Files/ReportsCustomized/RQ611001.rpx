@@ -164,13 +164,10 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
   <LayoutUnit>Inch</LayoutUnit>
   <MailSettings>
     <ActivitySource>RQRequisition.ReqNbr</ActivitySource>
-    <Bcc></Bcc>
     <Body>='Request for Proposal'</Body>
-    <Cc></Cc>
     <Format>='PDF'</Format>
     <ParentSource>Vendor.NoteID</ParentSource>
     <Subject>=[CompanyContact.FullName]+':'+' '+'Requisition #'+' '+[RQRequisition.ReqNbr]</Subject>
-    <TemplateID></TemplateID>
     <To>=[RemitContact.Email]</To>
   </MailSettings>
   <PageSettings>
@@ -3011,6 +3008,10 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
               <ResetGroup>group1</ResetGroup>
               <ValueExpr>=$No+1</ValueExpr>
             </ReportVariable>
+            <ReportVariable>
+              <Name>UnitRate</Name>
+              <ValueExpr>=IIf([RQRequisitionLine.UOM] = [INUnit.FromUnit], 1 ,CInt([INUnit.UnitRate]))</ValueExpr>
+            </ReportVariable>
           </Variables>
           <Items>
             <TextBox Name="textBox10">
@@ -3029,7 +3030,7 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
                 <TextAlign>Center</TextAlign>
               </Style>
               <StyleName>Normal</StyleName>
-              <Value>=Format('{0} Case {1} Bottle', PadLeft(CInt([RQRequisitionLine.OrderQty]) / CInt([INUnit.UnitRate]), 4, ' '), CInt([RQRequisitionLine.OrderQty]) % CInt([INUnit.UnitRate]))</Value>
+              <Value>=Format('{0} Case {1} Bottle', PadLeft(CInt([RQRequisitionLine.OrderQty]) / $UnitRate, 4, ' '), CInt([RQRequisitionLine.OrderQty]) % CInt($UnitRate))</Value>
             </TextBox>
             <TextBox Name="textBox3">
               <Location>0px, 0px</Location>
