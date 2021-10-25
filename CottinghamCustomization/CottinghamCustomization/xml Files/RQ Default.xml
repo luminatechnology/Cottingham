@@ -414,7 +414,7 @@ Released|Released|PX.Objects.RQ.RQRequisitionEntry|Document|PX.Objects.RQ.RQRequ
           <AUAction ActionName="VendorNotifications" MenuText="Send Request" RefCntr="8" RowNbr="14" OrderNbr="1" />
           <AUAction ActionName="VendorNotifications" MenuText="Send All Requests" RefCntr="1" RowNbr="14" OrderNbr="0" />
           <AUAction ActionName="Report" MenuText="Request for Proposal" RefCntr="1" RowNbr="9" OrderNbr="0" />
-          <AUAction ActionName="Report" MenuText="Print Pre-purchase Order" RefCntr="3" RowNbr="15" OrderNbr="1" />
+          <AUAction ActionName="Report" MenuText="Print Pre-purchase Order" RefCntr="4" RowNbr="11" OrderNbr="1" />
           <AUAction ActionName="Action" MenuText="ValidateAddresses" RefCntr="8" RowNbr="12" OrderNbr="7" />
           <AUAction ActionName="Action" MenuText="Send Request for Proposal" RefCntr="1" RowNbr="8" OrderNbr="6" />
           <AUAction ActionName="Action" MenuText="Reject" RefCntr="8" RowNbr="2" OrderNbr="1" />
@@ -605,8 +605,9 @@ Released|Released|PX.Objects.RQ.RQRequisitionEntry|Document|PX.Objects.RQ.RQRequ
             <AUStepField RowNbr="2" IsActive="1" TableName="PX.Objects.RQ.RQRequisition" FieldName="Hold" UseSavedState="0" IsDisabled="0" IsInvisible="0" IsRelative="0" NoteID="3e710c25-0d7b-4ce2-8cb8-483c79e79f30" />
             <AUStepField RowNbr="1" IsActive="1" TableName="PX.Objects.RQ.RQRequisition" FieldName="&lt;TABLE&gt;" UseSavedState="0" IsDisabled="1" IsInvisible="0" IsRelative="0" NoteID="4ec68c37-7cad-494e-8735-1e6ad3dff04c" />
           </AUStep>
-          <AUStep StepID="On Hold" Description="On Hold" GraphName="PX.Objects.RQ.RQRequisitionEntry" ViewName="Document" TableName="PX.Objects.RQ.RQRequisition" BqlTableName="PX.Objects.RQ.RQRequisition" TimeStampName="tstamp" IsActive="1" IsStart="1" FilterCntr="1" FieldCntr="9" ActionCntr="10" NoteID="6c54790c-1a66-4de8-a356-a1b837167c5b">
+          <AUStep StepID="On Hold" Description="On Hold" GraphName="PX.Objects.RQ.RQRequisitionEntry" ViewName="Document" TableName="PX.Objects.RQ.RQRequisition" BqlTableName="PX.Objects.RQ.RQRequisition" TimeStampName="tstamp" IsActive="1" IsStart="1" FilterCntr="1" FieldCntr="9" ActionCntr="11" NoteID="6c54790c-1a66-4de8-a356-a1b837167c5b">
             <AUStepFilter RowNbr="1" IsActive="1" OpenBrackets="0" FieldName="Hold" Condition="1" IsRelative="0" Value="True" Value2="False" CloseBrackets="0" Operator="0" NoteID="2677f2a5-7a97-432a-ad1e-3194e1be8d97" />
+            <AUStepFill ActionName="Report" MenuText="Print Pre-purchase Order" RowNbr="86" IsActive="1" FieldName="@reportID" IsRelative="0" Value="RQ611001" IsDelayed="0" IgnoreError="0" />
             <AUStepFill ActionName="Hold" MenuText="" RowNbr="84" IsActive="1" FieldName="Hold" IsRelative="0" Value="False" IsDelayed="0" IgnoreError="0" />
             <AUStepFill ActionName="Action" MenuText="Reject" RowNbr="81" IsActive="1" FieldName="Status" IsRelative="0" Value="R" IsDelayed="0" IgnoreError="0" />
             <AUStepFill ActionName="Action" MenuText="Reject" RowNbr="80" IsActive="1" FieldName="@refresh" IsRelative="0" Value="True" IsDelayed="0" IgnoreError="0" />
@@ -615,6 +616,7 @@ Released|Released|PX.Objects.RQ.RQRequisitionEntry|Document|PX.Objects.RQ.RQRequ
             <AUStepFill ActionName="Action" MenuText="Cancel Request" RowNbr="83" IsActive="1" FieldName="@actionID" IsRelative="0" Value="1" IsDelayed="0" IgnoreError="0" />
             <AUStepFill ActionName="Action" MenuText="Cancel Request" RowNbr="82" IsActive="1" FieldName="Cancelled" IsRelative="0" Value="True" IsDelayed="0" IgnoreError="0" />
             <AUStepFill ActionName="*" MenuText="" RowNbr="85" IsActive="1" FieldName="Hold" IsRelative="0" Value="True" IsDelayed="0" IgnoreError="0" />
+            <AUStepAction RowNbr="11" IsActive="1" ActionName="Report" IsAutomatic="0" IsDefault="0" IsDisabled="0" BatchMode="0" MenuText="Print Pre-purchase Order" AutoSave="0" SplitByValues="0" IsRetryActive="0" RetryScreenID="RQ302000" RetryStepID="On Hold" RetryCntr="0" IsSuccessActive="0" SuccessScreenID="RQ302000" SuccessStepID="On Hold" IsFailActive="0" FailScreenID="RQ302000" FailStepID="On Hold" NoteID="5f20d293-a12c-ec11-aa4f-afdc6d8df766" />
             <AUStepAction RowNbr="10" IsActive="1" ActionName="CreateQTOrder" IsAutomatic="0" IsDefault="1" IsDisabled="1" BatchMode="0" AutoSave="0" SplitByValues="0" IsRetryActive="0" RetryScreenID="RQ302000" RetryStepID="On Hold" RetryCntr="0" IsSuccessActive="0" SuccessScreenID="RQ302000" SuccessStepID="On Hold" IsFailActive="0" FailScreenID="RQ302000" FailStepID="On Hold" NoteID="340f8e67-15b7-4069-a754-7d8d75635329" />
             <AUStepAction RowNbr="9" IsActive="1" ActionName="CreatePOOrder" IsAutomatic="0" IsDefault="1" IsDisabled="1" BatchMode="0" AutoSave="0" SplitByValues="0" IsRetryActive="0" RetryScreenID="RQ302000" RetryStepID="On Hold" RetryCntr="0" IsSuccessActive="0" SuccessScreenID="RQ302000" SuccessStepID="On Hold" IsFailActive="0" FailScreenID="RQ302000" FailStepID="On Hold" NoteID="af03d72d-3032-4e3a-a471-9b577e8ff130" />
             <AUStepAction RowNbr="8" IsActive="1" ActionName="Action" IsAutomatic="0" IsDefault="0" IsDisabled="0" BatchMode="0" MenuText="ValidateAddresses" AutoSave="0" SplitByValues="0" IsRetryActive="0" RetryScreenID="RQ302000" RetryStepID="On Hold" RetryCntr="0" IsSuccessActive="0" SuccessScreenID="RQ302000" SuccessStepID="On Hold" IsFailActive="0" FailScreenID="RQ302000" FailStepID="On Hold" NoteID="77ff001b-4a9c-48c7-b472-1ff3253d7612" />
