@@ -78,8 +78,9 @@
         </PictureBox>
         <TextBox Name="textBox1">
           <CanGrow>True</CanGrow>
+          <CanSplit>True</CanSplit>
           <Location>160px, 0px</Location>
-          <Size>152px, 24px</Size>
+          <Size>272px, 32px</Size>
           <StyleName>Heading 2</StyleName>
           <Value>=[ProductContributionData.AcctName]</Value>
         </TextBox>
@@ -198,9 +199,19 @@
         <Header Name="groupHeaderSection2">
           <Height>0.63492cm</Height>
           <Items>
+            <Line Name="line1">
+              <Location>176px, 18px</Location>
+              <Size>136px, 0.04in</Size>
+              <VisibleExpr>=[ProductContributionData.BottomSold] = True</VisibleExpr>
+            </Line>
+            <Line Name="line4">
+              <Location>176px, 20px</Location>
+              <Size>136px, 0.04in</Size>
+              <VisibleExpr>=Trim([ProductContributionData.AcctType]) = 'Net Profit' And [ProductContributionData.BottomSold] = True</VisibleExpr>
+            </Line>
             <TextBox Name="textBox11">
               <Format>N0</Format>
-              <Location>176px, 2px</Location>
+              <Location>176px, 0px</Location>
               <Size>136px, 0.18in</Size>
               <Style>
                 <TextAlign>Right</TextAlign>
