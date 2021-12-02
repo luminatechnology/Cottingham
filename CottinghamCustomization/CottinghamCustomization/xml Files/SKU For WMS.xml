@@ -179,6 +179,7 @@
           <GIResult LineNbr="2" SortOrder="2" IsActive="1" Field="inventoryCD" Caption="sku" IsVisible="1" DefaultNav="1" QuickFilter="0" FastFilter="1" RowID="ad0f850d-7d6e-4873-8ac7-4102b5404a49" />
           <GIResult LineNbr="1" SortOrder="1" IsActive="1" Field="='CTH'" Caption="storerkey" IsVisible="1" DefaultNav="1" QuickFilter="0" FastFilter="1" RowID="ba3916c3-a345-4df0-b95a-fc0d3278ff63" />
         </GITable>
+        <GIWhere LineNbr="4" IsActive="1" DataFieldName="InventoryItem.itemStatus" Condition="NE" IsExpression="1" Value1="IN" Operation="A" />
         <GIWhere LineNbr="3" IsActive="1" DataFieldName="InventoryItem.isTemplate" Condition="NE" IsExpression="1" Value1="True" Value2="False" Operation="A" />
         <GIWhere LineNbr="2" IsActive="1" DataFieldName="InventoryItem.itemStatus" Condition="NE" IsExpression="0" Value1="XX" Operation="A" />
         <GIWhere LineNbr="1" IsActive="1" DataFieldName="InventoryItem.stkItem" Condition="E " IsExpression="1" Value1="True" Value2="False" Operation="A" />
