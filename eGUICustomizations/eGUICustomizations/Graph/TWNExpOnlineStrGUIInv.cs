@@ -2,24 +2,30 @@
 using System.Collections.Generic;
 using PX.Common;
 using PX.Data;
+using PX.Data.BQL;
+using PX.Data.BQL.Fluent;
+using PX.Objects.AR;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
-using static eGUICustomizations.Graph.TWNExpGUIInv2BankPro;
-using static eGUICustomizations.Descriptor.TWNStringList;
 
 namespace eGUICustomizations.Graph
 {
     public class TWNExpOnlineStrGUIInv : PXGraph<TWNExpOnlineStrGUIInv>
     {
-        #region Features & Setup
+        #region Features
         public PXCancel<TWNGUITrans> Cancel;
         public PXProcessing<TWNGUITrans,
                             Where<TWNGUITrans.eGUIExcluded, Equal<False>,
-                                  And<TWNGUITrans.gUIFormatcode, Equal<VATOutCode35>,
-                                       And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
-                                                  Or<TWNGUITrans.eGUIExported, IsNull>>,
-                                            And<Where<TWNGUITrans.taxNbr, IsNull,
-                                                      Or<TWNGUITrans.taxNbr, Equal<StringEmpty>>>>>>>> GUITranProc;
+                                  And<TWNGUITrans.gUIFormatcode, Equal<TWNExpGUIInv2BankPro.VATOutCode35>,
+                                       And<Where<TWNGUITrans.eGUIExported, Equal<False>,
+                                                 Or<TWNGUITrans.eGUIExported, IsNull>>>>>> GUITranProc;
+        //public PXProcessing<TWNGUITrans,
+        //                    Where<TWNGUITrans.eGUIExcluded, Equal<False>,
+        //                          And<TWNGUITrans.gUIFormatcode, Equal<VATOutCode35>,
+        //                               And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
+        //                                          Or<TWNGUITrans.eGUIExported, IsNull>>,
+        //                                    And<Where<TWNGUITrans.taxNbr, IsNull,
+        //                                              Or<TWNGUITrans.taxNbr, Equal<StringEmpty>>>>>>>> GUITranProc;
         #endregion
 
         #region Ctor
@@ -43,6 +49,8 @@ namespace eGUICustomizations.Graph
                 TWNExpGUIInv2BankPro invGraph = CreateInstance<TWNExpGUIInv2BankPro>();
 
                 string lines = "", fileName = "";
+
+                string verticalBar = TWNExpGUIInv2BankPro.verticalBar;
 
                 TWNGUIPreferences preferences = PXSelect<TWNGUIPreferences>.Select(graph);
 
@@ -84,8 +92,9 @@ namespace eGUICustomizations.Graph
                     // 會員電話
                     lines += new string(char.Parse(verticalBar), 4);
                     // 會員行動電話
-                    PX.Objects.AR.Customer  customer = PXSelectReadonly<PX.Objects.AR.Customer, Where<PX.Objects.AR.Customer.acctCD, Equal<Required<PX.Objects.AR.Customer.acctCD>>>>.Select(graph, gUITrans.CustVend);
-                    PX.Objects.CR.CRContact contact = PXSelectReadonly<PX.Objects.CR.CRContact, Where<PX.Objects.CR.CRContact.contactID, Equal<Required<PX.Objects.AR.Customer.defContactID>>>>.Select(graph, customer.DefContactID);
+                    //PX.Objects.AR.Customer  customer = PXSelectReadonly<PX.Objects.AR.Customer, Where<PX.Objects.AR.Customer.acctCD, Equal<Required<PX.Objects.AR.Customer.acctCD>>>>.Select(graph, gUITrans.CustVend);
+                    //PX.Objects.CR.CRContact contact = PXSelectReadonly<PX.Objects.CR.CRContact, Where<PX.Objects.CR.CRContact.contactID, Equal<Required<PX.Objects.AR.Customer.defContactID>>>>.Select(graph, customer.DefContactID);
+                    ARContact contact = SelectFrom<ARContact>.InnerJoin<ARInvoice>.On<ARInvoice.billContactID.IsEqual<ARContact.contactID>>.Where<ARInvoice.refNbr.IsEqual<@P.AsString>>.View.SelectSingleBound(graph, null, gUITrans.OrderNbr);
 
                     lines += contact?.Phone1 + verticalBar;
                     // 會員電子郵件
@@ -135,7 +144,7 @@ namespace eGUICustomizations.Graph
                         // 商品條碼
                         lines += new string(char.Parse(verticalBar), 2);
                         // 商品名稱
-                        lines += aRTran.TranDesc + verticalBar;
+                        lines += System.Text.RegularExpressions.Regex.Replace((aRTran.TranDesc ?? "").Replace("'", @"\'").Trim(), @"[\r\n]+", "") + verticalBar;
                         // 商品規格
                         // 單位
                         // 單價
@@ -157,7 +166,7 @@ namespace eGUICustomizations.Graph
                     }
 
                     // The following method is only for voided invoice.
-                    if (gUITrans.GUIStatus == TWNGUIStatus.Voided)
+                    if (gUITrans.GUIStatus == TWNStringList.TWNGUIStatus.Voided)
                     {
                         TWNExpGUIInv2BankPro.CreateVoidedDetailLine(verticalBar, gUITrans.OrderNbr, ref lines);
                     }
@@ -166,8 +175,8 @@ namespace eGUICustomizations.Graph
                 // Total Records
                 lines += tWNGUITrans.Count;
 
-                invGraph.UpdateGUITran(tWNGUITrans);
                 invGraph.UploadFile2FTP(fileName, lines);
+                invGraph.UpdateGUITran(tWNGUITrans);
             }
             catch (Exception ex)
             {

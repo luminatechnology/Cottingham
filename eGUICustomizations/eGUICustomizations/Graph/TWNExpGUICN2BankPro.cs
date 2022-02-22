@@ -5,7 +5,6 @@ using PX.Objects.AR;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
 using static eGUICustomizations.Graph.TWNExpGUIInv2BankPro;
-using static eGUICustomizations.Descriptor.TWNStringList;
 
 namespace eGUICustomizations.Graph
 {
@@ -14,10 +13,14 @@ namespace eGUICustomizations.Graph
         #region Process & Setup
         public PXCancel<TWNGUITrans> Cancel;
         public PXProcessing<TWNGUITrans,
-                            Where<TWNGUITrans.eGUIExcluded, Equal<False>,
-                                  And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
-                                             Or<TWNGUITrans.eGUIExported, IsNull>>,
-                                      And<TWNGUITrans.gUIFormatcode, Equal<ARRegisterExt.VATOut33Att>>>>> GUITranProc;
+                            Where<TWNGUITrans.eGUIExcluded.IsNotEqual<True>
+                                  .And<TWNGUITrans.eGUIExported.IsNotEqual<True>
+                                      .And<TWNGUITrans.gUIFormatcode.IsEqual<ARRegisterExt.VATOut33Att>
+                                          .And<TWNGUITrans.taxNbr.IsNotNull>>>>> GUITranProc;
+                            //Where<TWNGUITrans.eGUIExcluded, Equal<False>,
+                            //      And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
+                            //                 Or<TWNGUITrans.eGUIExported, IsNull>>,
+                            //          And<TWNGUITrans.gUIFormatcode, Equal<ARRegisterExt.VATOut33Att>>>>> GUITranProc;
         public PXSetup<TWNGUIPreferences> gUIPreferSetup;
         #endregion
 
@@ -30,7 +33,7 @@ namespace eGUICustomizations.Graph
         }
         #endregion
 
-        #region Function
+        #region Static Methods
         public static void Upload(List<TWNGUITrans> tWNGUITrans)
         {
             try
@@ -158,7 +161,7 @@ namespace eGUICustomizations.Graph
                     }
 
                     // The following method is only for voided invoice.
-                    if (gUITrans.GUIStatus == TWNGUIStatus.Voided)
+                    if (gUITrans.GUIStatus == TWNStringList.TWNGUIStatus.Voided)
                     {
                         TWNExpGUIInv2BankPro.CreateVoidedDetailLine(verticalBar, gUITrans.OrderNbr, ref lines);
                     }

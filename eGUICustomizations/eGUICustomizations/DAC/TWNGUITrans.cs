@@ -1,6 +1,5 @@
 using System;
 using PX.Data;
-using PX.Objects.AR;
 using PX.Objects.CS;
 using PX.Objects.GL;
 using PX.Objects.TX;
@@ -8,7 +7,6 @@ using eGUICustomizations.Graph;
 using eGUICustomizations.Descriptor;
 using Messages = PX.Objects.TX.Messages;
 using static PX.Objects.AR.ARInvoiceEntry_Extension;
-using static eGUICustomizations.Descriptor.TWNStringList;
 using SearchCategory = PX.Objects.SM.SearchCategory;
 
 namespace eGUICustomizations.DAC
@@ -56,7 +54,7 @@ namespace eGUICustomizations.DAC
         #region GUIStatus
         [PXDBString(10, IsUnicode = true)]
         [PXUIField(DisplayName = "GUI Status")]
-        [TWNGUIStatus.List]
+        [TWNStringList.TWNGUIStatus.List]
         public virtual string GUIStatus { get; set; }
         public abstract class gUIStatus : PX.Data.BQL.BqlString.Field<gUIStatus> { }
         #endregion
@@ -64,7 +62,7 @@ namespace eGUICustomizations.DAC
         #region GUIDirection
         [PXDBString(15, IsUnicode = true)]
         [PXUIField(DisplayName = "GUI Direction")]
-        [TWNGUIDirection.List]
+        [TWNStringList.TWNGUIDirection.List]
         public virtual string GUIDirection { get; set; }
         public abstract class gUIDirection : PX.Data.BQL.BqlString.Field<gUIDirection> { }
         #endregion
@@ -131,13 +129,13 @@ namespace eGUICustomizations.DAC
         #region VATType
         [PXDBString(2, IsUnicode = true)]
         [PXUIField(DisplayName = "VAT Type")]
-        [TWNGUIVATType.List]
+        [TWNStringList.TWNGUIVATType.List]
         public virtual string VATType { get; set; }
         public abstract class vATType : PX.Data.BQL.BqlString.Field<vATType> { }
         #endregion
 
         #region TaxNbr
-        [TaxNbrVerify(8, IsUnicode = true)]
+        [Descriptor.TaxNbrVerify(8, IsUnicode = true)]
         [PXUIField(DisplayName = "Tax Nbr")]    
         public virtual string TaxNbr { get; set; }
         public abstract class taxNbr : PX.Data.BQL.BqlString.Field<taxNbr> { }
@@ -201,7 +199,7 @@ namespace eGUICustomizations.DAC
         [PXDBString(1, IsUnicode = true)]
         [PXUIField(DisplayName = "Deduction Code")]
         [PXSelector(typeof(Search<CSAttributeDetail.valueID,
-                                  Where<CSAttributeDetail.attributeID, Equal<PX.Objects.AP.APRegisterExt.DeductionNameAtt>>>),
+                                  Where<CSAttributeDetail.attributeID, Equal<TWNManualGUIAPBill.DeductionNameAtt>>>),
                     typeof(CSAttributeDetail.description),
                     DescriptionField = typeof(CSAttributeDetail.description))]
         public virtual string DeductionCode { get; set; }
@@ -231,9 +229,7 @@ namespace eGUICustomizations.DAC
         #region OrderNbr
         [PXDBString(20, IsUnicode = true)]
         [PXUIField(DisplayName = "Order Nbr")]
-        [PXSelector(typeof(Search<ARRegister.refNbr,
-                                  Where<ARRegister.refNbr.IsEqual<TWNGUITrans.orderNbr.FromCurrent>>>),
-                    typeof(ARRegister.docType),
+        [PXSelector(typeof(Search<GLTran.refNbr>),
                     ValidateValue = false)]
         public virtual string OrderNbr { get; set; }
         public abstract class orderNbr : PX.Data.BQL.BqlString.Field<orderNbr> { }
@@ -256,7 +252,7 @@ namespace eGUICustomizations.DAC
         #region CustomType
         [PXDBString(1, IsUnicode = true)]
         [PXUIField(DisplayName = "Custom Type")]
-        [TWNGUICustomType.List]
+        [TWNStringList.TWNGUICustomType.List]
         public virtual string CustomType { get; set; }
         public abstract class customType : PX.Data.BQL.BqlString.Field<customType> { }
         #endregion
@@ -294,7 +290,7 @@ namespace eGUICustomizations.DAC
         #endregion
 
         #region Remark
-        [PXDBString(100, IsUnicode = true)]
+        [PXDBString(256, IsUnicode = true)]
         [PXUIField(DisplayName = "Remark")]
         public virtual string Remark { get; set; }
         public abstract class remark : PX.Data.BQL.BqlString.Field<remark> { }

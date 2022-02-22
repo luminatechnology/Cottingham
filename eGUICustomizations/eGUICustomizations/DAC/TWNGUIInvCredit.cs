@@ -1,9 +1,9 @@
 using System;
-using eGUICustomizations.Graph;
 using PX.Data;
 using PX.Objects.AR;
 using PX.Objects.CS;
-using static eGUICustomizations.Descriptor.TWNStringList;
+using eGUICustomizations.Descriptor;
+using eGUICustomizations.Graph;
 
 namespace eGUICustomizations.DAC
 {
@@ -13,7 +13,7 @@ namespace eGUICustomizations.DAC
     public class TWNGUIInvCredit : IBqlTable
     {
         #region RequestID
-        [PXDBString(15, IsKey = true, IsUnicode = true, InputMask = "")]
+        [PXDBString(15, IsKey = true, IsUnicode = true, InputMask = ">CCCCCCCCCCCCCCCC")]
         [PXUIField(DisplayName = "Request ID")]
         [AutoNumber(typeof(TWNGUIPreferences.requestNumbering), typeof(AccessInfo.businessDate))]
         [PXSelector(typeof(Search<TWNGUIInvCredit.requestID>), Filterable = true, ValidateValue = false)]
@@ -31,9 +31,9 @@ namespace eGUICustomizations.DAC
         [PXDBString(15, IsUnicode = true, InputMask = "")]
         [PXUIField(DisplayName = "GUI Nbr.")]
         [PXSelector(typeof(Search2<TWNGUITrans.gUINbr, InnerJoin<Customer, On<Customer.acctCD, Equal<TWNGUITrans.custVend>>>,
-                                                       Where<TWNGUITrans.gUIDirection, Equal<TWNGUIDirection.issue>,
+                                                       Where<TWNGUITrans.gUIDirection, Equal<TWNStringList.TWNGUIDirection.issue>,
                                                              And<TWNGUITrans.gUIFormatcode, Equal<TWNExpGUIInv2BankPro.VATOutCode35>,
-                                                                 And<TWNGUITrans.gUIStatus, Equal<TWNGUIStatus.used>,
+                                                                 And<TWNGUITrans.gUIStatus, Equal<TWNStringList.TWNGUIStatus.used>,
                                                                      And<Customer.bAccountID, Equal<Current<TWNGUIInvCredit.customerID>>>>>>>),
                     typeof(TWNGUITrans.gUIStatus),
                     typeof(TWNGUITrans.gUIDate),
@@ -43,8 +43,9 @@ namespace eGUICustomizations.DAC
         #endregion
     
         #region VATOutCode
-        [PXDBString(2, IsFixed = true, IsUnicode = true, InputMask = "")]
+        [PXDBString(2, IsFixed = true, IsUnicode = true)]
         [PXUIField(DisplayName = "VAT Out Code")]
+        [PXDefault()]
         public virtual string VATOutCode { get; set; }
         public abstract class vATOutCode : PX.Data.BQL.BqlString.Field<vATOutCode> { }
         #endregion

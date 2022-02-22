@@ -1,5 +1,5 @@
 using PX.Data;
-using static eGUICustomizations.Descriptor.TWNStringList;
+using eGUICustomizations.Descriptor;
 
 namespace PX.Objects.TX
 {
@@ -8,6 +8,7 @@ namespace PX.Objects.TX
         #region UsrTWNGUI
         [PXDBBool()]
         [PXUIField(DisplayName = "GUI Enabled")]
+        [PXDefault(false, PersistingCheck = PXPersistingCheck.Nothing)]
         public virtual bool? UsrTWNGUI { get; set; }
         public abstract class usrTWNGUI : IBqlField { }
         #endregion
@@ -15,7 +16,7 @@ namespace PX.Objects.TX
         #region UsrGUIType
         [PXDBString(2, IsUnicode = true)]
         [PXUIField(DisplayName = "GUI VAT Type")]
-        [TWNGUIVATType.List]
+        [TWNStringList.TWNGUIVATType.List]
         public virtual string UsrGUIType { get; set; }
         public abstract class usrGUIType : IBqlField { }
         #endregion

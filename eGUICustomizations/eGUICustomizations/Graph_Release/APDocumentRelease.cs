@@ -1,36 +1,31 @@
-using System.Collections.Generic;
 using PX.Common;
 using PX.Data;
 using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
-using PX.Objects.CM;
-using PX.Objects.GL;
-using PX.Objects.CS;
 using PX.Objects.TX;
-using PX.Objects.IN;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
 using eGUICustomizations.Graph_Release;
-using static eGUICustomizations.Descriptor.TWNStringList;
+using PX.Objects.CR;
+using PX.Objects.CM;
 
 namespace PX.Objects.AP
 {
     public class APReleaseProcess_Extension : PXGraphExtension<APReleaseProcess>
     {
-        #region Select
-        public SelectFrom<TWNGUITrans>
-                          .Where<TWNGUITrans.orderNbr.IsEqual<APInvoice.refNbr.FromCurrent>>.View ViewGUITrans;
+        #region Selects
+        public SelectFrom<TWNWHTTran>.Where<TWNWHTTran.docType.IsEqual<APRegister.docType.FromCurrent>
+                                            .And<TWNWHTTran.refNbr.IsEqual<APRegister.refNbr.FromCurrent>>>.View WHTTranView;
         #endregion
 
-        #region Delegate Funcation
+        #region Delegate Methods
         public delegate void PersistDelegate();
         [PXOverride]
         public void Persist(PersistDelegate baseMethod)
         {
             baseMethod();
 
-            APRegister    doc = Base.APDocument.Current;
-            APRegisterExt docExt = PXCache<APRegister>.GetExtension<APRegisterExt>(doc);
+            APRegister doc = Base.APDocument.Current;
 
             // Check for document and released flag
             if (TWNGUIValidation.ActivateTWGUI(Base) == true &&
@@ -42,6 +37,7 @@ namespace PX.Objects.AP
                 //{
                 //    throw new PXException(TWMessages.NoInvTaxDtls);
                 //}
+                TWNReleaseProcess rp = PXGraph.CreateInstance<TWNReleaseProcess>();
 
                 foreach (TWNManualGUIAPBill row in SelectFrom<TWNManualGUIAPBill>.Where<TWNManualGUIAPBill.docType.IsEqual<@P.AsString>
                                                                                         .And<TWNManualGUIAPBill.refNbr.IsEqual<@P.AsString>>>.View.Select(Base, doc.DocType, doc.RefNbr))
@@ -51,21 +47,19 @@ namespace PX.Objects.AP
 
                     if (Tax.PK.Find(Base, row.TaxID).GetExtension<TaxExt>().UsrTWNGUI != true) { continue; }
 
-                    Vendor vendor = Vendor.PK.Find(Base, row.VendorID);
-
                     using (PXTransactionScope ts = new PXTransactionScope())
                     {
-                        TWNReleaseProcess rp = PXGraph.CreateInstance<TWNReleaseProcess>();
-
                         TWNGUITrans tWNGUITrans = rp.InitAndCheckOnAP(row.GUINbr, row.VATInCode);
+
+                        Vendor vendor = Vendor.PK.Find(Base, row.VendorID);
 
                         rp.CreateGUITrans(new STWNGUITran()
                         {    
                             VATCode       = row.VATInCode,
                             GUINbr        = row.GUINbr,
-                            GUIStatus     = TWNGUIStatus.Used,
-                            BranchID      = Base.APTran_TranType_RefNbr.Current.BranchID,
-                            GUIDirection  = TWNGUIDirection.Receipt,
+                            GUIStatus     = TWNStringList.TWNGUIStatus.Used,
+                            BranchID      = doc.BranchID,
+                            GUIDirection  = TWNStringList.TWNGUIDirection.Receipt,
                             GUIDate       = row.GUIDate,
                             GUITitle      = vendor?.AcctName,
                             TaxZoneID     = row.TaxZoneID,
@@ -83,6 +77,10 @@ namespace PX.Objects.AP
                             OrderNbr      = doc.RefNbr
                         });
 
+                        ///<remarks>This is only for Cottingham's request.</remarks>
+                        rp.ViewGUITrans.Current.GUIDecPeriod = doc.DocDate;
+                        rp.ViewGUITrans.UpdateCurrent();
+
                         if (tWNGUITrans != null)
                         {
                             if (tWNGUITrans.NetAmtRemain < row.NetAmt)
@@ -90,58 +88,84 @@ namespace PX.Objects.AP
                                 throw new PXException(TWMessages.RemainAmt);
                             }
 
-                            ViewGUITrans.SetValueExt<TWNGUITrans.netAmtRemain>(tWNGUITrans, (tWNGUITrans.NetAmtRemain -= row.NetAmt));
-                            ViewGUITrans.SetValueExt<TWNGUITrans.taxAmtRemain>(tWNGUITrans, (tWNGUITrans.TaxAmtRemain -= row.TaxAmt));
+                            rp.ViewGUITrans.SetValueExt<TWNGUITrans.netAmtRemain>(tWNGUITrans, (tWNGUITrans.NetAmtRemain -= row.NetAmt));
+                            rp.ViewGUITrans.SetValueExt<TWNGUITrans.taxAmtRemain>(tWNGUITrans, (tWNGUITrans.TaxAmtRemain -= row.TaxAmt));
 
-                            tWNGUITrans = ViewGUITrans.Update(tWNGUITrans);
+                            tWNGUITrans = rp.ViewGUITrans.Update(tWNGUITrans);
                         }
 
                         // Manually Saving as base code will not call base graph persis.
-                        ViewGUITrans.Cache.Persist(PXDBOperation.Insert);
-                        ViewGUITrans.Cache.Persist(PXDBOperation.Update);
+                        rp.ViewGUITrans.Cache.Persist(PXDBOperation.Insert);
+                        rp.ViewGUITrans.Cache.Persist(PXDBOperation.Update);
 
                         ts.Complete(Base);
                     }
                 }
+
+                // Triggering after save events.
+                rp.ViewGUITrans.Cache.Persisted(false);
             }
 
-            // Triggering after save events.
-            ViewGUITrans.Cache.Persisted(false);
+            foreach (TWNWHT tWNWHT in SelectFrom<TWNWHT>.Where<TWNWHT.docType.IsEqual<@P.AsString>.And<TWNWHT.refNbr.IsEqual<@P.AsString>>>.View.Select(Base, doc.DocType, doc.RefNbr))
+            {
+                if (doc != null && doc.Released == true && doc.DocType == APDocType.Invoice)
+                {
+                    using (PXTransactionScope ts = new PXTransactionScope())
+                    {
+                        TWNWHTTran wHTTran = new TWNWHTTran()
+                        {
+                            DocType = doc.DocType,
+                            RefNbr = doc.RefNbr,
+                        };
+
+                        wHTTran = WHTTranView.Insert(wHTTran);
+
+                        wHTTran.BatchNbr   = doc.BatchNbr;
+                        wHTTran.TranDate   = doc.DocDate;
+                        wHTTran.PaymDate   = Base.APInvoice_DocType_RefNbr.Current?.DueDate;
+                        wHTTran.PersonalID = tWNWHT.PersonalID;
+                        wHTTran.PropertyID = tWNWHT.PropertyID;
+                        wHTTran.TypeOfIn   = tWNWHT.TypeOfIn;
+                        wHTTran.WHTFmtCode = tWNWHT.WHTFmtCode;
+                        wHTTran.WHTFmtSub  = tWNWHT.WHTFmtSub;
+                        wHTTran.PayeeName  = (string)PXSelectorAttribute.GetField(Base.APDocument.Cache, doc, nameof(doc.VendorID), doc.VendorID, nameof(Vendor.acctName));
+                        wHTTran.PayeeAddr  = SelectFrom<Address>.InnerJoin<Vendor>.On<Vendor.bAccountID.IsEqual<Address.bAccountID>
+                                                                                     .And<Vendor.defAddressID.IsEqual<Address.addressID>>>
+                                                               .Where<Vendor.bAccountID.IsEqual<@P.AsInt>>.View.ReadOnly.SelectSingleBound(Base, null, doc.VendorID).TopFirst?.AddressLine1;
+                        wHTTran.WHTTaxPct  = string.IsNullOrEmpty(tWNWHT.WHTTaxPct) ? 0m : System.Convert.ToDecimal(tWNWHT.WHTTaxPct);
+                        wHTTran.WHTAmt     = PXDBCurrencyAttribute.BaseRound(Base, (doc.CuryDocBal * wHTTran.WHTTaxPct).Value);
+                        wHTTran.NetAmt     = doc.CuryOrigDocAmt;
+                        wHTTran.SecNHIPct  = tWNWHT.SecNHIPct;
+                        wHTTran.SecNHICode = tWNWHT.SecNHICode;
+                        wHTTran.SecNHIAmt  = PXDBCurrencyAttribute.BaseRound(Base, (doc.CuryDocBal * wHTTran.SecNHIPct).Value);
+
+                        WHTTranView.Update(wHTTran);
+
+                        // Manually Saving as base code will not call base graph persis.
+                        WHTTranView.Cache.Persist(PXDBOperation.Insert);
+                        WHTTranView.Cache.Persist(PXDBOperation.Update);
+
+                        ts.Complete(Base);
+                    }
+
+                    // Triggering after save events.
+                    WHTTranView.Cache.Persisted(false);
+                }
+            }
+
+            foreach (APAdjust adjust in Base.APAdjust_AdjgDocType_RefNbr_VendorID.Cache.Cached)
+            {
+                if (doc != null && doc.Released == true && doc.DocType == APDocType.Check && Base.APPayment_DocType_RefNbr.Current != null)
+                {
+                    PXUpdate<Set<TWNWHTTran.paymDate, Required<APAdjust.adjgDocDate>,
+                                 Set<TWNWHTTran.paymRef, Required<APAdjust.adjgRefNbr>>>,
+                             TWNWHTTran,
+                             Where<TWNWHTTran.docType, Equal<Required<APAdjust.adjdDocType>>,
+                                   And<TWNWHTTran.refNbr, Equal<Required<APAdjust.adjdRefNbr>>>>>.Update(Base, Base.APPayment_DocType_RefNbr.Current.AdjDate, Base.APPayment_DocType_RefNbr.Current.ExtRefNbr,
+                                                                                                               adjust.AdjdDocType, adjust.AdjdRefNbr);
+                }
+            }
         }
-
-        //public delegate List<APRegister> ReleaseInvoiceDelegate(JournalEntry je, ref APRegister doc, 
-        //                                                        PXResult<APInvoice, CurrencyInfo, Terms, Vendor> res, 
-        //                                                        bool isPrebooking, out List<INRegister> inDocs);
-        //[PXOverride]
-        //public List<APRegister> ReleaseInvoice(JournalEntry je, ref APRegister doc,
-        //                                       PXResult<APInvoice, CurrencyInfo, Terms, Vendor> res,
-        //                                       bool isPrebooking, out List<INRegister> inDocs,
-        //                                       ReleaseInvoiceDelegate baseMethod)
-        //{
-        //    var ret = baseMethod(je, ref doc, res, isPrebooking, out inDocs);
-
-        //    if (Base.APTaxTran_TranType_RefNbr.Current != null)
-        //    {
-        //        Tax tax = SelectTax(Base, Base.APTran_TranType_RefNbr.Current.TaxID);
-
-        //        foreach (GLTran gLTran in je.GLTranModuleBatNbr.Cache.Inserted)
-        //        {
-        //            if (tax != null && (tax.PurchTaxAcctID.Equals(gLTran.AccountID) || tax.SalesTaxAcctID.Equals(gLTran.AccountID) ))
-        //            {
-        //                gLTran.TranDesc = string.Format("{0} / {1}", PXCache<APRegister>.GetExtension<APRegisterExt>(doc).UsrVATInCode,
-        //                                                             PXCache<APRegister>.GetExtension<APRegisterExt>(doc).UsrGUINbr);
-        //            }
-
-        //            //if (gLTran.ProjectID == ProjectDefaultAttribute.NonProject())
-        //            //{
-        //            //    gLTran.ProjectID = doc.ProjectID;
-        //            //    gLTran.TaskID    = Base.APTran_TranType_RefNbr.Current.TaskID;
-        //            //}
-        //        }
-        //    }
-
-        //    return ret;
-        //}
         #endregion
 
         #region Static Methods

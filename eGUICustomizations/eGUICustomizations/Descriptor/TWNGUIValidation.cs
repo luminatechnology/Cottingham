@@ -1,11 +1,10 @@
 ﻿using PX.Data;
 using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
-using PX.Objects.AR;
 using PX.Data.Licensing;
 using eGUICustomizations.DAC;
+using PX.Objects.AR;
 using Branch = PX.Objects.GL.Branch;
-using static eGUICustomizations.Descriptor.TWNStringList;
 
 namespace eGUICustomizations.Descriptor
 {
@@ -21,26 +20,37 @@ namespace eGUICustomizations.Descriptor
         public TWNGUITrans tWNGUITrans = null;
         #endregion
 
-        #region Static Method
+        #region Static Methods
         public static bool ActivateTWGUI(PXGraph graph)
         {
             if (graph.Accessinfo.BranchID == null) { return false; }
-
+            
             Address address = SelectFrom<Address>.InnerJoin<BAccount>.On<BAccount.bAccountID.IsEqual<Address.bAccountID>
                                                                         .And<BAccount.defAddressID.IsEqual<Address.addressID>>>
                                                   .InnerJoin<Branch>.On<Branch.bAccountID.IsEqual<BAccount.bAccountID>>
                                                   .Where<Branch.branchID.IsEqual<@P.AsInt>>.View.ReadOnly.Select(graph, graph.Accessinfo.BranchID);
 
-            return address.CountryID.Equals("TW"); // Hard code country ID in condition.
+            return address.CountryID == "TW"; // Hard code country ID in condition.
         }
         #endregion
 
-        #region Functions
-        public virtual void CheckGUINbrExisted(PXGraph graph, string gUINbr, string gUIFmtCode)
+        #region Methods
+        public virtual void CheckGUINbrExisted(PXGraph graph, string gUINbr, string gUIFmtCode, string refNbr = null)
         {
-            if (SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUINbr.IsEqual<@P.AsString>
-                                             .And<TWNGUITrans.gUIFormatcode.IsEqual<@P.AsString>>
-                                                  .And<TWNGUITrans.gUIStatus.IsEqual<TWNGUIStatus.used>>>.View.ReadOnly.Select(graph, gUINbr, gUIFmtCode).Count > 0)
+            var select = new SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUINbr.IsEqual<@P.AsString>
+                                                           .And<TWNGUITrans.gUIFormatcode.IsEqual<@P.AsString>>
+                                                                /*.And<TWNGUITrans.gUIStatus.IsEqual<TWNStringList.TWNGUIStatus.used>>*/>.View.ReadOnly(graph);
+
+            if (!string.IsNullOrEmpty(gUIFmtCode) && gUIFmtCode.EndsWith("3") == true)
+            {
+                select.WhereAnd<Where<TWNGUITrans.orderNbr, Equal<@P.AsString>>>();
+            }
+            else
+            {
+                select.WhereAnd<Where<TWNGUITrans.sequenceNo, Equal<PX.Objects.CS.decimal0>>>();
+            }
+
+            if (select.Select(gUINbr, gUIFmtCode, refNbr).Count > 0)
             {
                 throw new PXSetPropertyException(TWMessages.GUINbrExisted, PXErrorLevel.RowError);
             }
@@ -90,14 +100,19 @@ namespace eGUICustomizations.Descriptor
             }
         }
 
-        public virtual void CheckTaxAmount(decimal netAmt, decimal taxAmt)
+        public virtual PXSetPropertyException CheckTaxAmount(PXCache cache, decimal netAmt, decimal taxAmt)
         {
             const decimal fivePercent = (decimal)0.05;
 
+            PXSetPropertyException exception = null;
+
             if ((netAmt * fivePercent) - taxAmt > 1 && netAmt != 0)
             {
-                throw new PXSetPropertyException(TWMessages.TaxAmtIsWrong, PXErrorLevel.Warning);
+                exception = new PXSetPropertyException(TWMessages.TaxAmtIsWrong, PXErrorLevel.Warning);
             }
+
+            return exception;
+            ;
         }
 
         public virtual void CheckTabNbr(string taxNbr)
@@ -146,6 +161,22 @@ namespace eGUICustomizations.Descriptor
                     errorLevel    = (int)PXErrorLevel.Warning;
                     errorOccurred = true;
                     errorMessage  = TWMessages.TaxNbrWarning;
+                }
+            }
+        }
+
+        public virtual void VerifyGUIPrepayAdjust(PXCache cache, ARRegister register)
+        {
+            if (register != null)
+            {
+                string prepayGUINbr = register.GetExtension<ARRegisterExt>().UsrGUINbr;
+
+                TWNGUIPrepayAdjust prepayAdjust = SelectFrom<TWNGUIPrepayAdjust>.Where<TWNGUIPrepayAdjust.prepayGUINbr.IsEqual<@P.AsString>>
+                                                                                .OrderBy<TWNGUIPrepayAdjust.createdDateTime.Desc>.View.SelectSingleBound(cache.Graph, null, prepayGUINbr);
+
+                if (prepayAdjust != null && register?.CuryOrigDocAmt != (prepayAdjust.NetAmtUnapplied + prepayAdjust.TaxAmtUnapplied))
+                {
+                    throw new PXSetPropertyException(prepayAdjust.SequenceNo > 0 ? TWMessages.ExistPrepayCM : TWMessages.HasMultiPrepay, prepayGUINbr);
                 }
             }
         }

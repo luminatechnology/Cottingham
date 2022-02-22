@@ -56,7 +56,7 @@ namespace PX.Objects.CA
             }
         }
 
-        protected void _(Events.FieldDefaulting<TWNManualGUIBank, TWNManualGUIBank.deduction> e)
+        protected virtual void _(Events.FieldDefaulting<TWNManualGUIBank.deduction> e)
         {
             var row = (TWNManualGUIBank)e.Row;
 
@@ -64,28 +64,28 @@ namespace PX.Objects.CA
             e.NewValue = row.VendorID == null ? "1" : e.NewValue;
         }
 
-        protected void _(Events.FieldDefaulting<TWNManualGUIBank, TWNManualGUIBank.ourTaxNbr> e)
+        protected void _(Events.FieldDefaulting<TWNManualGUIBank.ourTaxNbr> e)
         {
             var row = e.Row as TWNManualGUIBank;
 
             e.NewValue = row.VendorID == null ? GUIPreferences.Current.OurTaxNbr : e.NewValue;
         }
 
-        protected void _(Events.FieldVerifying<TWNManualGUIBank, TWNManualGUIBank.gUINbr> e)
+        protected virtual void _(Events.FieldVerifying<TWNManualGUIBank.gUINbr> e)
         {
             var row = (TWNManualGUIBank)e.Row;
 
             tWNGUIValidation.CheckGUINbrExisted(Base, (string)e.NewValue, row.VATInCode);
         }
 
-        protected void _(Events.FieldVerifying<TWNManualGUIBank, TWNManualGUIBank.taxAmt> e)
+        protected virtual void _(Events.FieldVerifying<TWNManualGUIBank.taxAmt> e)
         {
             var row = (TWNManualGUIBank)e.Row;
 
-            tWNGUIValidation.CheckTaxAmount((decimal)row.NetAmt, (decimal)e.NewValue);
+            e.Cache.RaiseExceptionHandling<TWNManualGUIBank.taxAmt>(row, e.NewValue, tWNGUIValidation.CheckTaxAmount(e.Cache, row.NetAmt.Value, (decimal)e.NewValue));
         }
 
-        protected void _(Events.FieldUpdated<TWNManualGUIBank, TWNManualGUIBank.netAmt> e)
+        protected virtual void _(Events.FieldUpdated< TWNManualGUIBank.netAmt> e)
         {        
             var row = (TWNManualGUIBank)e.Row;
 

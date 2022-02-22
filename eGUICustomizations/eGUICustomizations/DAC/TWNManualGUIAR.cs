@@ -4,9 +4,7 @@ using PX.Objects.AR;
 using PX.Objects.CR;
 using PX.Objects.CS;
 using PX.Objects.TX;
-using eGUICustomizations.Graph;
 using eGUICustomizations.Descriptor;
-using static eGUICustomizations.Descriptor.TWNStringList;
 
 namespace eGUICustomizations.DAC
 {
@@ -24,19 +22,14 @@ namespace eGUICustomizations.DAC
         #region Status
         [PXDBString(1, IsUnicode = true, InputMask = "")]
         [PXUIField(DisplayName = "Status", Enabled = false)]
-        [TWNGUIManualStatus.List]
-        [PXDefault(TWNGUIManualStatus.Open)]
+        [TWNStringList.TWNGUIManualStatus.List]
+        [PXDefault(TWNStringList.TWNGUIManualStatus.Open)]
         public virtual string Status { get; set; }
         public abstract class status : PX.Data.BQL.BqlString.Field<status> { }
         #endregion
     
         #region CustomerID
-        [PXDBInt()]
-        [PXUIField(DisplayName = "Customer")]     
-        [PXSelector(typeof(Search<BAccount.bAccountID,
-                                  Where<BAccount.type.IsEqual<BAccountType.customerType>>>),
-                    SubstituteKey = typeof(BAccount.acctCD), 
-                    DescriptionField = typeof(BAccount.acctName))]
+        [CustomerActive()]
         public virtual int? CustomerID { get; set; }
         public abstract class customerID : PX.Data.BQL.BqlInt.Field<customerID> { }
         #endregion
@@ -47,24 +40,26 @@ namespace eGUICustomizations.DAC
         [PXSelector(typeof(Search<CSAttributeDetail.valueID,
                                   Where<CSAttributeDetail.attributeID, Equal<ARRegisterExt.VATOUTFRMTNameAtt>>>),
                     typeof(CSAttributeDetail.description))]
+        [PXDefault(TWGUIFormatCode.vATOutCode32)]
         public virtual string VatOutCode { get; set; }
         public abstract class vatOutCode : PX.Data.BQL.BqlString.Field<vatOutCode> { }
         #endregion
 
         #region GUINbr
-        [GUINumber(15, IsUnicode = true, InputMask = ">CCCCCCCCCCCCCC")]
+        [GUINumber(15, IsUnicode = true, InputMask = ">aaaaaaaaaaaaaaa")]
         [PXUIField(DisplayName = "GUI Nbr")]
         [PXDefault()]
         [ARGUINbrAutoNum(typeof(Search<TWNGUIPreferences.gUI2CopiesNumbering>), typeof(AccessInfo.businessDate))]
         [PXSelector(typeof(Search<TWNGUITrans.gUINbr,
-                                  Where<TWNGUITrans.gUIStatus, Equal<TWNGUIStatus.used>,
-                                        And<TWNGUITrans.gUIDirection, Equal<TWNGUIDirection.issue>,
+                                  Where<TWNGUITrans.gUIStatus, Equal<TWNStringList.TWNGUIStatus.used>,
+                                        And<TWNGUITrans.gUIDirection, Equal<TWNStringList.TWNGUIDirection.issue>,
                                             And<TWNGUITrans.gUIFormatcode, NotEqual<ARRegisterExt.VATOut33Att>,
                                                 And<TWNGUITrans.taxNbr, Equal<Current<taxNbr>>>>>>>),
                     typeof(TWNGUITrans.gUIFormatcode),
                     typeof(TWNGUITrans.netAmtRemain),
                     typeof(TWNGUITrans.taxAmtRemain),
-                    Filterable = true)]
+                    Filterable = true,
+                    ValidateValue = false)]
         public virtual string GUINbr { get; set; }
         public abstract class gUINbr : PX.Data.BQL.BqlString.Field<gUINbr> { }
         #endregion
@@ -128,7 +123,7 @@ namespace eGUICustomizations.DAC
         #endregion
     
         #region TaxAmt
-        [TWTaxAmount(0)]
+        [TWTaxAmount(0, typeof(netAmt))]
         [PXDefault(TypeCode.Decimal, "0.0")]
         [PXUIField(DisplayName = "Tax Amt")]
         public virtual decimal? TaxAmt { get; set; }
@@ -146,7 +141,7 @@ namespace eGUICustomizations.DAC
         #region CustomType
         [PXDBString(15, IsUnicode = true, InputMask = "")]
         [PXUIField(DisplayName = "Custom Type")]
-        [TWNGUICustomType.List] 
+        [TWNStringList.TWNGUICustomType.List] 
         public virtual string CustomType { get; set; }
         public abstract class customType : PX.Data.BQL.BqlString.Field<customType> { }
         #endregion

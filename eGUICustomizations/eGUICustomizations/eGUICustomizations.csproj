@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\..\Bin\</OutputPath>
+    <OutputPath>..\..\..\..\..\Bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
@@ -32,30 +32,36 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PX.Common">
-      <HintPath>..\..\..\..\..\..\Bin\PX.Common.dll</HintPath>
+      <HintPath>..\..\..\..\..\Bin\PX.Common.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="PX.Common.Std, Version=1.0.0.0, Culture=neutral, PublicKeyToken=3b136cac2f602b8e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Bin\PX.Common.Std.dll</HintPath>
     </Reference>
     <Reference Include="PX.CS.Contracts">
       <HintPath>..\..\..\..\..\..\Bin\PX.CS.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="PX.Data">
-      <HintPath>..\..\..\..\..\..\Bin\PX.Data.dll</HintPath>
+      <HintPath>..\..\..\..\..\Bin\PX.Data.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PX.Data.BQL.Fluent">
       <HintPath>..\..\..\..\..\..\Bin\PX.Data.BQL.Fluent.dll</HintPath>
     </Reference>
     <Reference Include="PX.Objects">
-      <HintPath>..\..\..\..\..\..\Bin\PX.Objects.dll</HintPath>
+      <HintPath>..\..\..\..\..\Bin\PX.Objects.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="PX.Objects.FS">
-      <HintPath>..\..\..\..\..\..\Bin\PX.Objects.FS.dll</HintPath>
+    <Reference Include="PX.SiteMap, Version=1.0.0.0, Culture=neutral, PublicKeyToken=3b136cac2f602b8e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Bin\PX.SiteMap.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -63,6 +69,7 @@
     <Compile Include="DAC\TWNExportTicketTypes.cs" />
     <Compile Include="DAC\TWNGUIInvCredit.cs" />
     <Compile Include="DAC\TWNGUIPreferences.cs" />
+    <Compile Include="DAC\TWNGUIPrepayAdjust.cs" />
     <Compile Include="DAC\TWNGUITrans.cs" />
     <Compile Include="DAC\TWNInvTranHist.cs" />
     <Compile Include="DAC\TWNManualGUIAP.cs" />
@@ -71,13 +78,15 @@
     <Compile Include="DAC\TWNManualGUIBank.cs" />
     <Compile Include="DAC\TWNManualGUIExpense.cs" />
     <Compile Include="DAC\TWNNPOTable.cs" />
-    <Compile Include="DAC_Extension\APRegisterExtensions.cs" />
+    <Compile Include="DAC\TWNWHT.cs" />
+    <Compile Include="DAC\TWNWHTTran.cs" />
     <Compile Include="DAC_Extension\ARRegisterExtensions.cs" />
     <Compile Include="DAC_Extension\TaxExtensions.cs" />
-    <Compile Include="Descriptor\ARGUINbrAutoNumAttribute.cs" />
+    <Compile Include="Descriptor\TWNAttribute.cs" />
     <Compile Include="Descriptor\TWMessages.cs" />
     <Compile Include="Descriptor\TWNB2CPrinter.cs" />
     <Compile Include="Descriptor\TWNGUIValidation.cs" />
+    <Compile Include="Descriptor\TWNSiteMapControlHandler.cs" />
     <Compile Include="Descriptor\TWNStringList.cs" />
     <Compile Include="Graph\TWNCreateNewGUIMaint.cs" />
     <Compile Include="Graph\TWNeGUIInquiry.cs" />
@@ -93,12 +102,15 @@
     <Compile Include="Graph\TWNManGUIAPMaint.cs" />
     <Compile Include="Graph\TWNManGUIARMaint.cs" />
     <Compile Include="Graph\TWNNPOMaint.cs" />
+    <Compile Include="Graph\TWNWHTInquiry.cs" />
     <Compile Include="Graph_Extension\AddReturnLineToDirectInvoice.cs" />
     <Compile Include="Graph_Extension\APInvoiceEntry.cs" />
     <Compile Include="Graph_Extension\ARInvoiceEntry.cs" />
+    <Compile Include="Graph_Extension\ARPaymentEntry.cs" />
     <Compile Include="Graph_Extension\CATranEntry.cs" />
     <Compile Include="Graph_Extension\ExpenseClaimEntry.cs" />
     <Compile Include="Graph_Extension\SalesTaxMaint.cs" />
+    <Compile Include="Graph_Extension\SOInvoiceEntry.cs" />
     <Compile Include="Graph_Extension\SOOrderEntry.cs" />
     <Compile Include="Graph_Release\APDocumentRelease.cs" />
     <Compile Include="Graph_Release\ARReleaseProcess.cs" />

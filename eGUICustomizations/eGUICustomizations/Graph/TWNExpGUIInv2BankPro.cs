@@ -9,7 +9,6 @@ using PX.Objects.AR;
 using PX.Objects.SO;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
-using static eGUICustomizations.Descriptor.TWNStringList;
 
 namespace eGUICustomizations.Graph
 {
@@ -38,12 +37,15 @@ namespace eGUICustomizations.Graph
         #region Features & Setup
         public PXCancel<TWNGUITrans> Cancel;
         public PXProcessing<TWNGUITrans,
-                            Where<TWNGUITrans.eGUIExcluded, Equal<False>,
-                                  And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
-                                             Or<TWNGUITrans.eGUIExported, IsNull>>,
-                                       And<Where<TWNGUITrans.gUIFormatcode, Equal<VATOutCode31>,
-                                                 Or<TWNGUITrans.gUIFormatcode, Equal<VATOutCode32>,
-                                                    Or<TWNGUITrans.gUIFormatcode, Equal<VATOutCode35>>>>>>>> GUITranProc;
+                            Where<TWNGUITrans.eGUIExcluded.IsNotEqual<True>
+                                  .And<TWNGUITrans.eGUIExported.IsNotEqual<True>
+                                      .And<TWNGUITrans.gUIFormatcode.IsIn<VATOutCode31, VATOutCode32, VATOutCode35>
+                                          .And<TWNGUITrans.taxNbr.IsNotNull>>>>> GUITranProc;
+        //And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
+        //           Or<TWNGUITrans.eGUIExported, IsNull>>,
+        //     And<Where<TWNGUITrans.gUIFormatcode, Equal<VATOutCode31>,
+        //               Or<TWNGUITrans.gUIFormatcode, Equal<VATOutCode32>,
+        //                  Or<TWNGUITrans.gUIFormatcode, Equal<VATOutCode35>>>>>>>> GUITranProc;
         public PXSetup<TWNGUIPreferences> gUIPreferSetup;
         #endregion
 
@@ -56,7 +58,56 @@ namespace eGUICustomizations.Graph
         }
         #endregion
 
-        #region Functions
+        #region Methods
+        public void UpdateGUITran(List<TWNGUITrans> tWNGUITrans)
+        {
+            foreach (TWNGUITrans trans in tWNGUITrans)
+            {
+                trans.EGUIExported = true;
+                trans.EGUIExportedDateTime = DateTime.UtcNow;
+
+                GUITranProc.Cache.Update(trans);
+            }
+
+            this.Actions.PressSave();
+        }
+
+        public void UploadFile2FTP(string fileName, string content)
+        {
+            ///<remarks>
+            ///ftpes:// is not a standard protocol prefix. But it is recognized by some FTP clients to mean "Explicit FTP over TLS/SSL".
+            ///With FtpWebRequest you specify that by using standard ftp:// protocol prefix and setting EnableSsl = true
+            ///</remarks>
+            string uRL = gUIPreferSetup.Current.Url.Replace("ftps", "ftp");
+
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(new Uri(uRL + fileName));
+
+            request.Credentials = new NetworkCredential(gUIPreferSetup.Current.UserName, gUIPreferSetup.Current.Password);
+            request.Method = WebRequestMethods.Ftp.UploadFile;
+            //request.EnableSsl = true;
+
+            byte[] data = System.Text.Encoding.UTF8.GetBytes(content);
+
+            request.ContentLength = data.Length;
+
+            Stream requestStream = request.GetRequestStream();
+
+            requestStream.Write(data, 0, data.Length);
+            requestStream.Close();
+            requestStream.Dispose();
+
+            using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
+            {
+                response.Close();
+                /// Close FTP
+                request.Abort();
+
+                //throw new PXOperationCompletedException(message);
+            }
+        }
+        #endregion
+
+        #region Static Methods
         public static void Upload(List<TWNGUITrans> tWNGUITrans)
         {
             try
@@ -127,23 +178,24 @@ namespace eGUICustomizations.Graph
                     lines += (gUITrans.BatchNbr != null) ? gUITrans.BatchNbr.Substring(gUITrans.BatchNbr.Length - 4, 4) : null;
                     lines += verticalBar;
                     // Carrier Type
-                    lines += ARReleaseProcess_Extension.GetCarrierType(gUITrans.CarrierID) + verticalBar;
+                    Tuple<string, string, string> tuple = new ARReleaseProcess_Extension().GetB2CTypeValue(string.IsNullOrEmpty(gUITrans.TaxNbr), gUITrans.CarrierID, gUITrans.NPONbr);
+                    lines += tuple.Item1 + verticalBar;
                     // Carrier ID
-                    lines += ARReleaseProcess_Extension.GetCarrierID(gUITrans.TaxNbr, gUITrans.CarrierID) + verticalBar;
+                    lines += tuple.Item2 + verticalBar;
                     // NPOBAN
-                    lines += ARReleaseProcess_Extension.GetNPOBAN(gUITrans.TaxNbr, gUITrans.NPONbr) + verticalBar;
+                    lines += tuple.Item3 + verticalBar;
                     // Request Paper
-                    lines += gUITrans.B2CPrinted.Equals(true) ? "Y" : "N" + verticalBar;
+                    lines += gUITrans.B2CPrinted == true ? "Y" : "N" + verticalBar;
                     // Void Reason
                     // Project Number Void Approved
                     lines += new string(char.Parse(verticalBar), 2) + "\r\n";
 
                     // The following method is only for voided invoice.
-                    if (gUITrans.GUIStatus == TWNGUIStatus.Voided)
+                    if (gUITrans.GUIStatus == TWNStringList.TWNGUIStatus.Voided)
                     {
                         CreateVoidedDetailLine(verticalBar, gUITrans.OrderNbr, ref lines);
                     }
-                    else 
+                    else
                     {
                         foreach (PXResult<ARTran> result in graph.RetrieveARTran(gUITrans.OrderNbr))
                         {
@@ -266,50 +318,6 @@ namespace eGUICustomizations.Graph
             }
         }
 
-        public void UpdateGUITran(List<TWNGUITrans> tWNGUITrans)
-        {
-            foreach (TWNGUITrans trans in tWNGUITrans)
-            {
-                trans.EGUIExported = true;
-                trans.EGUIExportedDateTime = DateTime.UtcNow;
-
-                GUITranProc.Cache.Update(trans);
-            }
-
-            this.Actions.PressSave();
-        }
-
-        public void UploadFile2FTP(string fileName, string content)
-        {
-            //string message = "Upload Processing Completed";
-
-            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(new Uri(gUIPreferSetup.Current.Url + fileName));
-
-            request.Credentials = new NetworkCredential(gUIPreferSetup.Current.UserName, gUIPreferSetup.Current.Password);
-            request.Method = WebRequestMethods.Ftp.UploadFile;
-
-            byte[] data = System.Text.Encoding.UTF8.GetBytes(content);
-
-            request.ContentLength = data.Length;
-
-            Stream requestStream = request.GetRequestStream();
-
-            requestStream.Write(data, 0, data.Length);
-            requestStream.Close();
-            requestStream.Dispose();
-
-            using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
-            {
-                response.Close();
-                /// Close FTP
-                request.Abort();
-
-                //throw new PXOperationCompletedException(message);
-            }
-        }
-        #endregion
-
-        #region Static Methods
         public static string GetBillType(TWNGUITrans gUITran)
         {
             string billType = null;
@@ -318,13 +326,13 @@ namespace eGUICustomizations.Graph
             {
                 case TWGUIFormatCode.vATOutCode35:
                 case TWGUIFormatCode.vATOutCode31:
-                    if (gUITran.GUIStatus == TWNGUIStatus.Used) { billType = "O"; }
-                    else if (gUITran.GUIStatus == TWNGUIStatus.Voided) { billType = "C"; }
+                    if (gUITran.GUIStatus == TWNStringList.TWNGUIStatus.Used) { billType = "O"; }
+                    else if (gUITran.GUIStatus == TWNStringList.TWNGUIStatus.Voided) { billType = "C"; }
                     break;
 
                 case TWGUIFormatCode.vATOutCode33:
-                    if (gUITran.GUIStatus == TWNGUIStatus.Used) { billType = "A2"; }
-                    else if (gUITran.GUIStatus == TWNGUIStatus.Voided) { billType = "D"; }
+                    if (gUITran.GUIStatus == TWNStringList.TWNGUIStatus.Used) { billType = "A2"; }
+                    else if (gUITran.GUIStatus == TWNStringList.TWNGUIStatus.Voided) { billType = "D"; }
                     break;
             }
 
@@ -333,25 +341,25 @@ namespace eGUICustomizations.Graph
 
         public static string GetTaxType(string vATType)
         {
-            if (vATType == TWNGUIVATType.Five) { return "1"; }
-            else if (vATType == TWNGUIVATType.Zero) { return "2"; }
+            if (vATType == TWNStringList.TWNGUIVATType.Five) { return "1"; }
+            else if (vATType == TWNStringList.TWNGUIVATType.Zero) { return "2"; }
             else { return "3"; }
         }
 
         public static string GetTaxRate(string vATType)
         {
-            return (vATType == TWNGUIVATType.Five) ? "0.05" : "0";
+            return (vATType == TWNStringList.TWNGUIVATType.Five) ? "0.05" : "0";
         }
 
         public static string GetCustomClearance(TWNGUITrans gUITran)
         {
-            if (gUITran.CustomType == TWNGUICustomType.NotThruCustom &&
-                gUITran.VATType == TWNGUIVATType.Five)
+            if (gUITran.CustomType == TWNStringList.TWNGUICustomType.NotThruCustom &&
+                gUITran.VATType == TWNStringList.TWNGUIVATType.Five)
             {
                 return "1";
             }
-            if (gUITran.CustomType == TWNGUICustomType.ThruCustom &&
-                gUITran.VATType == TWNGUIVATType.Zero)
+            if (gUITran.CustomType == TWNStringList.TWNGUICustomType.ThruCustom &&
+                gUITran.VATType == TWNStringList.TWNGUIVATType.Zero)
             {
                 return "2";
             }
@@ -363,7 +371,7 @@ namespace eGUICustomizations.Graph
 
         public static string GetCancelDate(TWNGUITrans gUITran)
         {
-            return gUITran.GUIStatus.Equals(TWNGUIStatus.Voided) ? gUITran.GUIDate.Value.ToString("yyyyMMdd") : string.Empty;
+            return gUITran.GUIStatus ==TWNStringList.TWNGUIStatus.Voided ? gUITran.GUIDate.Value.ToString("yyyyMMdd") : string.Empty;
         }
 
         public static decimal GetSalesAmt(TWNGUITrans gUITran)

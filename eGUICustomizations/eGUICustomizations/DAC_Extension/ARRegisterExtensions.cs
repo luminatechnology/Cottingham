@@ -3,9 +3,7 @@ using PX.Data;
 using PX.Objects.CR;
 using PX.Objects.CS;
 using eGUICustomizations.DAC;
-using eGUICustomizations.Graph;
 using eGUICustomizations.Descriptor;
-using static eGUICustomizations.Descriptor.TWNStringList;
 
 namespace PX.Objects.AR
 {
@@ -19,10 +17,8 @@ namespace PX.Objects.AR
         }
         
         [PXDBString(2, IsUnicode = true)]
-        [PXUIField(DisplayName = "VAT Out Code", Visibility = PXUIVisibility.SelectorVisible)]
-        [PXSelector(typeof(Search<CSAttributeDetail.valueID,
-                                  Where<CSAttributeDetail.attributeID, Equal<VATOUTFRMTNameAtt>>>),
-                    typeof(CSAttributeDetail.description),
+        [PXUIField(DisplayName = "VAT Out Code")]
+        [PXSelector(typeof(Search<CSAttributeDetail.valueID, Where<CSAttributeDetail.attributeID, Equal<VATOUTFRMTNameAtt>>>),
                     DescriptionField = typeof(CSAttributeDetail.description), 
                     ValidateValue = false)]
         public virtual string UsrVATOutCode { get; set; }
@@ -37,7 +33,7 @@ namespace PX.Objects.AR
         }
 
         [TaxNbrVerify(8, IsUnicode = true)]
-        [PXUIField(DisplayName = "Tax Nbr")]
+        [PXUIField(DisplayName = "Tax Nbr.")]
         [PXDefault(typeof(Search2<CSAnswers.value, InnerJoin<Customer, On<Customer.noteID, Equal<CSAnswers.refNoteID>>>,
                                                    Where<Customer.bAccountID, Equal<Current<ARRegister.customerID>>,
                                                          And<CSAnswers.attributeID, Equal<TaxNbrNameAtt>>>>),
@@ -55,7 +51,7 @@ namespace PX.Objects.AR
         }
 
         [TaxNbrVerify(8, IsUnicode = true)]
-        [PXUIField(DisplayName = "Our Tax Nbr")]
+        [PXUIField(DisplayName = "Our Tax Nbr.")]
         [PXDefault(typeof(Search2<CSAnswers.value, InnerJoin<Customer, On<Customer.noteID, Equal<CSAnswers.refNoteID>>>,
                                                    Where<Customer.bAccountID, Equal<Current<ARRegister.customerID>>,
                                                          And<CSAnswers.attributeID, Equal<OurTaxNbrNameAtt>>>>),
@@ -76,17 +72,18 @@ namespace PX.Objects.AR
             public VATOut34Att() : base(TWGUIFormatCode.vATOutCode34) { }
         }
 
-        [GUINumber(1000, IsUnicode = true, InputMask = ">CCCCCCCCCCCCCC")]
+        //[GUINumber(1000, IsUnicode = true, InputMask = ">CCCCCCCCCCCCCC")]
+        [PXDBString(10000, IsUnicode = true)]
         [PXUIField(DisplayName = "GUI Nbr.")]
-        //[ARGUINbrAutoNum(typeof(TWNGUIPreferences.gUI2CopiesNumbering), typeof(AccessInfo.businessDate))]
-        [PXSelector(typeof(Search2<TWNGUITrans.gUINbr,
-                                   InnerJoin<BAccount, On<BAccount.acctCD, Equal<TWNGUITrans.custVend>>>,
-                                   Where<BAccount.bAccountID, Equal<Current<ARRegister.customerID>>,
-                                       And<TWNGUITrans.gUIStatus,Equal<TWNGUIStatus.used>,
-                                           And<TWNGUITrans.gUIDirection, Equal<TWNGUIDirection.issue>,
-                                               And<Where<TWNGUITrans.gUIFormatcode, NotEqual<VATOut33Att>,
-                                                         And<TWNGUITrans.gUIFormatcode, NotEqual<VATOut34Att>>>>>>>>),
+        [PXSelector(typeof(Search2<TWNGUITrans.gUINbr, InnerJoin<BAccount, On<BAccount.acctCD, Equal<TWNGUITrans.custVend>>>,
+                                                       Where<BAccount.bAccountID, Equal<Current<ARRegister.customerID>>,
+                                                           And<TWNGUITrans.gUIStatus,Equal<TWNStringList.TWNGUIStatus.used>,
+                                                               And<TWNGUITrans.gUIDirection, Equal<TWNStringList.TWNGUIDirection.issue>,
+                                                                   And<TWNGUITrans.netAmtRemain, Greater<decimal0>,
+                                                                       And<Where<TWNGUITrans.gUIFormatcode, NotEqual<VATOut33Att>,
+                                                                                 And<TWNGUITrans.gUIFormatcode, NotEqual<VATOut34Att>>>>>>>>>),
                     typeof(TWNGUITrans.gUIFormatcode),
+                    typeof(TWNGUITrans.gUINbr),
                     typeof(TWNGUITrans.netAmtRemain),
                     typeof(TWNGUITrans.taxAmtRemain),
                     ValidateValue = false,
@@ -98,8 +95,7 @@ namespace PX.Objects.AR
         #region UsrGUIDate
         [PXDBDate]
         [PXUIField(DisplayName = "GUI Date")]
-        [PXDefault(typeof(AccessInfo.businessDate), 
-                   PersistingCheck = PXPersistingCheck.Nothing)]        
+        [PXDefault(typeof(AccessInfo.businessDate),  PersistingCheck = PXPersistingCheck.Nothing)]        
         public virtual DateTime? UsrGUIDate { get; set; }
         public abstract class usrGUIDate : IBqlField { }
         #endregion
@@ -107,7 +103,7 @@ namespace PX.Objects.AR
         #region UsrB2CType
         [PXDBString(3, IsUnicode = true)]
         [PXUIField(DisplayName = "B2C Type")]
-        [PXDefault(TWNB2CType.DEF, PersistingCheck = PXPersistingCheck.Nothing)]
+        [PXDefault(TWNStringList.TWNB2CType.DEF, PersistingCheck = PXPersistingCheck.Nothing)]
         public virtual string UsrB2CType { get; set; }
         public abstract class usrB2CType : PX.Data.BQL.BqlString.Field<usrB2CType> { }
         #endregion
@@ -121,7 +117,7 @@ namespace PX.Objects.AR
 
         #region UsrNPONbr
         [PXDBString(10, IsUnicode = true)]
-        [PXUIField(DisplayName = "NPO Nbr", Visibility = PXUIVisibility.SelectorVisible, IsDirty = true)]
+        [PXUIField(DisplayName = "NPO Nbr.", Visibility = PXUIVisibility.SelectorVisible, IsDirty = true)]
         [NPONbrSelector]
         public virtual string UsrNPONbr { get; set; }
         public abstract class usrNPONbr : PX.Data.BQL.BqlString.Field<usrNPONbr> { }
@@ -130,9 +126,17 @@ namespace PX.Objects.AR
         #region UsrCreditAction
         [PXDBString(10, IsUnicode = true)]
         [PXUIField(DisplayName = "Credit Action")]
-        [PXDefault(TWNCreditAction.NO, PersistingCheck = PXPersistingCheck.Nothing)]
+        [PXDefault(TWNStringList.TWNCreditAction.NO, PersistingCheck = PXPersistingCheck.Nothing)]
         public virtual string UsrCreditAction { get; set; }
         public abstract class usrCreditAction : PX.Data.BQL.BqlString.Field<usrCreditAction> { }
+        #endregion
+
+        #region UsrVATType
+        [PXDBString(2, IsUnicode = true)]
+        [PXUIField(DisplayName = "VAT Type")]
+        [TWNStringList.TWNGUIVATType.List]
+        public virtual string UsrVATType { get; set; }
+        public abstract class usrVATType : PX.Data.BQL.BqlString.Field<usrVATType> { }
         #endregion
     }
 }

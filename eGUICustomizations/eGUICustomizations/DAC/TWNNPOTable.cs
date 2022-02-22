@@ -1,6 +1,6 @@
 ﻿using System;
 using PX.Data;
-using eGUICustomizations.Graph;
+using eGUICustomizations.Descriptor;
 
 namespace eGUICustomizations.DAC
 {

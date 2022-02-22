@@ -2,31 +2,163 @@
 using PX.Data;
 using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
-using PX.Objects.GL;
+using PX.Objects.AR;
 using PX.Objects.TX;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
-using eGUICustomizations.Graph;
-using static eGUICustomizations.Descriptor.TWNStringList;
 
 namespace eGUICustomizations.Graph_Release
 {
     public class TWNReleaseProcess : PXGraph<TWNReleaseProcess>, ITWNGUITran
     {
+        #region Selects
         public SelectFrom<TWNGUITrans>.View ViewGUITrans;
+        public SelectFrom<TWNGUIPrepayAdjust>.View PrepayAdjust;
+        #endregion
 
         #region Property
         public int SequenceNo { get; set; }
         #endregion
 
-        #region Functions
-        public TWNGUITrans InitAndCheckOnAP(string gUINbr, string vATInCode)
+        #region Methods
+        public virtual void CreateGUITrans(STWNGUITran sGUITran)
         {
-            SequenceNo = (int)PXSelectGroupBy<TWNGUITrans,
-                                              Where<TWNGUITrans.gUINbr, Equal<Required<TWNGUITrans.gUINbr>>,
-                                                    And<TWNGUITrans.gUIFormatcode, Equal<Required<TWNGUITrans.gUIFormatcode>>>>,
-                                              Aggregate<Count>>
-                                              .Select(this, gUINbr, vATInCode).RowCount;
+            TWNGUITrans row = ViewGUITrans.Cache.CreateInstance() as TWNGUITrans;
+
+            row.GUIFormatcode = sGUITran.VATCode;
+            row.GUINbr        = sGUITran.GUINbr;
+            row.SequenceNo    = SequenceNo;
+
+            row = ViewGUITrans.Insert(row);
+
+            row.GUIStatus     = sGUITran.GUIStatus;
+            row.Branch        = PXAccess.GetBranchCD(sGUITran.BranchID);
+            row.GUIDirection  = sGUITran.GUIDirection;
+            row.GUIDate       = row.GUIDecPeriod = sGUITran.GUIDate;
+            row.GUITitle      = sGUITran.GUITitle;
+            row.TaxZoneID     = sGUITran.TaxZoneID;
+            row.TaxCategoryID = sGUITran.TaxCategoryID;
+            row.TaxID         = sGUITran.TaxID;
+            row.VATType       = sGUITran.VATType ?? GetVATType(row.TaxID);
+            row.TaxNbr        = sGUITran.TaxNbr;
+            row.OurTaxNbr     = sGUITran.OurTaxNbr;
+            row.NetAmount     = row.NetAmtRemain = sGUITran.NetAmount;
+            row.TaxAmount     = row.TaxAmtRemain = sGUITran.TaxAmount;
+            row.CustVend      = sGUITran.AcctCD;
+            row.CustVendName  = sGUITran.AcctName;
+            row.DeductionCode = sGUITran.DeductionCode;
+            row.TransDate     = base.Accessinfo.BusinessDate;
+            row.EGUIExcluded  = sGUITran.eGUIExcluded;
+            row.Remark        = sGUITran.Remark;
+            row.BatchNbr      = sGUITran.BatchNbr;
+            row.OrderNbr      = sGUITran.OrderNbr;
+            row.CarrierType   = sGUITran.CarrierType;
+            row.CarrierID     = sGUITran.CarrierID;
+            row.NPONbr        = sGUITran.NPONbr;
+            row.B2CPrinted    = sGUITran.B2CPrinted;
+            //row.QREncrypter   = sGUITran.GUIDirection.Equals(TWNGUIDirection.Issue) && sGUITran.NetAmount > 0 && sGUITran.eGUIExcluded.Equals(false) ? GetQREncrypter(sGUITran) : null;
+
+            ViewGUITrans.Update(row);
+
+            this.Actions.PressSave();
+        }
+
+        public virtual void CreateGUIPrepayAdjust(bool create2Record = false, Tuple<string, int?, decimal?, decimal?, decimal?, decimal?> tuple = null)
+        {
+            TWNGUITrans trans = ViewGUITrans.Current;
+
+            TWNGUIPrepayAdjust prepay = PrepayAdjust.Cache.CreateInstance() as TWNGUIPrepayAdjust;
+
+            prepay.AppliedGUINbr = trans.GUINbr;
+            prepay.PrepayGUINbr  = tuple?.Item1 ?? trans.GUINbr;
+            prepay.SequenceNo    = tuple?.Item2 ?? trans.SequenceNo;
+            prepay.Reason        = create2Record == false ? trans.GUIStatus : TWNStringList.TWNGUIStatus.Used;
+
+            prepay = PrepayAdjust.Insert(prepay);
+
+            decimal? netAmt = tuple?.Item3 ?? trans.NetAmount;
+            decimal? taxAmt = tuple?.Item4 ?? trans.TaxAmount;
+
+            prepay.NetAmt          = prepay.Reason != TWNStringList.TWNGUIStatus.Voided ? netAmt : -1 * netAmt;
+            prepay.TaxAmt          = prepay.Reason != TWNStringList.TWNGUIStatus.Voided ? taxAmt : -1 * taxAmt;
+            prepay.NetAmtUnapplied = prepay.Reason != TWNStringList.TWNGUIStatus.Voided ? (tuple?.Item5 ?? netAmt) : prepay.NetAmt;
+            prepay.TaxAmtUnapplied = prepay.Reason != TWNStringList.TWNGUIStatus.Voided ? (tuple?.Item6 ?? taxAmt) : prepay.TaxAmt;
+            prepay.Remark          = trans.Remark;
+
+            PrepayAdjust.Update(prepay);
+
+            this.Actions.PressSave();
+        }
+
+        public virtual void GenerateVoidedGUI(bool isDeleted, ARRegister register)
+        {
+            int count = isDeleted == true ? 2 : 1;
+
+            ARRegisterExt regisExt = register.GetExtension<ARRegisterExt>();
+
+            if (string.IsNullOrEmpty(regisExt.UsrGUINbr)) { return; }
+
+            using (PXTransactionScope ts = new PXTransactionScope())
+            {
+                new TWNGUIValidation().VerifyGUIPrepayAdjust(this.PrepayAdjust.Cache, register);
+
+                TWNReleaseProcess rp = PXGraph.CreateInstance<TWNReleaseProcess>();
+
+                var trans = rp.InitAndCheckOnAR(regisExt.UsrGUINbr, regisExt.UsrVATOutCode);
+
+                Customer customer = Customer.PK.Find(this, register.CustomerID);
+
+                Tuple<string, string, string, decimal?, decimal?> tuple = new ARReleaseProcess_Extension().RetrieveTaxDetails(this, register);
+
+                if (isDeleted == true)
+                {
+                    rp.CreateGUITrans(new STWNGUITran()
+                    {
+                        VATCode       = regisExt.UsrVATOutCode,
+                        GUINbr        = regisExt.UsrGUINbr,
+                        GUIStatus     = TWNStringList.TWNGUIStatus.Voided,
+                        BranchID      = register.BranchID,
+                        GUIDirection  = TWNStringList.TWNGUIDirection.Issue,
+                        GUIDate       = regisExt.UsrGUIDate.Value.Date.Add(register.CreatedDateTime.Value.TimeOfDay),
+                        GUITitle      = customer.AcctName,
+                        TaxZoneID     = tuple.Item1,
+                        TaxCategoryID = tuple.Item3,
+                        TaxID         = tuple.Item2,
+                        TaxNbr        = regisExt.UsrTaxNbr,
+                        OurTaxNbr     = regisExt.UsrOurTaxNbr,
+                        NetAmount     = tuple.Item4,
+                        TaxAmount     = tuple.Item5,
+                        AcctCD        = customer.AcctCD,
+                        AcctName      = customer.AcctName,
+                        Remark        = register.DocDesc,
+                        OrderNbr      = register.RefNbr
+                    });
+                }
+                else
+                {
+                    rp.ViewGUITrans.Current = SelectFrom<TWNGUITrans>.Where<TWNGUITrans.gUIFormatcode.IsEqual<@P.AsString>
+                                                                            .And<TWNGUITrans.gUINbr.IsEqual<@P.AsString>
+                                                                                 .And<TWNGUITrans.orderNbr.IsEqual<@P.AsString>>>>.View
+                                                                            .SelectSingleBound(this, null, regisExt.UsrVATOutCode, regisExt.UsrGUINbr, register.RefNbr);
+
+                    rp.ViewGUITrans.Current.GUIStatus = TWNStringList.TWNGUIStatus.Voided;
+                    rp.ViewGUITrans.UpdateCurrent();
+                }
+
+                for (int i = 1; i <= count; i++)
+                {
+                    rp.CreateGUIPrepayAdjust(isDeleted && i == 2);
+                }
+
+                ts.Complete();
+            }
+        }
+
+        public virtual TWNGUITrans InitAndCheckOnAP(string gUINbr, string vATInCode)
+        {
+            SequenceNo = (int)PXSelectGroupBy<TWNGUITrans, Where<TWNGUITrans.gUINbr, Equal<Required<TWNGUITrans.gUINbr>>,
+                                                                 And<TWNGUITrans.gUIFormatcode, Equal<Required<TWNGUITrans.gUIFormatcode>>>>,
+                                              Aggregate<Count>>.Select(this, gUINbr, vATInCode).RowCount;
 
             TWNGUIValidation gUIValidation = new TWNGUIValidation();
 
@@ -35,13 +167,11 @@ namespace eGUICustomizations.Graph_Release
             return gUIValidation.tWNGUITrans;
         }
 
-        public TWNGUITrans InitAndCheckOnAR(string gUINbr, string vATOutCode)
+        public virtual TWNGUITrans InitAndCheckOnAR(string gUINbr, string vATOutCode)
         {
-            SequenceNo = (int)PXSelectGroupBy<TWNGUITrans,
-                                              Where<TWNGUITrans.gUINbr, Equal<Required<TWNGUITrans.gUINbr>>,
-                                                    And<TWNGUITrans.gUIFormatcode, Equal<Required<TWNGUITrans.gUIFormatcode>>>>,
-                                              Aggregate<Count>>
-                                              .Select(this, gUINbr, vATOutCode).RowCount;
+            SequenceNo = (int)PXSelectGroupBy<TWNGUITrans, Where<TWNGUITrans.gUINbr, Equal<Required<TWNGUITrans.gUINbr>>,
+                                                                 And<TWNGUITrans.gUIFormatcode, Equal<Required<TWNGUITrans.gUIFormatcode>>>>,
+                                              Aggregate<Count>>.Select(this, gUINbr, vATOutCode).RowCount;
 
             TWNGUIValidation gUIValidation = new TWNGUIValidation();
 
@@ -50,31 +180,9 @@ namespace eGUICustomizations.Graph_Release
             return gUIValidation.tWNGUITrans;
         }
 
-        public string GetBranchCD(int? branchID)
-        {
-            int parm = branchID is null ? base.Accessinfo.BranchID.Value : branchID.Value;
-
-            Branch branch = SelectFrom<Branch>.Where<Branch.branchID.IsEqual<@P.AsInt>>
-                                              .View.ReadOnly.SelectSingleBound(this, null, parm);
-
-            return branch.BranchCD;
-        }
-
-        public string GetVATType(string taxID)
-        {
-            Tax tax = SelectFrom<Tax>.Where<Tax.taxID.IsEqual<@P.AsString>>.View.ReadOnly.SelectSingleBound(this, null, taxID);
-
-            if (tax != null)
-            {
-                return tax.GetExtension<TaxExt>().UsrGUIType;
-            }
-            else
-            { 
-                return string.Empty; 
-            }            
-        }
+        private string GetVATType(string taxID) => SelectFrom<Tax>.Where<Tax.taxID.IsEqual<@P.AsString>>.View.ReadOnly.SelectSingleBound(this, null, taxID)?.TopFirst?.GetExtension<TaxExt>().UsrGUIType;
        
-        //public string GetQREncrypter(STWNGUITran sGUITran)
+        //private string GetQREncrypter(STWNGUITran sGUITran)
         //{
         //    com.tradevan.qrutil.QREncrypter qrEncrypter = new com.tradevan.qrutil.QREncrypter();
 
@@ -123,61 +231,6 @@ namespace eGUICustomizations.Graph_Release
 
         //    return result;
         //}
-
-        public void CreateGUITrans(STWNGUITran sGUITran)
-        {
-            TWNGUITrans row = ViewGUITrans.Cache.CreateInstance() as TWNGUITrans;
-
-            row.GUIFormatcode = sGUITran.VATCode;
-            row.GUINbr        = sGUITran.GUINbr;
-            row.SequenceNo    = SequenceNo;
-
-            row = ViewGUITrans.Insert(row);
-
-            row.GUIStatus     = sGUITran.GUIStatus;
-            row.Branch        = GetBranchCD(sGUITran.BranchID);
-            row.GUIDirection  = sGUITran.GUIDirection;
-            row.GUIDate       = row.GUIDecPeriod = sGUITran.GUIDate;
-            row.GUITitle      = sGUITran.GUITitle;
-            row.TaxZoneID     = sGUITran.TaxZoneID;
-            row.TaxCategoryID = sGUITran.TaxCategoryID;
-            row.TaxID         = sGUITran.TaxID;
-            row.VATType       = GetVATType(row.TaxID);
-            row.TaxNbr        = sGUITran.TaxNbr;
-            row.OurTaxNbr     = sGUITran.OurTaxNbr;
-            row.NetAmount     = row.NetAmtRemain = sGUITran.NetAmount;
-            row.TaxAmount     = row.TaxAmtRemain = sGUITran.TaxAmount;
-            row.CustVend      = sGUITran.AcctCD;
-            row.CustVendName  = sGUITran.AcctName;
-            row.DeductionCode = sGUITran.DeductionCode;
-            row.TransDate     = base.Accessinfo.BusinessDate;
-            row.EGUIExcluded  = sGUITran.eGUIExcluded;
-            row.Remark        = sGUITran.Remark;
-            row.BatchNbr      = sGUITran.BatchNbr;
-            row.OrderNbr      = sGUITran.OrderNbr;
-            row.CarrierType   = sGUITran.CarrierType;
-            row.CarrierID     = sGUITran.CarrierID;
-            row.NPONbr        = sGUITran.NPONbr;
-            row.B2CPrinted    = sGUITran.B2CPrinted;
-            //row.QREncrypter   = sGUITran.GUIDirection.Equals(TWNGUIDirection.Issue) && sGUITran.NetAmount > 0 && sGUITran.eGUIExcluded.Equals(false) ? GetQREncrypter(sGUITran) : null;
-
-            ViewGUITrans.Update(row);
-
-            this.Actions.PressSave();
-        }
-        #endregion
-
-        #region Static Method
-        public static void UpdateGUIStatus(string gUINbr)
-        {
-            PXUpdate<Set<TWNGUITrans.gUIStatus, Required<TWNGUITrans.gUIStatus>>,
-                     TWNGUITrans,
-                     Where<TWNGUITrans.gUIStatus, Equal<TWNGUIStatus.used>,
-                           And<TWNGUITrans.gUIDirection, Equal<TWNGUIDirection.issue>,
-                               And<TWNGUITrans.sequenceNo, Equal<Zero>,
-                                   And<TWNGUITrans.gUINbr, Equal<Required<TWNGUITrans.gUINbr>>>>>>>
-                                   .Update(new PXGraph(), TWNGUIStatus.Voided, gUINbr);
-        }
         #endregion
     }
 
@@ -196,6 +249,7 @@ namespace eGUICustomizations.Graph_Release
         public string TaxZoneID;
         public string TaxCategoryID;
         public string TaxID;
+        public string VATType;
         public string TaxNbr;
         public string AcctCD;
         public string AcctName;

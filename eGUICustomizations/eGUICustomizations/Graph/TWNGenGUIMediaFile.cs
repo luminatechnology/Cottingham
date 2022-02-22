@@ -140,11 +140,10 @@ namespace eGUICustomizations.Graph
                         }
 
                         count = 1;
-                        PXSelectBase<NumberingSequence> query = new PXSelect<NumberingSequence,
-                                                                                Where<NumberingSequence.numberingID, Like<GUI2x>,
-                                                                                    Or<NumberingSequence.numberingID, Like<GUI3x>,
-                                                                                        And<NumberingSequence.startDate, GreaterEqual<Current<GUITransFilter.fromDate>>,
-                                                                                            And<NumberingSequence.startDate, LessEqual<Current<GUITransFilter.toDate>>>>>>>(this);
+                        PXSelectBase<NumberingSequence> query = new PXSelect<NumberingSequence, Where<NumberingSequence.numberingID, Like<GUI2x>,
+                                                                                                      Or<NumberingSequence.numberingID, Like<GUI3x>,
+                                                                                                         And<NumberingSequence.startDate, GreaterEqual<Current<GUITransFilter.fromDate>>,
+                                                                                                             And<NumberingSequence.startDate, LessEqual<Current<GUITransFilter.toDate>>>>>>>(this);
 
                         foreach (NumberingSequence numSeq in query.Select())
                         {
@@ -398,7 +397,7 @@ namespace eGUICustomizations.Graph
     public partial class GUITransFilter : PX.Data.IBqlTable
     {
         #region FromDate
-        [PXDBDate(PreserveTime = true)]
+        [PXDBDateAndTime(UseTimeZone = true, PreserveTime = true)]
         [PXDefault(typeof(AccessInfo.businessDate))]
         [PXUIField(DisplayName = "From Date", Visibility = PXUIVisibility.Visible)]
         public virtual DateTime? FromDate { get; set; }
@@ -406,7 +405,7 @@ namespace eGUICustomizations.Graph
         #endregion
 
         #region ToDate
-        [PXDBDate(PreserveTime = true)]
+        [PXDBDateAndTime(UseTimeZone = true, PreserveTime = true)]
         [PXDefault(typeof(AccessInfo.businessDate))]
         [PXUIField(DisplayName = "To Date", Visibility = PXUIVisibility.Visible)]
         public virtual DateTime? ToDate { get; set; }

@@ -2,19 +2,15 @@ using PX.SM;
 using PX.Data;
 using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
-using PX.Objects.AP;
 using PX.Objects.AR;
 using PX.Objects.CA;
 using PX.Objects.CS;
-using System;
 using System.Globalization;
 using System.Collections.Generic;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
 using Branch = PX.Objects.GL.Branch;
 using static eGUICustomizations.Descriptor.TWNStringList;
-using PX.Common;
-using PX.Objects.FS;
 
 namespace eGUICustomizations.Graph
 {
@@ -32,29 +28,27 @@ namespace eGUICustomizations.Graph
                                             .And<ARTran.curyExtPrice.IsGreater<decimal0>>>>.View.ReadOnly ARTranView;
         #endregion
 
-        #region Action
-        public PXAction<TWNGUITrans> PatchPrint;
+        //#region Action
+        //public PXAction<TWNGUITrans> PatchPrint;
+        //[PXButton(CommitChanges = true)]
+        //[PXUIField(DisplayName = TWMessages.PatchPrint, Visible = false)]
+        //public virtual void patchPrint()
+        //{
+        //    ButtonValidation(ViewGUITrans.Current);
 
-        [PXButton(CommitChanges = true)]
-        [PXUIField(DisplayName = TWMessages.PatchPrint, Visible = false)]
-        public virtual void patchPrint()
-        {
-            ButtonValidation(ViewGUITrans.Current);
+        //    PrintReport(ARTranView.Select(), ViewGUITrans.Current, false);
+        //}
 
-            //PrintReport(ARTranView.Select(), ViewGUITrans.Current, false);
-        }
+        //public PXAction<TWNGUITrans> RePrint;
+        //[PXButton(CommitChanges = true)]
+        //[PXUIField(DisplayName = TWMessages.RePrint, Visible = false)]
+        //public virtual void rePrint()
+        //{
+        //    ButtonValidation(ViewGUITrans.Current);
 
-        public PXAction<TWNGUITrans> RePrint;
-
-        [PXButton(CommitChanges = true)]
-        [PXUIField(DisplayName = TWMessages.RePrint, Visible = false)]
-        public virtual void rePrint()
-        {
-            ButtonValidation(ViewGUITrans.Current);
-
-            //PrintReport(ARTranView.Select(), ViewGUITrans.Current, true);
-        }
-        #endregion
+        //    PrintReport(ARTranView.Select(), ViewGUITrans.Current, true);
+        //}
+        //#endregion
 
         #region Event Handlers
         protected void _(Events.RowSelected<TWNGUITrans> e)
@@ -68,7 +62,7 @@ namespace eGUICustomizations.Graph
         }
         #endregion
 
-        #region Functions
+        #region Methods
         //public virtual void PrintReport(PXResultset<ARTran> results, TWNGUITrans tWNGUITrans, bool rePrint)
         //{
         //    ViewGUITrans.Current = ViewGUITrans.Current ?? tWNGUITrans;
@@ -84,7 +78,8 @@ namespace eGUICustomizations.Graph
 
         //        string taxNbr = ViewGUITrans.Current.TaxNbr ?? string.Empty;
 
-        //        SMPrinter sMPrinter = GetSMPrinter(this.Accessinfo.UserID);
+        //        SMPrinter sMPrinter = SelectFrom<SMPrinter>.InnerJoin<UserPreferences>.On<UserPreferences.defaultPrinterID.IsEqual<SMPrinter.printerID>>
+                                        //.Where<UserPreferences.userID.IsEqual<@P.AsGuid>>.View.ReadOnly.Select(this, this.Accessinfo.UserID);
 
         //        TWNB2CPrinter.GetPrinter = sMPrinter != null ? sMPrinter.PrinterName : throw new PXException(TWMessages.DefPrinter);
 
@@ -133,13 +128,10 @@ namespace eGUICustomizations.Graph
         /// GUIItrans.GUINbr + 
         /// If GUITrans.BatchNbr is not null then Right(Guitrans.bachNbr,4) else Right(Guitrans.OrderNbrr,4)
         /// </summary>
-        protected string GetCode39()
-        {
-            return string.Format("{0}{1}{2}", PXGraph.CreateInstance<TWNGenGUIMediaFile>().GetGUILegal(ViewGUITrans.Current.GUIDate.Value),
-                                              ViewGUITrans.Current.GUINbr,
-                                              string.IsNullOrEmpty(ViewGUITrans.Current.BatchNbr) ? ViewGUITrans.Current.OrderNbr.Substring(ViewGUITrans.Current.OrderNbr.Length - 4) :
-                                                                                                    ViewGUITrans.Current.BatchNbr.Substring(ViewGUITrans.Current.BatchNbr.Length - 4));
-        }
+        protected string GetCode39() => string.Format("{0}{1}{2}", PXGraph.CreateInstance<TWNGenGUIMediaFile>().GetGUILegal(ViewGUITrans.Current.GUIDate.Value),
+                                                                   ViewGUITrans.Current.GUINbr,
+                                                                   string.IsNullOrEmpty(ViewGUITrans.Current.BatchNbr) ? ViewGUITrans.Current.OrderNbr.Substring(ViewGUITrans.Current.OrderNbr.Length - 4) :
+                                                                                                                         ViewGUITrans.Current.BatchNbr.Substring(ViewGUITrans.Current.BatchNbr.Length - 4));
 
         /// <summary>
         /// GUITrans.QREncrypter + ':' + '**********' + ':' +
@@ -148,22 +140,25 @@ namespace eGUICustomizations.Graph
         /// </summary>
         protected string GetQRCode1(List<ARTran> aRTrans)
         {
-            string desc = aRTrans[0].TranDesc;
-            
-            SubTranDescr(ref desc);
+            string descr = aRTrans[0].TranDesc;
+
+            byte[] bytes = System.Text.Encoding.Default.GetBytes(descr);
+
+            ///<remarks>Because eInvoice.dll left QRCode description has byte length limitation (40 bytes).</remarks>
+            if (bytes.Length > 40)
+            {
+                descr = System.Text.Encoding.Default.GetString(bytes, 0, 40);
+            }
 
             return string.Format("{0}:{1}:{2}:{3}:{4}:{5}:{6}:{7}", ViewGUITrans.Current.QREncrypter, "**********",
-                                                                    aRTrans.Count, aRTrans.Count, aRTrans[0].LineNbr, desc, 
+                                                                    aRTrans.Count, aRTrans.Count, aRTrans[0].LineNbr, descr, 
                                                                     (int)aRTrans[0].Qty, (int)(aRTrans[0].UnitPrice * (decimal)1.05));
         }
 
         /// <summary>
         /// **'+Line description+':'+Qty (no decimal places)+':'+Unit Price*1.05(No decimal places)
         /// </summary>
-        protected string GetQRCode2(List<ARTran> aRTrans)
-        {
-            return string.Format("{0}{1}:{2}:{3}", "**", aRTrans[0].TranDesc, (int)aRTrans[0].Qty, (int)(aRTrans[0].UnitPrice * (decimal)1.05));
-        }
+        protected string GetQRCode2(List<ARTran> aRTrans) => string.Format("{0}{1}:{2}:{3}", "**", aRTrans[0].TranDesc, (int)aRTrans[0].Qty, (int)(aRTrans[0].UnitPrice * (decimal)1.05));
 
         /// <summary>
         /// 102年11-12
@@ -208,19 +203,13 @@ namespace eGUICustomizations.Graph
         /// <summary>
         /// GUITrans.GUINbr -> YQ-12345678
         /// </summary>
-        protected string GetInvoiceNo()
-        {
-            return string.Format("{0}-{1}", ViewGUITrans.Current.GUINbr.Substring(0, 2), ViewGUITrans.Current.GUINbr.Substring(2));
-        }
+        protected string GetInvoiceNo() => string.Format("{0}-{1}", ViewGUITrans.Current.GUINbr.Substring(0, 2), ViewGUITrans.Current.GUINbr.Substring(2));
 
         /// <summary>
         /// If GUITrans.BatchNbr is not null then Right(Guitrans.bachNbrr,4) else Right(Guitrans.OrderNbrr,4)
         /// </summary>
-        protected string GetRandom()
-        {
-            return string.IsNullOrEmpty(ViewGUITrans.Current.BatchNbr) ? ViewGUITrans.Current.OrderNbr.Substring(ViewGUITrans.Current.OrderNbr.Length - 4) :
-                                                                         ViewGUITrans.Current.BatchNbr.Substring(ViewGUITrans.Current.BatchNbr.Length - 4);
-        }
+        protected string GetRandom() => string.IsNullOrEmpty(ViewGUITrans.Current.BatchNbr) ? ViewGUITrans.Current.OrderNbr.Substring(ViewGUITrans.Current.OrderNbr.Length - 4) :
+                                                                                              ViewGUITrans.Current.BatchNbr.Substring(ViewGUITrans.Current.BatchNbr.Length - 4);
 
         /// <summary>
         /// Get the company name instead of the tenant name.
@@ -254,45 +243,30 @@ namespace eGUICustomizations.Graph
         /// <summary>
         /// Get SO Invoice’s Note if the Note is not blank.
         /// </summary>
-        protected string GetNoteInfo()
-        {
-            Note note = SelectFrom<Note>.InnerJoin<ARRegister>.On<ARRegister.noteID.IsEqual<Note.noteID>>
-                                        .Where<ARRegister.refNbr.IsEqual<@P.AsString>>.View.ReadOnly.Select(this, ViewGUITrans.Current.OrderNbr);
-
-            return note == null ? string.Empty : note.NoteText;
-        }
+        protected string GetNoteInfo() => SelectFrom<Note>.InnerJoin<ARRegister>.On<ARRegister.noteID.IsEqual<Note.noteID>>
+                                                          .Where<ARRegister.refNbr.IsEqual<@P.AsString>>.View.ReadOnly.Select(this, ViewGUITrans.Current.OrderNbr)?.TopFirst.NoteText ?? string.Empty;
 
         /// <summary>
         /// Get AR invoice customer order nbr.
         /// </summary>
-        protected string GetCustOrdNbr()
-        {
-            ARInvoice invoice = SelectFrom<ARInvoice>.Where<ARInvoice.refNbr.IsEqual<TWNGUITrans.orderNbr.FromCurrent>>.View.Select(this);
-
-            return invoice.InvoiceNbr ?? string.Empty;
-        }
+        protected string GetCustOrdNbr() => SelectFrom<ARInvoice>.Where<ARInvoice.refNbr.IsEqual<TWNGUITrans.orderNbr.FromCurrent>>.View.Select(this)?.TopFirst.InvoiceNbr ?? string.Empty;
 
         /// <summary>
         /// 發票開立部門 = First ARTran line BranchID to get locatin
         /// </summary>
-        protected string GetDefBranchLoc(List<ARTran> aRTrans)
-        {
-            FSBranchLocation fSBranchLoc = SelectFrom<FSBranchLocation>
-                                                      .Where<FSBranchLocation.branchID.IsEqual<@P.AsInt>>.View.ReadOnly.Select(this, aRTrans[0].BranchID);
+        //protected string GetDefBranchLoc(List<ARTran> aRTrans)
+        //{
+        //    FSBranchLocation fSBranchLoc = SelectFrom<FSBranchLocation>
+        //                                              .Where<FSBranchLocation.branchID.IsEqual<@P.AsInt>>.View.ReadOnly.Select(this, aRTrans[0].BranchID);
 
-            return (fSBranchLoc == null || fSBranchLoc.BranchLocationCD == null) ? string.Empty : fSBranchLoc.BranchLocationCD;
-        }
+        //    return (fSBranchLoc == null || fSBranchLoc.BranchLocationCD == null) ? string.Empty : fSBranchLoc.BranchLocationCD;
+        //}
 
         /// <summary>
         /// 付款方式 = If GUITrans.TaxNbr is not blank  then “月結” else description of ARinvoice.paymentmehtodID
         /// </summary>
-        protected string GetPaymMethod()
-        {
-            PaymentMethod paymMth = SelectFrom<PaymentMethod>.LeftJoin<ARInvoice>.On<ARInvoice.paymentMethodID.IsEqual<PaymentMethod.paymentMethodID>>
-                                                             .Where<ARInvoice.refNbr.IsEqual<@P.AsString>>.View.ReadOnly.Select(this, ViewGUITrans.Current.OrderNbr);
-
-            return paymMth.Descr ?? string.Empty;
-        }
+        protected string GetPaymMethod() => SelectFrom<PaymentMethod>.LeftJoin<ARInvoice>.On<ARInvoice.paymentMethodID.IsEqual<PaymentMethod.paymentMethodID>>
+                                                                     .Where<ARInvoice.refNbr.IsEqual<@P.AsString>>.View.ReadOnly.Select(this, ViewGUITrans.Current.OrderNbr)?.TopFirst.Descr ?? string.Empty;
 
         /// <summary>
         /// After print the GUI invoice, this field be updated once.
@@ -312,39 +286,14 @@ namespace eGUICustomizations.Graph
         /// </summary>
         /// <param name="roleName"></param>
         /// <returns></returns>
-        protected bool AssignedRole(params string[] roleName)
-        {
-            return GetUsersInRoles(this, roleName) != null;
-        }
-        #endregion
-
-        #region Static Methods
-        /// <summary>
-        /// Get all defined roles through the user parameter.
-        /// </summary>
-        /// <param name="graph"></param>
-        /// <param name="userName"></param>
-        /// <returns></returns>
-        public static UsersInRoles GetUsersInRoles(PXGraph graph, params string[] userName)
-        {
-            return SelectFrom<UsersInRoles>.Where<UsersInRoles.rolename.IsEqual<@P.AsString>
-                                                  .And<UsersInRoles.username.IsEqual<AccessInfo.userName.FromCurrent>>>.View.ReadOnly.Select(graph, userName);
-        }
-
-        /// <summary>
-        /// Get table buffer from device hub settings.
-        /// </summary>
-        public static SMPrinter GetSMPrinter(Guid? userID)
-        {
-            return SelectFrom<SMPrinter>.InnerJoin<UserPreferences>.On<UserPreferences.defaultPrinterID.IsEqual<SMPrinter.printerID>>
-                                        .Where<UserPreferences.userID.IsEqual<@P.AsGuid>>.View.ReadOnly.Select(PXGraph.CreateInstance<TWNeGUIInquiry>(), userID);
-        }
+        protected bool AssignedRole(params string[] roleName) => SelectFrom<UsersInRoles>.Where<UsersInRoles.rolename.IsEqual<@P.AsString>
+                                                                                         .And<UsersInRoles.username.IsEqual<AccessInfo.userName.FromCurrent>>>.View.ReadOnly.Select(this, roleName) != null;
 
         /// <summary>
         /// When clicking the print button, verify the main GUI information.
         /// </summary>
         /// <param name="gUITrans"></param>
-        public static void ButtonValidation(TWNGUITrans gUITrans)
+        public void ButtonValidation(TWNGUITrans gUITrans)
         {
             string message = string.Empty;
 
@@ -354,7 +303,7 @@ namespace eGUICustomizations.Graph
             }
             else if (gUITrans.GUIStatus != TWNGUIStatus.Used)
             {
-                message = string.Format(TWMessages.StatusNotUsed, gUITrans.GUINbr); 
+                message = string.Format(TWMessages.StatusNotUsed, gUITrans.GUINbr);
             }
             else if (gUITrans.GUIFormatcode != TWGUIFormatCode.vATOutCode31 && gUITrans.GUIFormatcode != TWGUIFormatCode.vATOutCode35)
             {
@@ -366,127 +315,6 @@ namespace eGUICustomizations.Graph
                 throw new PXException(message);
             }
         }
-
-        /// <summary>
-        /// Because eInvoice.dll left QRCode description has byte length limitation (40 bytes).
-        /// </summary>
-        /// <param name="descr"></param>
-        private static void SubTranDescr(ref string descr)
-        {
-            byte[] bytes = System.Text.Encoding.Default.GetBytes(descr);
-
-            if (bytes.Length > 40)
-            {
-                descr = System.Text.Encoding.Default.GetString(bytes, 0, 40);
-            }
-        }
         #endregion
     }
-
-    #region Custom Attribute
-    #region GUINumberAttribute
-    public class GUINumberAttribute : PXDBStringAttribute, IPXFieldVerifyingSubscriber
-    {
-        public GUINumberAttribute(int length) : base(length) { }
-
-        public void FieldVerifying(PXCache sender, PXFieldVerifyingEventArgs e)
-        {
-            if (string.IsNullOrEmpty((string)e.NewValue) ||
-                e.NewValue.ToString().Length.Equals(10) ||
-                TWNGUIValidation.ActivateTWGUI(new PXGraph()).Equals(false)) { return; }
-
-            object obj = null;
-            string vATCode = null;
-
-            switch (this.BqlTable.Name)
-            {
-                case nameof(APRegister):
-                    obj = sender.GetValueExt<APRegisterExt.usrVATInCode>(e.Row);
-                    break;
-                case nameof(ARRegister):
-                    obj = sender.GetValueExt<ARRegisterExt.usrVATOutCode>(e.Row);
-                    break;
-                case nameof(TWNGUITrans):
-                    obj = sender.GetValueExt<TWNGUITrans.gUIFormatcode>(e.Row);
-                    break;
-                case nameof(TWNManualGUIAP):
-                    obj = sender.GetValueExt<TWNManualGUIAP.vATInCode>(e.Row);
-                    break;
-                case nameof(TWNManualGUIAR):
-                    obj = sender.GetValueExt<TWNManualGUIAR.vatOutCode>(e.Row);
-                    break;
-                case nameof(TWNManualGUIBank):
-                    obj = sender.GetValueExt<TWNManualGUIBank.vATInCode>(e.Row);
-                    break;
-                case nameof(TWNManualGUIExpense):
-                    obj = sender.GetValueExt<TWNManualGUIExpense.vATInCode>(e.Row);
-                    break;
-            }
-
-            vATCode = obj is null ? string.Empty : obj.ToString();
-
-            if (!vATCode.IsIn(TWGUIFormatCode.vATOutCode33, TWGUIFormatCode.vATOutCode34) || 
-                vATCode.IsIn(TWGUIFormatCode.vATInCode21, TWGUIFormatCode.vATInCode23, TWGUIFormatCode.vATInCode25)
-               )
-            {
-                throw new PXSetPropertyException(e.NewValue.ToString().Length > 10 ? TWMessages.GUINbrLength : TWMessages.GUINbrMini, PXErrorLevel.Error);
-            }
-        }
-    }
-    #endregion
-
-    #region TaxNbrVerifyAttribute
-    public class TaxNbrVerifyAttribute : PXDBStringAttribute, IPXFieldVerifyingSubscriber
-    {
-        public TaxNbrVerifyAttribute(int length) : base(length) { }
-
-        public void FieldVerifying(PXCache sender, PXFieldVerifyingEventArgs e)
-        {
-            if (e.NewValue == null) { return; }
-
-            TWNGUIValidation validation = new TWNGUIValidation();
-
-            validation.CheckTabNbr(e.NewValue.ToString());
-
-            if (validation.errorOccurred == true)
-            {
-                throw new PXSetPropertyException(validation.errorMessage, (PXErrorLevel)validation.errorLevel);
-            }
-
-        }
-    }
-    #endregion
-
-    #region TWNetAmountAttribute
-    public class TWNetAmountAttribute : PXDBDecimalAttribute, IPXFieldVerifyingSubscriber
-    {
-        public TWNetAmountAttribute(int percision) : base(percision) { }
-
-        public void FieldVerifying(PXCache sender, PXFieldVerifyingEventArgs e)
-        {
-            if ((decimal)e.NewValue < 0)
-            {
-                // Throwing an exception to cancel assignment of the new value to the field
-                throw new PXSetPropertyException(TWMessages.NetAmtNegError);
-            }
-        }
-    }
-    #endregion
-
-    #region TWTaxAmountAttribute
-    public class TWTaxAmountAttribute : PXDBDecimalAttribute, IPXFieldVerifyingSubscriber
-    {
-        public TWTaxAmountAttribute(int percision) : base(percision) { }
-
-        public void FieldVerifying(PXCache sender, PXFieldVerifyingEventArgs e)
-        {
-            if ((decimal)e.NewValue < 0)
-            {
-                // Throwing an exception to cancel assignment of the new value to the field
-                throw new PXSetPropertyException(TWMessages.TaxAmtNegError);
-            }
-        }
-    }
-    #endregion
-    #endregion
 }

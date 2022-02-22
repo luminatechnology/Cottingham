@@ -6,8 +6,8 @@ using PX.Objects.CA;
 using PX.Objects.CS;
 using PX.Objects.CR;
 using PX.Objects.TX;
-using eGUICustomizations.Graph;
 using PX.Data.ReferentialIntegrity.Attributes;
+using eGUICustomizations.Descriptor;
 using static eGUICustomizations.Descriptor.TWNStringList;
 
 namespace eGUICustomizations.DAC
@@ -48,18 +48,7 @@ namespace eGUICustomizations.DAC
         #endregion
 
         #region VendorID
-        [PXDBInt()]
-        [PXUIField(DisplayName = "Vendor")]
-        [PXSelector(typeof(Search2<BAccount2.bAccountID,
-                           LeftJoin<Vendor,
-                                    On<Vendor.bAccountID, Equal<BAccount2.bAccountID>,
-                                      And<Vendor.type, Equal<BAccountType.vendorType>>>>,
-                           Where<BAccount2.type, Equal<BAccountType.vendorType>>>),
-                    typeof(BAccount.acctCD),
-                    typeof(BAccount.acctName),
-                    typeof(BAccount.type),
-                    SubstituteKey = typeof(BAccount.acctCD),
-                    DescriptionField = typeof(BAccount.acctName))]
+        [VendorActive()]
         public virtual int? VendorID { get; set; }
         public abstract class vendorID : PX.Data.BQL.BqlInt.Field<vendorID> { }
         #endregion
@@ -68,19 +57,18 @@ namespace eGUICustomizations.DAC
         [PXDBString(2, IsUnicode = true)]
         [PXUIField(DisplayName = "VAT In Code")]
         [PXSelector(typeof(Search<CSAttributeDetail.valueID,
-                                  Where<CSAttributeDetail.attributeID, Equal<APRegisterExt.VATINFRMTNameAtt>>>),
+                                  Where<CSAttributeDetail.attributeID, Equal<TWNManualGUIAPBill.VATINFRMTNameAtt>>>),
                     typeof(CSAttributeDetail.description))]
         [PXDefault(typeof(Search<CSAnswers.value,
                                  Where<CSAnswers.refNoteID, Equal<Current<Vendor.noteID>>,
-                                       And<CSAnswers.attributeID, Equal<APRegisterExt.VATINFRMTNameAtt>>>>),
-                   PersistingCheck = PXPersistingCheck.Nothing)]
+                                       And<CSAnswers.attributeID, Equal<TWNManualGUIAPBill.VATINFRMTNameAtt>>>>))]
         [PXFormula(typeof(Default<vendorID>))]
         public string VATInCode { get; set; }
         public abstract class vATInCode : PX.Data.BQL.BqlString.Field<vATInCode> { }
         #endregion
     
         #region GUINbr
-        [GUINumber(14, IsKey = true, IsUnicode = true, InputMask = ">aaaaaaaaaaaaaa")]
+        [GUINumber(15, IsKey = true, IsUnicode = true, InputMask = ">aaaaaaaaaaaaaa")]
         [PXUIField(DisplayName = "GUI Nbr")]
         [PXDefault()]
         public string GUINbr { get; set; }
@@ -132,7 +120,7 @@ namespace eGUICustomizations.DAC
         [PXUIField(DisplayName = "Tax Nbr")]
         [PXDefault(typeof(Search<CSAnswers.value,
                                  Where<CSAnswers.refNoteID, Equal<Current<Vendor.noteID>>,
-                                       And<CSAnswers.attributeID, Equal<APRegisterExt.TaxNbrNameAtt>>>>),
+                                       And<CSAnswers.attributeID, Equal<TWNManualGUIAPBill.TaxNbrNameAtt>>>>),
                    PersistingCheck = PXPersistingCheck.Nothing)]
         [PXFormula(typeof(Default<vendorID>))]
         public string TaxNbr { get; set; }
@@ -144,7 +132,7 @@ namespace eGUICustomizations.DAC
         [PXUIField(DisplayName = "Our Tax Nbr")]
         [PXDefault(typeof(Search<CSAnswers.value,
                                  Where<CSAnswers.refNoteID, Equal<Current<Vendor.noteID>>,
-                                       And<CSAnswers.attributeID, Equal<APRegisterExt.OurTaxNbrNameAtt>>>>),
+                                       And<CSAnswers.attributeID, Equal<TWNManualGUIAPBill.OurTaxNbrNameAtt>>>>),
                    PersistingCheck = PXPersistingCheck.Nothing)]
         [PXFormula(typeof(Default<vendorID>))]
         public string OurTaxNbr { get; set; }
@@ -155,11 +143,11 @@ namespace eGUICustomizations.DAC
         [PXDBString(2, IsUnicode = true)]
         [PXUIField(DisplayName = "Deduction")]
         [PXSelector(typeof(Search<CSAttributeDetail.valueID,
-                                  Where<CSAttributeDetail.attributeID, Equal<APRegisterExt.DeductionNameAtt>>>),
+                                  Where<CSAttributeDetail.attributeID, Equal<TWNManualGUIAPBill.DeductionNameAtt>>>),
                     typeof(CSAttributeDetail.description))]
         [PXDefault(typeof(Search<CSAnswers.value,
                                  Where<CSAnswers.refNoteID, Equal<Current<Vendor.noteID>>,
-                                       And<CSAnswers.attributeID, Equal<APRegisterExt.DeductionNameAtt>>>>),
+                                       And<CSAnswers.attributeID, Equal<TWNManualGUIAPBill.DeductionNameAtt>>>>),
                    PersistingCheck = PXPersistingCheck.Nothing)]
         [PXFormula(typeof(Default<vendorID>))]
         public string Deduction { get; set; }

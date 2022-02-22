@@ -8,58 +8,35 @@ using PX.Objects.CS;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
 using eGUICustomizations.Graph_Release;
-using static eGUICustomizations.Descriptor.TWNStringList;
-using PX.Objects.FS;
 
 namespace PX.Objects.AR
 {
     public class ARInvoiceEntry_Extension : PXGraphExtension<ARInvoiceEntry>
-    { 
-        #region Delegate Action Menu
-        //public delegate IEnumerable ReportDelegate(PXAdapter adapter, string reportID);
-        //[PXOverride]
-        //public IEnumerable Report(PXAdapter adapter, string reportID, ReportDelegate baseMethod)
-        //{
-        //    IEnumerable records = baseMethod(adapter, reportID);
+    {
+        public bool activateGUI = TWNGUIValidation.ActivateTWGUI(new PXGraph());
 
-        //    //if we are here that means that report is not identified by base method
-        //    PXReportRequiredException ex = null;
+        public TWNReleaseProcess rp = PXGraph.CreateInstance<TWNReleaseProcess>();
 
-        //    var parameters = new Dictionary<string, string>();
-        //    Dictionary<PX.SM.PrintSettings, PXReportRequiredException> reportsToPrint = new Dictionary<PX.SM.PrintSettings, PXReportRequiredException>();
+        TWNGUIValidation tWNGUIValidation = new TWNGUIValidation();
 
-        //    foreach (ARInvoice doc in records)
-        //    {
-        //        if (reportID == "TW601000")
-        //        {
-        //            parameters["ARInvoice.DocType"] = doc.DocType;
-        //            parameters["ARInvoice.RefNbr"] = doc.RefNbr;
+        //public static bool IsActive() => TWNGUIValidation.ActivateTWGUI(new PXGraph());
 
-        //            ex = PXReportRequiredException.CombineReport(ex, reportID, parameters);
-        //        }
-        //    }
+        #region Delegate Methods
+        public delegate void PersistDelgate();
+        [PXOverride]
+        public void Persist(PersistDelgate baseMethod)
+        {
+            foreach (ARRegister row in Base.CurrentDocument.Cache.Deleted)
+            {
+                rp.GenerateVoidedGUI(true, row);
+            }
 
-        //    //if (ex != null) throw ex;
-        //    string actualReportID = new NotificationUtility(Base).SearchReport(ARNotificationSource.Customer, Base.Document, reportID, Base.Document.Current.BranchID);
-
-        //    reportsToPrint = PX.SM.SMPrintJobMaint.AssignPrintJobToPrinter(reportsToPrint, parameters, adapter, 
-        //                                                                   new NotificationUtility(Base).SearchPrinter, 
-        //                                                                   ARNotificationSource.Customer, reportID, actualReportID, 
-        //                                                                   Base.Document.Current.BranchID);
-
-        //    if (ex != null)
-        //    {
-        //        PX.SM.SMPrintJobMaint.CreatePrintJobGroups(reportsToPrint);
-
-        //        throw ex;
-        //    }
-
-        //    return records;
-        //}
+            baseMethod();
+        }
         #endregion
 
-        #region Action
-        public PXAction<PX.Objects.AR.ARInvoice> BuyPlasticBag;
+        #region Actions
+        public PXAction<ARInvoice> BuyPlasticBag;
         [PXButton(CommitChanges = true)]
         [PXUIField(DisplayName = "Buy Plastic Bag", Visible = false)]
         protected void buyPlasticBag()
@@ -81,32 +58,53 @@ namespace PX.Objects.AR
         #endregion
 
         #region Event Handlers
-        public bool activateGUI = TWNGUIValidation.ActivateTWGUI(new PXGraph());
-
-        TWNGUIValidation tWNGUIValidation = new TWNGUIValidation();
-
-        TWNReleaseProcess rp = PXGraph.CreateInstance<TWNReleaseProcess>();
-
-        protected void _(Events.RowPersisting<ARInvoice> e, PXRowPersisting InvokeBaseHandler)
+        protected void _(Events.RowSelected<ARInvoice> e, PXRowSelected baseHandler)
         {
-            InvokeBaseHandler?.Invoke(e.Cache, e.Args);
+            baseHandler?.Invoke(e.Cache, e.Args);
+
+            if (e.Row == null) { return; }
+
+            ARRegisterExt registerExt = e.Row.GetExtension<ARRegisterExt>();
+
+            //BuyPlasticBag.SetVisible(activateGUI);
+
+            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrGUIDate>(e.Cache, null, activateGUI);
+            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrGUINbr>(e.Cache, null, activateGUI);
+            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrOurTaxNbr>(e.Cache, null, activateGUI);
+            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrTaxNbr>(e.Cache, null, activateGUI);
+            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrVATOutCode>(e.Cache, null, activateGUI);
+            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrB2CType>(e.Cache, null, activateGUI);
+            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrCarrierID>(e.Cache, null, activateGUI);
+            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrNPONbr>(e.Cache, null, activateGUI);
+            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrCreditAction>(e.Cache, null, activateGUI &&
+                                                                                        !string.IsNullOrEmpty(registerExt.UsrVATOutCode) &&
+                                                                                        registerExt.UsrVATOutCode.IsIn(TWGUIFormatCode.vATOutCode33, TWGUIFormatCode.vATOutCode34));
+
+            bool taxNbrBlank = string.IsNullOrEmpty(registerExt.UsrTaxNbr);
+            bool statusClosed = e.Row.Status.IsIn(ARDocStatus.Open, ARDocStatus.Closed);
+
+            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrB2CType>(e.Cache, e.Row, !statusClosed && taxNbrBlank);
+            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrCarrierID>(e.Cache, e.Row, !statusClosed && taxNbrBlank && registerExt.UsrB2CType == TWNStringList.TWNB2CType.MC);
+            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrNPONbr>(e.Cache, e.Row, !statusClosed && taxNbrBlank && registerExt.UsrB2CType == TWNStringList.TWNB2CType.NPO);
+            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrVATOutCode>(e.Cache, e.Row, string.IsNullOrEmpty(registerExt.UsrGUINbr));
+            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrCreditAction>(e.Cache, e.Row, Base.GetDocumentState(e.Cache, e.Row).DocumentDescrEnabled);
+        }
+
+        protected void _(Events.RowPersisting<ARInvoice> e, PXRowPersisting baseHandler)
+        {
+            baseHandler?.Invoke(e.Cache, e.Args);
 
             if (e.Operation == PXDBOperation.Insert || e.Operation == PXDBOperation.Update)
             {
-                ARRegisterExt regisExt = PXCache<ARRegister>.GetExtension<ARRegisterExt>(e.Row);
+                ARRegisterExt regisExt = e.Row.GetExtension<ARRegisterExt>();
 
-                //if (e.Row.CuryDocBal == decimal.Zero && string.IsNullOrEmpty(regisExt.UsrGUINbr))
-                //{
-                //    regisExt.UsrVATOutCode = string.Empty;
-                //}
-                //else 
-                if (string.IsNullOrEmpty(regisExt.UsrGUINbr) && (regisExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode31 ||
-                                                                      regisExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode32 ||
-                                                                      regisExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode35) )
+                if (string.IsNullOrEmpty(regisExt.UsrGUINbr) && regisExt.UsrVATOutCode.IsIn(TWGUIFormatCode.vATOutCode31, TWGUIFormatCode.vATOutCode32, TWGUIFormatCode.vATOutCode35) )
                 {
-                    TWNGUIPreferences gUIPreferences = SelectFrom<TWNGUIPreferences>.View.Select(Base);
+                    TWNGUIPreferences pref = SelectFrom<TWNGUIPreferences>.View.Select(Base);
 
-                    regisExt.UsrGUINbr = ARGUINbrAutoNumAttribute.GetNextNumber(e.Cache, e.Row, regisExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode32 ? gUIPreferences.GUI2CopiesNumbering : gUIPreferences.GUI3CopiesNumbering, 
+                    regisExt.UsrGUINbr = ARGUINbrAutoNumAttribute.GetNextNumber(e.Cache, 
+                                                                                e.Row, 
+                                                                                regisExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode32 ? pref.GUI2CopiesNumbering : pref.GUI3CopiesNumbering, 
                                                                                 regisExt.UsrGUIDate);
 
                     tWNGUIValidation.CheckGUINbrExisted(Base, regisExt.UsrGUINbr, regisExt.UsrVATOutCode);
@@ -114,55 +112,22 @@ namespace PX.Objects.AR
             }
         }
 
-        protected void _(Events.RowSelected<ARInvoice> e, PXRowSelected baseHandler)
-        {
-            baseHandler?.Invoke(e.Cache, e.Args);
-
-            ARInvoiceState state = Base.GetDocumentState(e.Cache, e.Row);
-
-            ARRegisterExt registerExt = PXCache<ARRegister>.GetExtension<ARRegisterExt>(e.Row);
-
-            bool taxNbrBlank = string.IsNullOrEmpty(registerExt.UsrTaxNbr);
-            bool statusClosed = e.Row.Status.Equals(ARDocStatus.Open) || e.Row.Status.Equals(ARDocStatus.Closed);
-
-            //BuyPlasticBag.SetVisible(activateGUI);
-
-            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrGUIDate>     (e.Cache, null, activateGUI);
-            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrGUINbr>      (e.Cache, null, activateGUI);
-            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrOurTaxNbr>   (e.Cache, null, activateGUI);
-            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrTaxNbr>      (e.Cache, null, activateGUI);
-            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrVATOutCode>  (e.Cache, null, activateGUI);
-            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrB2CType>     (e.Cache, null, activateGUI);
-            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrCarrierID>   (e.Cache, null, activateGUI);
-            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrNPONbr>      (e.Cache, null, activateGUI);
-            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrCreditAction>(e.Cache, null, activateGUI &&
-                                                                                        !string.IsNullOrEmpty(registerExt.UsrVATOutCode) &&
-                                                                                        registerExt.UsrVATOutCode.IsIn(TWGUIFormatCode.vATOutCode33, TWGUIFormatCode.vATOutCode34));
-
-            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrB2CType>     (e.Cache, e.Row, !statusClosed && taxNbrBlank);
-            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrCarrierID>   (e.Cache, e.Row, !statusClosed && taxNbrBlank && registerExt.UsrB2CType == TWNB2CType.MC);
-            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrNPONbr>      (e.Cache, e.Row, !statusClosed && taxNbrBlank && registerExt.UsrB2CType == TWNB2CType.NPO);
-            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrVATOutCode>  (e.Cache, e.Row, string.IsNullOrEmpty(registerExt.UsrGUINbr));
-
-            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrCreditAction>(e.Cache, e.Row, state.DocumentDescrEnabled);
-        }
-
         protected void _(Events.RowUpdated<ARInvoice> e, PXRowUpdated baseHandler)
         {
             baseHandler?.Invoke(e.Cache, e.Args);
 
             /// When using the copy and paste feature, don't bring the source GUI number into the new one.
-            if (Base.IsCopyPasteContext.Equals(true))
+            if (Base.IsCopyPasteContext == true)
             {
-                PXCache<ARRegister>.GetExtension<ARRegisterExt>(e.Row).UsrGUINbr = null;
+                e.Row.GetExtension<ARRegisterExt>().UsrGUINbr = null;
             }
         }
 
-        protected void _(Events.RowInserting<ARInvoice> e)
+        protected virtual void _(Events.RowInserting<ARInvoice> e)
         {
-            if (activateGUI && e.Row.DocType.Equals(ARDocType.CreditMemo))
+            if (activateGUI && e.Row.DocType == ARDocType.CreditMemo)
             {
-                ARRegisterExt registerExt = PXCache<ARRegister>.GetExtension<ARRegisterExt>(e.Row);
+                ARRegisterExt registerExt = e.Row.GetExtension<ARRegisterExt>();
 
                 switch (registerExt.UsrVATOutCode)
                 {
@@ -178,58 +143,15 @@ namespace PX.Objects.AR
             }
         }
 
-        protected void _(Events.RowDeleted<ARInvoice> e)
+        protected virtual void _(Events.FieldUpdated<ARInvoice.customerID> e, PXFieldUpdated baseHandler)
         {
-            ARRegisterExt aRRegisterExt = PXCache<ARRegister>.GetExtension<ARRegisterExt>(e.Row);
+            baseHandler?.Invoke(e.Cache, e.Args);
 
-            string taxID = string.Empty;
-
-            /// When deleted, ARTax does not keep the current record, but can fetches the record from the cache.
-            foreach (ARTax aRTax in Base.Tax_Rows.Cache.Deleted)
-            {
-                taxID = aRTax.TaxID;
-
-                goto CreateGUI;
-            }
-
-        CreateGUI:
-            if (string.IsNullOrEmpty(taxID))
-            {
-                throw new PXException(TWMessages.NoInvTaxDtls);
-            }
-
-            if (string.IsNullOrEmpty(aRRegisterExt.UsrGUINbr) || !activateGUI || string.IsNullOrEmpty(TX.Tax.PK.Find(Base, taxID).GetExtension<TX.TaxExt>().UsrGUIType) ) { return; }
-
-            // Acuminator disable once PX1043 SavingChangesInEventHandlers [Justification]
-            rp.CreateGUITrans(new STWNGUITran()
-            {
-                VATCode = aRRegisterExt.UsrVATOutCode,
-                GUINbr = aRRegisterExt.UsrGUINbr,
-                GUIStatus = TWNGUIStatus.Voided,
-                GUIDirection = TWNGUIDirection.Issue,
-                GUIDate = aRRegisterExt.UsrGUIDate,
-                TaxZoneID = e.Row.TaxZoneID,
-                TaxCategoryID = Base.taxzone.Current.DfltTaxCategoryID,
-                TaxID = taxID,
-                TaxNbr = aRRegisterExt.UsrTaxNbr,
-                OurTaxNbr = aRRegisterExt.UsrOurTaxNbr,
-                NetAmount = 0,
-                TaxAmount = 0,
-                AcctCD = Base.customer.Current.AcctCD,
-                AcctName = Base.customer.Current.AcctName,
-                DeductionCode = string.Empty,
-                Remark = string.Format(TWMessages.DeleteInfo, Base.Accessinfo.UserName),
-                OrderNbr = e.Row.RefNbr
-            });
-        }
-
-        protected void _(Events.FieldUpdated<ARInvoice.customerID> e)
-        {
             ARInvoice row = e.Row as ARInvoice;
 
             if (row != null && activateGUI && row.DocType == ARDocType.CreditMemo)
             {
-                PXCache<ARRegister>.GetExtension<ARRegisterExt>(row).UsrVATOutCode = TWGUIFormatCode.vATOutCode33;
+                e.Cache.SetValue<ARRegisterExt.usrVATOutCode>(row, TWGUIFormatCode.vATOutCode33);
             }
             else if (row != null && activateGUI &&
                      (row.DocType == ARDocType.Invoice || row.DocType == ARDocType.CashSale)
@@ -240,41 +162,40 @@ namespace PX.Objects.AR
                                                            .View.ReadOnly.Select(Base, Base.customer.Current.NoteID);
                 if (cSAnswers != null)
                 {
-                    PXCache<ARRegister>.GetExtension<ARRegisterExt>(row).UsrVATOutCode = cSAnswers.Value;
+                    e.Cache.SetValue<ARRegisterExt.usrVATOutCode>(row, cSAnswers.Value);
                 }
             }
         }
 
-        protected void _(Events.FieldVerifying<ARInvoice.hold> e)
+        protected virtual void _(Events.FieldVerifying<ARInvoice.hold> e)
         {
-            if (activateGUI && e.NewValue.Equals(false) && e.OldValue.Equals(true))
+            if (activateGUI && (bool)e.NewValue == false && (bool)e.OldValue == true)
             {
                 var row = e.Row as ARInvoice;
 
-                if (!row.CuryDocBal.Equals(decimal.Zero) && string.IsNullOrEmpty(PXCache<ARRegister>.GetExtension<ARRegisterExt>(row).UsrVATOutCode))
+                if (row.CuryDocBal != decimal.Zero && string.IsNullOrEmpty(row.GetExtension<ARRegisterExt>().UsrVATOutCode))
                 {
                     Base.Document.Ask(TWMessages.RemindHeader, TWMessages.ReminderMesg, MessageButtons.OKCancel);
 
-                    if (Base.Document.AskExt() == WebDialogResult.Cancel) { e.Cancel = true; }
+                    e.Cancel = Base.Document.AskExt() == WebDialogResult.Cancel;
                 }
             }
         }
-        #endregion
 
-        #region Custom Attribute
-        /// <summary>
-        /// Create custom attribute that convert number to Chinese word.
-        /// </summary>
-        [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class)]
-        public class ChineseAmountAttribute : PXStringAttribute, IPXFieldSelectingSubscriber
+        protected virtual void _(Events.FieldVerifying<ARRegisterExt.usrCreditAction> e)
         {
-            void IPXFieldSelectingSubscriber.FieldSelecting(PXCache sender, PXFieldSelectingEventArgs e)
-            {
-                ARInvoice invoice = sender.Graph.Caches[typeof(ARInvoice)].Current as ARInvoice;
+            string gUINbr = (e.Row as ARRegister)?.GetExtension<ARRegisterExt>().UsrGUINbr;
 
-                if (invoice != null)
+            if (!string.IsNullOrEmpty(gUINbr))
+            {
+                bool prepayGUI = SelectFrom<ARRegister>.InnerJoin<TWNGUITrans>.On<TWNGUITrans.orderNbr.IsEqual<ARRegister.refNbr>>
+                                                       .Where<TWNGUITrans.gUINbr.IsEqual<@P.AsString>
+                                                              .And<TWNGUITrans.gUIFormatcode.IsEqual<@P.AsString>>>.View
+                                                       .Select(rp, gUINbr, TWGUIFormatCode.vATOutCode35).TopFirst?.DocType == ARDocType.Prepayment;
+
+                if (prepayGUI == true && (string)e.NewValue == TWNStringList.TWNCreditAction.VG)
                 {
-                    e.ReturnValue = AmtInChinese((int)invoice.CuryDocBal);
+                    throw new PXSetPropertyException(TWMessages.CantVoidPrepayGUI, PXErrorLevel.Error);
                 }
             }
         }
@@ -394,15 +315,15 @@ namespace PX.Objects.AR
             }
         }
 
-        public static bool CheckAppointmentAmt(ARInvoice invoice)
-        {
-            FSAppointment appointment = SelectFrom<FSAppointment>.InnerJoin<FSPostDoc>.On<FSPostDoc.appointmentID.IsEqual<FSAppointment.appointmentID>>
-                                                                 .Where<FSPostDoc.postDocType.IsEqual<@P.AsString>
-                                                                        .And<FSPostDoc.postRefNbr.IsEqual<@P.AsString>>>
-                                                                 .View.Select(PXGraph.CreateInstance<ARInvoiceEntry>(), invoice.DocType, invoice.RefNbr);
+        //public static bool CheckAppointmentAmt(ARInvoice invoice)
+        //{
+        //    FSAppointment appointment = SelectFrom<FSAppointment>.InnerJoin<FSPostDoc>.On<FSPostDoc.appointmentID.IsEqual<FSAppointment.appointmentID>>
+        //                                                         .Where<FSPostDoc.postDocType.IsEqual<@P.AsString>
+        //                                                                .And<FSPostDoc.postRefNbr.IsEqual<@P.AsString>>>
+        //                                                         .View.Select(PXGraph.CreateInstance<ARInvoiceEntry>(), invoice.DocType, invoice.RefNbr);
             
-            return appointment != null && appointment.CostTotal.Equals(decimal.Zero);
-        }
+        //    return appointment != null && appointment.CostTotal.Equals(decimal.Zero);
+        //}
         #endregion
     }
 }

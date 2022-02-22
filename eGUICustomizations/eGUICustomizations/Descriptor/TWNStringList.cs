@@ -1,5 +1,4 @@
-﻿using System;
-using PX.Data;
+﻿using PX.Data;
 
 namespace eGUICustomizations.Descriptor
 {
@@ -45,9 +44,9 @@ namespace eGUICustomizations.Descriptor
         #region TWNGUIStatus
         public class TWNGUIStatus
         {
-            public const string Used   = "Used";
-            public const string Voided = "Voided";
-            public const string Blank  = "Blank";
+            public const string Used   = "U";
+            public const string Voided = "V";
+            public const string Blank  = "N";
 
             public static readonly string[] Values = new string[3]
             {

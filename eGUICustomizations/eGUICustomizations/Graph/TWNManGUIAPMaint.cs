@@ -33,7 +33,7 @@ namespace eGUICustomizations.Graph
                           .Where<TWNGUITrans.gUINbr.IsEqual<TWNManualGUIAP.gUINbr.FromCurrent>>.View ViewGUITrans;
         #endregion
 
-        #region Action
+        #region Actions
         public PXAction<TWNManualGUIAP> Release;
         [PXProcessButton]
         [PXUIField(DisplayName = ActionsMessages.Release)]
@@ -110,39 +110,39 @@ namespace eGUICustomizations.Graph
         #region Event Handlers
         TWNGUIValidation tWNGUIValidation = new TWNGUIValidation();
 
-        protected void _(Events.RowPersisting<TWNManualGUIAP> e)
+        protected virtual void _(Events.RowPersisting<TWNManualGUIAP> e)
         {
             tWNGUIValidation.CheckCorrespondingInv(this,e.Row.GUINbr, e.Row.VATInCode);
 
-            if (tWNGUIValidation.errorOccurred.Equals(true) )
+            if (tWNGUIValidation.errorOccurred == true)
             {
                 e.Cache.RaiseExceptionHandling<TWNManualGUIAP.gUINbr>(e.Row, e.Row.GUINbr, new PXSetPropertyException(tWNGUIValidation.errorMessage, PXErrorLevel.Error));
             }
         }
 
-        protected void _(Events.FieldDefaulting<TWNManualGUIAP, TWNManualGUIAP.deduction> e)
+        protected virtual void _(Events.FieldDefaulting<TWNManualGUIAP.deduction> e)
         {
             var row = (TWNManualGUIAP)e.Row;
 
             /// If user doesn't choose a vendor then bring the fixed default value from Attribure "DEDUCTCODE" first record.
-            e.NewValue = row.VendorID is null ? "1" : e.NewValue;
+            e.NewValue = row.VendorID == null ? "1" : e.NewValue;
         }
 
-        protected void _(Events.FieldVerifying<TWNManualGUIAP, TWNManualGUIAP.gUINbr> e)
+        protected virtual void _(Events.FieldVerifying<TWNManualGUIAP.gUINbr> e)
         {
             var row = (TWNManualGUIAP)e.Row;
 
             tWNGUIValidation.CheckGUINbrExisted(this, (string)e.NewValue, row.VATInCode);
         }
 
-        protected void _(Events.FieldVerifying<TWNManualGUIAP, TWNManualGUIAP.taxAmt> e)
+        protected virtual void _(Events.FieldVerifying<TWNManualGUIAP.taxAmt> e)
         {
             var row = (TWNManualGUIAP)e.Row;
 
-            tWNGUIValidation.CheckTaxAmount((decimal)row.NetAmt, (decimal)e.NewValue);
+            e.Cache.RaiseExceptionHandling<TWNManualGUIAP.taxAmt>(row, e.NewValue, tWNGUIValidation.CheckTaxAmount(e.Cache, row.NetAmt.Value, (decimal)e.NewValue));
         }
 
-        protected void _(Events.FieldUpdated<TWNManualGUIAP, TWNManualGUIAP.vendorID> e)
+        protected virtual void _(Events.FieldUpdated<TWNManualGUIAP.vendorID> e)
         {
             var row = (TWNManualGUIAP)e.Row;
 
@@ -151,7 +151,7 @@ namespace eGUICustomizations.Graph
                                                             .InnerJoin<TaxZone>.On<TaxZone.taxZoneID.IsEqual<Location.vTaxZoneID>>
                                                             .InnerJoin<TaxZoneDet>.On<TaxZoneDet.taxZoneID.IsEqual<Location.vTaxZoneID>>
                                                             .Where<Vendor.bAccountID.IsEqual<@P.AsInt>>.View.Select(this, row.VendorID);
-            if (!result.Equals(null))
+            if (result != null)
             {
                 row.TaxZoneID     = result.GetItem<Location>().VTaxZoneID;
                 row.TaxCategoryID = result.GetItem<TaxZone>().DfltTaxCategoryID;
@@ -161,16 +161,16 @@ namespace eGUICustomizations.Graph
                 {
                     switch (cS.AttributeID)
                     {
-                        case APRegisterExt.VATINFRMTName :
+                        case TWNManualGUIAPBill.VATINFRMTName :
                             row.VATInCode = cS.Value;
                             break;
-                        case APRegisterExt.OurTaxNbrName :
+                        case TWNManualGUIAPBill.OurTaxNbrName :
                             row.OurTaxNbr = cS.Value;
                             break;
-                        case APRegisterExt.TaxNbrName :
+                        case TWNManualGUIAPBill.TaxNbrName :
                             row.TaxNbr = cS.Value;
                             break;
-                        case APRegisterExt.DeductionName :
+                        case TWNManualGUIAPBill.DeductionName :
                             row.Deduction = cS.Value;
                             break;
                     }

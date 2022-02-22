@@ -6,13 +6,14 @@ using PX.Objects.TX;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Graph_Release;
 using eGUICustomizations.Descriptor;
-using static eGUICustomizations.Descriptor.TWNStringList;
 
 namespace PX.Objects.EP
 {
     public class EPReleaseProcess_Extension : PXGraphExtension<EPReleaseProcess>
     {
-        #region Delegate Functions
+        public static bool IsActive() => TWNGUIValidation.ActivateTWGUI(new PXGraph());
+
+        #region Delegate Methods
         public delegate void ReleaseDocProcDelegate(EPExpenseClaim claim);
         [PXOverride]
         public void ReleaseDocProc(EPExpenseClaim claim, ReleaseDocProcDelegate baseMethod)
@@ -22,11 +23,9 @@ namespace PX.Objects.EP
                 baseMethod(claim);
 
                 if (TWNGUIValidation.ActivateTWGUI(Base) == true &&
-                    claim != null &&
-                    claim.Released == true )
+                    claim != null && claim.Released == true)
                 {
-                    ExpenseClaimEntry graph = PXGraph.CreateInstance<ExpenseClaimEntry>();
-                    TWNReleaseProcess rp    = PXGraph.CreateInstance<TWNReleaseProcess>();
+                    TWNReleaseProcess rp = PXGraph.CreateInstance<TWNReleaseProcess>();
 
                     Vendor vendor = new Vendor();
 
@@ -36,16 +35,16 @@ namespace PX.Objects.EP
                     
                         if (manualGUIExp.VendorID != null)
                         {
-                            vendor = SelectFrom<Vendor>.Where<Vendor.bAccountID.IsEqual<@P.AsInt>>.View.SelectSingleBound(Base, null, manualGUIExp.VendorID);
+                            vendor = Vendor.PK.Find(Base, manualGUIExp.VendorID);
                         }
 
                         rp.CreateGUITrans(new STWNGUITran()
                         {
                             VATCode       = manualGUIExp.VATInCode,
                             GUINbr        = manualGUIExp.GUINbr,
-                            GUIStatus     = TWNGUIStatus.Used,
-                            BranchID      = graph.ExpenseClaimDetailsCurrent.Current?.BranchID,
-                            GUIDirection  = TWNGUIDirection.Receipt,
+                            GUIStatus     = TWNStringList.TWNGUIStatus.Used,
+                            BranchID      = claim.BranchID,
+                            GUIDirection  = TWNStringList.TWNGUIDirection.Receipt,
                             GUIDate       = manualGUIExp.GUIDate,
                             GUITitle      = vendor.AcctName,
                             TaxZoneID     = manualGUIExp.TaxZoneID,
