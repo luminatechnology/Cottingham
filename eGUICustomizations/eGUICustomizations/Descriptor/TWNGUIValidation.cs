@@ -2,15 +2,15 @@
 using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
 using PX.Data.Licensing;
-using eGUICustomizations.DAC;
 using PX.Objects.AR;
+using eGUICustomizations.DAC;
 using Branch = PX.Objects.GL.Branch;
 
 namespace eGUICustomizations.Descriptor
 {
     public class TWNGUIValidation
     {
-        #region Variables & table buffer
+        #region Declaration Objects
         public int errorLevel      = 0;
         public bool isCreditNote   = false;
         public bool notBeDeleted   = false;
@@ -52,7 +52,7 @@ namespace eGUICustomizations.Descriptor
 
             if (select.Select(gUINbr, gUIFmtCode, refNbr).Count > 0)
             {
-                throw new PXSetPropertyException(TWMessages.GUINbrExisted, PXErrorLevel.RowError);
+                throw new PXSetPropertyException(TWMessages.GUINbrExisted, gUINbr, PXErrorLevel.RowError);
             }
         }
 
@@ -100,28 +100,13 @@ namespace eGUICustomizations.Descriptor
             }
         }
 
-        public virtual PXSetPropertyException CheckTaxAmount(PXCache cache, decimal netAmt, decimal taxAmt)
-        {
-            const decimal fivePercent = (decimal)0.05;
-
-            PXSetPropertyException exception = null;
-
-            if ((netAmt * fivePercent) - taxAmt > 1 && netAmt != 0)
-            {
-                exception = new PXSetPropertyException(TWMessages.TaxAmtIsWrong, PXErrorLevel.Warning);
-            }
-
-            return exception;
-            ;
-        }
-
         public virtual void CheckTabNbr(string taxNbr)
         {
             if (taxNbr.Length < 8)
             {
-                errorLevel    = (int)PXErrorLevel.Error;
+                errorLevel = (int)PXErrorLevel.Error;
                 errorOccurred = true;
-                errorMessage  = TWMessages.TaxNbrLenNot8;
+                errorMessage = TWMessages.TaxNbrLenNot8;
             }
             else
             {
@@ -146,7 +131,7 @@ namespace eGUICustomizations.Descriptor
                                                {num_5 / 10, num_5 % 10},
                                                {num_6 / 10, num_6 % 10},
                                                {num_7 / 10, num_7 % 10},
-                                               {num_8 / 10, num_8 % 10} 
+                                               {num_8 / 10, num_8 % 10}
                                              };
 
                 for (int i = 0; i < array.GetLength(0); i++)
@@ -158,43 +143,58 @@ namespace eGUICustomizations.Descriptor
 
                 if (total % 10 != 0)
                 {
-                    errorLevel    = (int)PXErrorLevel.Warning;
+                    errorLevel = (int)PXErrorLevel.Warning;
                     errorOccurred = true;
-                    errorMessage  = TWMessages.TaxNbrWarning;
+                    errorMessage = TWMessages.TaxNbrWarning;
                 }
             }
+        }
+
+        public virtual PXSetPropertyException CheckTaxAmount(PXCache cache, decimal netAmt, decimal taxAmt)
+        {
+            const decimal fivePercent = (decimal)0.05;
+
+            PXSetPropertyException exception = null;
+
+            if ((netAmt * fivePercent) - taxAmt > 1 && netAmt != 0)
+            {
+                exception = new PXSetPropertyException(TWMessages.TaxAmtIsWrong, PXErrorLevel.Warning);
+            }
+
+            return exception;
         }
 
         public virtual void VerifyGUIPrepayAdjust(PXCache cache, ARRegister register)
         {
             if (register != null)
             {
-                string prepayGUINbr = register.GetExtension<ARRegisterExt>().UsrGUINbr;
+                string appliedGUINbr = register.GetExtension<ARRegisterExt>().UsrGUINbr;
 
-                TWNGUIPrepayAdjust prepayAdjust = SelectFrom<TWNGUIPrepayAdjust>.Where<TWNGUIPrepayAdjust.prepayGUINbr.IsEqual<@P.AsString>>
-                                                                                .OrderBy<TWNGUIPrepayAdjust.createdDateTime.Desc>.View.SelectSingleBound(cache.Graph, null, prepayGUINbr);
+                TWNGUIPrepayAdjust prepayAdjust = SelectFrom<TWNGUIPrepayAdjust>.Where<TWNGUIPrepayAdjust.appliedGUINbr.IsEqual<@P.AsString>>
+                                                                                .OrderBy<TWNGUIPrepayAdjust.createdDateTime.Desc,
+                                                                                         TWNGUIPrepayAdjust.prepayGUINbr.Desc>.View.SelectSingleBound(cache.Graph, null, appliedGUINbr);
 
                 if (prepayAdjust != null && register?.CuryOrigDocAmt != (prepayAdjust.NetAmtUnapplied + prepayAdjust.TaxAmtUnapplied))
                 {
-                    throw new PXSetPropertyException(prepayAdjust.SequenceNo > 0 ? TWMessages.ExistPrepayCM : TWMessages.HasMultiPrepay, prepayGUINbr);
+                    throw new PXSetPropertyException(prepayAdjust.SequenceNo > 0 ? TWMessages.ExistPrepayCM : TWMessages.HasMultiPrepay, appliedGUINbr);
                 }
             }
         }
 
-        public virtual bool ConfirmDeletion(PXView view, string gUIFmtCode)
-        {
-            isCreditNote = true;
+        //public virtual bool ConfirmDeletion(PXView view, string gUIFmtCode)
+        //{
+        //    isCreditNote = true;
 
-            if (gUIFmtCode != TWGUIFormatCode.vATOutCode33 && gUIFmtCode != TWGUIFormatCode.vATOutCode34 && gUIFmtCode != null)
-            {
-                WebDialogResult result = view.Ask(TWMessages.CfmMegOnDelete, MessageButtons.YesNo);
+        //    if (gUIFmtCode != TWGUIFormatCode.vATOutCode33 && gUIFmtCode != TWGUIFormatCode.vATOutCode34 && gUIFmtCode != null)
+        //    {
+        //        WebDialogResult result = view.Ask(TWMessages.CfmMegOnDelete, MessageButtons.YesNo);
 
-                isCreditNote = false;
-                notBeDeleted = (result == WebDialogResult.No);
-            }
+        //        isCreditNote = false;
+        //        notBeDeleted = (result == WebDialogResult.No);
+        //    }
 
-            return notBeDeleted;
-        }
+        //    return notBeDeleted;
+        //}
         #endregion
     }
 }
