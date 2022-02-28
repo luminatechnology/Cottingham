@@ -138,5 +138,13 @@ namespace PX.Objects.AR
         public virtual string UsrVATType { get; set; }
         public abstract class usrVATType : PX.Data.BQL.BqlString.Field<usrVATType> { }
         #endregion
+
+        #region UsrShowTWGUITab
+        [PXBool()]
+        [PXUIField(Visible = false)]
+        [PXFormula(typeof(Switch<Case<Where<ARRegister.docType, Equal<ARDocType.prepayment>>, True>, False>))]
+        public virtual bool? UsrShowTWGUITab { get; set; }
+        public abstract class usrShowTWGUITab : PX.Data.BQL.BqlBool.Field<usrShowTWGUITab> { }
+        #endregion
     }
 }
