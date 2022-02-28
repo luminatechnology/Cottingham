@@ -14,7 +14,7 @@ namespace eGUICustomizations.Descriptor
         public const string NetAmtNegError = "Net Amount Cannot Be Negative.";
         public const string TaxAmtNegError = "Tax Amount Cannot Be Negative.";
         public const string TaxAmtIsWrong  = "The Tax Amount Might Be Wrong, Please Double Check.";
-        public const string GUINbrExisted  = "The GUI Issue/Receipt Number Already Exists.";
+        public const string GUINbrExisted  = "The GUI Issue/Receipt Number {0} Already Exists.";
         public const string CNIsNotFound   = "The Original GUI Number Cannot Be Found For Credit Note.";
         public const string ManHasReleased = "Manual GUI Transaction Has Been Released.";
         public const string GUINbrIsMandat = "GUI Number Cannot Be Empty.";
