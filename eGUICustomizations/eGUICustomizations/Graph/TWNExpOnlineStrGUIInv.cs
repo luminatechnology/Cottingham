@@ -87,15 +87,18 @@ namespace eGUICustomizations.Graph
                     // 會員編號
                     lines += gUITrans.CustVend + verticalBar;
                     // 會員姓名
+                    lines += gUITrans.GUITitle + verticalBar;
                     // 會員郵遞區號
+                    lines += verticalBar;
                     // 會員地址
+                    ARAddress address = SelectFrom<ARAddress>.InnerJoin<ARInvoice>.On<ARInvoice.billAddressID.IsEqual<ARAddress.addressID>>.Where<ARInvoice.refNbr.IsEqual<@P.AsString>>.View.SelectSingleBound(graph, null, gUITrans.OrderNbr);
+                    lines += address?.AddressLine1 + verticalBar;
                     // 會員電話
-                    lines += new string(char.Parse(verticalBar), 4);
+                    lines += verticalBar;
                     // 會員行動電話
                     //PX.Objects.AR.Customer  customer = PXSelectReadonly<PX.Objects.AR.Customer, Where<PX.Objects.AR.Customer.acctCD, Equal<Required<PX.Objects.AR.Customer.acctCD>>>>.Select(graph, gUITrans.CustVend);
                     //PX.Objects.CR.CRContact contact = PXSelectReadonly<PX.Objects.CR.CRContact, Where<PX.Objects.CR.CRContact.contactID, Equal<Required<PX.Objects.AR.Customer.defContactID>>>>.Select(graph, customer.DefContactID);
                     ARContact contact = SelectFrom<ARContact>.InnerJoin<ARInvoice>.On<ARInvoice.billContactID.IsEqual<ARContact.contactID>>.Where<ARInvoice.refNbr.IsEqual<@P.AsString>>.View.SelectSingleBound(graph, null, gUITrans.OrderNbr);
-
                     lines += contact?.Phone1 + verticalBar;
                     // 會員電子郵件
                     lines += contact?.Email + verticalBar;
