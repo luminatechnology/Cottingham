@@ -40,27 +40,6 @@ namespace PX.Objects.AR
 
             baseMethod();
         }
-
-        public delegate IEnumerable VoidCheckDelegate(PXAdapter adapter);
-        [PXOverride]
-        public IEnumerable VoidCheck(PXAdapter adapter, VoidCheckDelegate baseMethod)
-        {
-            try
-            {
-                if (Base.Document.Current.DocType == ARDocType.Prepayment)
-                {
-                    rp.GenerateVoidedGUI(false, Base.Document.Current);
-                }
-
-                baseMethod(adapter);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            
-            return adapter.Get();
-        }
         #endregion
 
         #region ARPaymentEntry_Workflow
@@ -117,6 +96,10 @@ namespace PX.Objects.AR
         {
             PXLongOperation.StartOperation(Base, delegate ()
             {
+                var register = Base.CurrentDocument.Current?.GetExtension<ARRegisterExt>();
+
+                new TWNGUIValidation().CheckGUINbrExisted(Base, register?.UsrGUINbr, register?.UsrVATOutCode);
+
                 ///<remarks>It is enforced again whether it is disabled or not.</remarks>
                 Base.release.Press();
             });
@@ -132,26 +115,31 @@ namespace PX.Objects.AR
 
             if (e.Row == null) { return; }
 
+            bool isPrepayment = e.Row.DocType == ARDocType.Prepayment;
+
+            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrGUIDate>   (e.Cache, null, activateGUI && isPrepayment);
+            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrGUINbr>    (e.Cache, null, activateGUI && isPrepayment);
+            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrOurTaxNbr> (e.Cache, null, activateGUI && isPrepayment);
+            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrTaxNbr>    (e.Cache, null, activateGUI && isPrepayment);
+            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrVATOutCode>(e.Cache, null, activateGUI && isPrepayment);
+            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrB2CType>   (e.Cache, null, activateGUI && isPrepayment);
+            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrCarrierID> (e.Cache, null, activateGUI && isPrepayment);
+            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrNPONbr>    (e.Cache, null, activateGUI && isPrepayment);
+            PXUIFieldAttribute.SetVisible< ARRegisterExt.usrVATType>  (e.Cache, null, activateGUI && isPrepayment);
+
+            generateGUI.SetVisible(activateGUI);
+
             ARRegisterExt regisExt = e.Row.GetExtension<ARRegisterExt>();
 
-            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrGUIDate>(e.Cache, null, activateGUI);
-            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrGUINbr>(e.Cache, null, activateGUI);
-            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrOurTaxNbr>(e.Cache, null, activateGUI);
-            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrTaxNbr>(e.Cache, null, activateGUI);
-            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrVATOutCode>(e.Cache, null, activateGUI);
-            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrB2CType>(e.Cache, null, activateGUI);
-            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrCarrierID>(e.Cache, null, activateGUI);
-            PXUIFieldAttribute.SetVisible<ARRegisterExt.usrNPONbr>(e.Cache, null, activateGUI);
-
             bool taxNbrBlank = string.IsNullOrEmpty(regisExt.UsrTaxNbr);
-            bool isReleased = e.Row.Status.IsIn(ARDocStatus.Open, ARDocStatus.Closed);
+            bool hasReleased = e.Row.Status.IsIn(ARDocStatus.Open, ARDocStatus.Closed);
 
-            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrB2CType>(e.Cache, e.Row, !isReleased && taxNbrBlank);
-            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrCarrierID>(e.Cache, e.Row, !isReleased && taxNbrBlank && regisExt.UsrB2CType == TWNStringList.TWNB2CType.MC);
-            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrNPONbr>(e.Cache, e.Row, !isReleased && taxNbrBlank && regisExt.UsrB2CType == TWNStringList.TWNB2CType.NPO);
+            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrB2CType>   (e.Cache, e.Row, !hasReleased && taxNbrBlank);
+            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrCarrierID> (e.Cache, e.Row, !hasReleased && taxNbrBlank && regisExt.UsrB2CType == TWNStringList.TWNB2CType.MC);
+            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrNPONbr>    (e.Cache, e.Row, !hasReleased && taxNbrBlank && regisExt.UsrB2CType == TWNStringList.TWNB2CType.NPO);
             PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrVATOutCode>(e.Cache, e.Row, string.IsNullOrEmpty(regisExt.UsrGUINbr));
 
-            generateGUI.SetEnabled(isReleased == true && string.IsNullOrEmpty(regisExt.UsrGUINbr));
+            generateGUI.SetEnabled(hasReleased == true);
         }
 
         protected void _(Events.RowPersisting<ARPayment> e, PXRowPersisting baseHandler)
@@ -187,7 +175,7 @@ namespace PX.Objects.AR
         {
             Guid? custNoteID = Base.customer.Current?.NoteID;
 
-            if (custNoteID != null)
+            if (custNoteID != null && Base.CurrentDocument.Current?.DocType == ARDocType.Prepayment)
             {
                 var value = CS.CSAnswers.PK.Find(Base, custNoteID, "PRINTPREPA")?.Value;
 
