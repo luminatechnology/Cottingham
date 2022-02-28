@@ -80,7 +80,7 @@ namespace PX.Objects.AR
                                                                                         !string.IsNullOrEmpty(registerExt.UsrVATOutCode) &&
                                                                                         registerExt.UsrVATOutCode.IsIn(TWGUIFormatCode.vATOutCode33, TWGUIFormatCode.vATOutCode34));
 
-            bool taxNbrBlank = string.IsNullOrEmpty(registerExt.UsrTaxNbr);
+            bool taxNbrBlank  = string.IsNullOrEmpty(registerExt.UsrTaxNbr);
             bool statusClosed = e.Row.Status.IsIn(ARDocStatus.Open, ARDocStatus.Closed);
 
             PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrB2CType>(e.Cache, e.Row, !statusClosed && taxNbrBlank);
@@ -140,6 +140,8 @@ namespace PX.Objects.AR
                         registerExt.UsrVATOutCode = TWGUIFormatCode.vATOutCode34;
                         break;
                 }
+
+                registerExt.UsrCreditAction = TWNStringList.TWNCreditAction.CN;
             }
         }
 
@@ -147,23 +149,20 @@ namespace PX.Objects.AR
         {
             baseHandler?.Invoke(e.Cache, e.Args);
 
-            ARInvoice row = e.Row as ARInvoice;
+            if (activateGUI == true && e.Row is ARInvoice row)
+            {
+                string vATInCode = null;
 
-            if (row != null && activateGUI && row.DocType == ARDocType.CreditMemo)
-            {
-                e.Cache.SetValue<ARRegisterExt.usrVATOutCode>(row, TWGUIFormatCode.vATOutCode33);
-            }
-            else if (row != null && activateGUI &&
-                     (row.DocType == ARDocType.Invoice || row.DocType == ARDocType.CashSale)
-                    )
-            {
-                CSAnswers cSAnswers = SelectFrom<CSAnswers>.Where<CSAnswers.refNoteID.IsEqual<@P.AsGuid>
-                                                                  .And<CSAnswers.attributeID.IsEqual<ARRegisterExt.VATOUTFRMTNameAtt>>>
-                                                           .View.ReadOnly.Select(Base, Base.customer.Current.NoteID);
-                if (cSAnswers != null)
+                if (row.DocType == ARDocType.CreditMemo)
                 {
-                    e.Cache.SetValue<ARRegisterExt.usrVATOutCode>(row, cSAnswers.Value);
+                    vATInCode = TWGUIFormatCode.vATOutCode33;
                 }
+                else if (row.DocType.IsIn(ARDocType.Invoice, ARDocType.CashSale))
+                {
+                    vATInCode = CSAnswers.PK.Find(Base, Base.customer.Current.NoteID, ARRegisterExt.VATOUTFRMTName)?.Value;
+                }
+
+                e.Cache.SetValue<ARRegisterExt.usrVATOutCode>(row, vATInCode);
             }
         }
 
