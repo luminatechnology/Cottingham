@@ -10,6 +10,7 @@ using PX.Objects.TX;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Graph_Release;
 using eGUICustomizations.Descriptor;
+using System.Collections.Generic;
 
 namespace PX.Objects.AR
 {
@@ -50,7 +51,8 @@ namespace PX.Objects.AR
                     throw new PXException(TWMessages.VATOutCodeIs37);
                 }
 
-                string   taxZoneID, taxID, taxCateID = null;
+                #region Tax Details
+                string taxZoneID, taxID, taxCateID = null;
                 decimal? remainNet, remainTax, settledNet = 0m, settledTax = 0m, taxRate = 0m;
 
                 if (doc.DocType != ARDocType.Prepayment)
@@ -77,6 +79,7 @@ namespace PX.Objects.AR
                     remainNet = tuple.Item4;
                     remainTax = tuple.Item5;
                 }
+                #endregion
 
                 using (PXTransactionScope ts = new PXTransactionScope())
                 {
@@ -99,7 +102,7 @@ namespace PX.Objects.AR
 
                             if (!string.IsNullOrEmpty(taxCateID)) { goto CreatGUI; }
                         }
-
+                        
                     CreatGUI:
                         if (docExt.UsrCreditAction.IsIn(TWNStringList.TWNCreditAction.CN, TWNStringList.TWNCreditAction.NO))
                         {
@@ -154,6 +157,8 @@ namespace PX.Objects.AR
                             });
 
                             #region Prepayment Adjust
+                            decimal? adjustNetTol = null, adjustTaxTol = null;
+
                             foreach (ARAdjust adjust in Base.ARAdjust_AdjdDocType_RefNbr_CustomerID.Cache.Cached)
                             {
                                 string prepayGUINbr = ARRegister.PK.Find(Base, adjust.AdjgDocType, adjust.AdjgRefNbr).GetExtension<ARRegisterExt>().UsrGUINbr;
@@ -161,9 +166,25 @@ namespace PX.Objects.AR
                                 decimal adjustNet = PXDBCurrencyAttribute.BaseRound(Base, (adjust.CuryAdjdAmt / (1 + taxRate)).Value);
                                 decimal adjustTax = PXDBCurrencyAttribute.BaseRound(Base, (adjust.CuryAdjdAmt - adjustNet).Value);
 
-                                var (netUnapplied, taxUnapplied, seqNo) = GetGUIPrepayAdjustAmounts(prepayGUINbr, adjustNet, adjustTax);
+                                foreach (var keyValues in GetGUIPrepayAdjustAmounts(prepayGUINbr, adjustNet, adjustTax))
+                                {
+                                    rp.CreateGUIPrepayAdjust(false, Tuple.Create<string, int?, decimal?, decimal?, decimal?, decimal?>(prepayGUINbr, 0, -adjustNet, -adjustTax, keyValues.Value.Item1, keyValues.Value.Item2));
 
-                                rp.CreateGUIPrepayAdjust(false, Tuple.Create<string, int?, decimal?, decimal?, decimal?, decimal?>(prepayGUINbr, 0, -adjustNet , -adjustTax, -netUnapplied, -taxUnapplied));
+                                    adjustNetTol = (adjustNetTol ?? 0m) + adjustNet;
+                                    adjustTaxTol = (adjustTaxTol ?? 0m) + adjustTax;
+                                }
+                            }
+
+                            if (adjustNetTol != null)
+                            {
+                                var gUITran = rp.ViewGUITrans.Current;
+
+                                rp.ViewGUITrans.Cache.SetValue<TWNGUITrans.netAmount>(gUITran, gUITran.NetAmount - adjustNetTol);
+                                rp.ViewGUITrans.Cache.SetValue<TWNGUITrans.taxAmount>(gUITran, gUITran.TaxAmount - adjustTaxTol);
+                                rp.ViewGUITrans.Cache.SetValue<TWNGUITrans.netAmtRemain>(gUITran, gUITran.NetAmtRemain - adjustNetTol);
+                                rp.ViewGUITrans.Cache.SetValue<TWNGUITrans.taxAmtRemain>(gUITran, gUITran.TaxAmtRemain -  adjustTaxTol);
+
+                                rp.ViewGUITrans.UpdateCurrent();
                             }
 
                             if (doc.DocType == ARDocType.Prepayment)
@@ -185,8 +206,8 @@ namespace PX.Objects.AR
                             {
                                 if (remainNet < 0) { throw new PXException(TWMessages.RemainAmt); }
 
-                                rp.ViewGUITrans.SetValueExt<TWNGUITrans.netAmtRemain>(tWNGUITrans, (tWNGUITrans.NetAmtRemain -= settledNet));
-                                rp.ViewGUITrans.SetValueExt<TWNGUITrans.taxAmtRemain>(tWNGUITrans, (tWNGUITrans.TaxAmtRemain -= settledTax));
+                                rp.ViewGUITrans.SetValueExt<TWNGUITrans.netAmtRemain>(tWNGUITrans, tWNGUITrans.NetAmtRemain -= settledNet);
+                                rp.ViewGUITrans.SetValueExt<TWNGUITrans.taxAmtRemain>(tWNGUITrans, tWNGUITrans.TaxAmtRemain -= settledTax);
                             }
 
                             rp.ViewGUITrans.Update(tWNGUITrans);
@@ -201,20 +222,17 @@ namespace PX.Objects.AR
                             decimal taxable = (doc as ARInvoice).CuryVatTaxableTotal.Value;
                             decimal taxTotl = (doc as ARInvoice).CuryTaxTotal.Value;
 
-                            var (netUnapplied, taxUnapplied, seqNo) = GetGUIPrepayAdjustAmounts(gUINbr, taxable, taxTotl);
-
-                            if (netUnapplied + taxUnapplied < doc.CuryDocBal)
+                            foreach (var keyValues in GetGUIPrepayAdjustAmounts(gUINbr, taxable, taxTotl, isVoided) )
                             {
-                                throw new PXException(TWMessages.InsufPrepayCN);
-                            }
-                            else if (seqNo == null && isVoided == true) { continue; }
+                                if (keyValues.Value.Item3 == null && isVoided == true) { continue; }
 
-                            rp.CreateGUIPrepayAdjust(false, Tuple.Create<string, int?, decimal?, decimal?, decimal?, decimal?>(gUINbr,
-                                                                                                                               isVoided == false ? (seqNo ?? 0) + 1 : 0,
-                                                                                                                               isVoided == false ? -taxable : -netUnapplied,
-                                                                                                                               isVoided == false ? -taxTotl : -taxUnapplied, 
-                                                                                                                               netUnapplied, 
-                                                                                                                               taxUnapplied));
+                                rp.CreateGUIPrepayAdjust(false, Tuple.Create<string, int?, decimal?, decimal?, decimal?, decimal?>(gUINbr,
+                                                                                                                                   isVoided == false ? (keyValues.Value.Item3 ?? 0) + 1 : keyValues.Value.Item3,
+                                                                                                                                   isVoided == false ? -taxable : -keyValues.Value.Item1,
+                                                                                                                                   isVoided == false ? -taxTotl : -keyValues.Value.Item2,
+                                                                                                                                   keyValues.Value.Item1,
+                                                                                                                                   keyValues.Value.Item2));
+                            }
                         }
                         #endregion
                     }
@@ -236,6 +254,14 @@ namespace PX.Objects.AR
                     // Triggering after save events.
                     rp.ViewGUITrans.Cache.Persisted(false);
                 }
+            }
+
+            if ((doc as ARPayment)?.VoidAppl == true &&
+                doc.DocType == ARDocType.VoidPayment &&
+                doc.OrigDocType == ARDocType.Prepayment &&
+                doc.Released == true)
+             {
+                PXGraph.CreateInstance<TWNReleaseProcess>().GenerateVoidedGUI(false, doc);
             }
         }
 
@@ -279,17 +305,42 @@ namespace PX.Objects.AR
             return Tuple.Create(taxZoneID, taxID, taxCateID, remainNet, remainTax);
         }
 
-        public (decimal netUnapplied, decimal taxUnapplied, int? seqNo) GetGUIPrepayAdjustAmounts(string gUINbr, decimal adjustNet, decimal adjustTax)
+        public Dictionary<string, ValueTuple<decimal, decimal, int?>> GetGUIPrepayAdjustAmounts(string gUINbr, decimal adjustNet, decimal adjustTax, bool isVoided = false)
         {
-            TWNGUIPrepayAdjust row = SelectFrom<TWNGUIPrepayAdjust>.Where<TWNGUIPrepayAdjust.prepayGUINbr.IsEqual<@P.AsString>>
-                                                                   .OrderBy<TWNGUIPrepayAdjust.createdDateTime.Desc>.View.SelectSingleBound(Base, null, gUINbr);
+            Dictionary<string, ValueTuple<decimal, decimal, int?>> dic = new Dictionary<string, (decimal, decimal, int?)>();
 
-            decimal prepayNet = row?.NetAmtUnapplied ?? 0m;
-            decimal prepayTax = row?.TaxAmtUnapplied ?? 0m;
-            decimal settleNet = (adjustNet + adjustTax) >= (prepayNet + prepayTax) ? adjustNet - prepayNet : adjustNet;
-            decimal settleTax = (adjustNet + adjustTax) >= (prepayNet + prepayTax) ? adjustTax - prepayTax : adjustTax;
+            if (isVoided == false)
+            {
+                TWNGUIPrepayAdjust prepay = SelectFrom<TWNGUIPrepayAdjust>.Where<TWNGUIPrepayAdjust.prepayGUINbr.IsEqual<@P.AsString>>
+                                                       .OrderBy<TWNGUIPrepayAdjust.createdDateTime.Desc>.View.SelectSingleBound(Base, null, gUINbr);
 
-            return (settleNet, settleTax, row?.SequenceNo);
+                decimal remainNet = prepay?.NetAmtUnapplied ?? 0m;
+                decimal remainTax = prepay?.TaxAmtUnapplied ?? 0m;
+
+                if (remainNet + remainTax < adjustNet + adjustTax) { throw new PXException(TWMessages.InsufPrepayCN); }
+
+                decimal settleNet = remainNet - adjustNet;
+                decimal settleTax = remainTax - adjustTax;
+
+                dic.Add(prepay.PrepayGUINbr, ValueTuple.Create(settleNet, settleTax, prepay?.SequenceNo));
+            }
+            else
+            {
+                TWNGUIPrepayAdjust applied = SelectFrom<TWNGUIPrepayAdjust>.Where<TWNGUIPrepayAdjust.appliedGUINbr.IsEqual<@P.AsString>
+                                                                                 .And<TWNGUIPrepayAdjust.reason.IsEqual<TWNStringList.TWNGUIStatus.used>>
+                                                                                      .And<TWNGUIPrepayAdjust.sequenceNo.IsEqual<CS.int0>>>.View.SelectSingleBound(Base, null, gUINbr);
+
+                foreach (TWNGUIPrepayAdjust prepay in SelectFrom<TWNGUIPrepayAdjust>.Where<TWNGUIPrepayAdjust.prepayGUINbr.IsEqual<@P.AsString>>
+                                                                                    .OrderBy<TWNGUIPrepayAdjust.createdDateTime.Desc>.View.SelectSingleBound(Base, null, applied.PrepayGUINbr))
+                {
+                    decimal settleNet = (prepay?.NetAmtUnapplied ?? 0m) + (applied?.NetAmt ?? 0m);
+                    decimal settleTax = (prepay?.TaxAmtUnapplied ?? 0m) + (applied?.TaxAmt ?? 0m);
+
+                    dic.Add(prepay.PrepayGUINbr, ValueTuple.Create(settleNet, settleTax, prepay?.SequenceNo));
+                }
+            }
+
+            return dic;
         }
         #endregion
     }

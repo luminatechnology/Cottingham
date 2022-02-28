@@ -81,8 +81,8 @@ namespace eGUICustomizations.Graph_Release
 
             prepay.NetAmt          = prepay.Reason != TWNStringList.TWNGUIStatus.Voided ? netAmt : -1 * netAmt;
             prepay.TaxAmt          = prepay.Reason != TWNStringList.TWNGUIStatus.Voided ? taxAmt : -1 * taxAmt;
-            prepay.NetAmtUnapplied = prepay.Reason != TWNStringList.TWNGUIStatus.Voided ? (tuple?.Item5 ?? netAmt) : prepay.NetAmt;
-            prepay.TaxAmtUnapplied = prepay.Reason != TWNStringList.TWNGUIStatus.Voided ? (tuple?.Item6 ?? taxAmt) : prepay.TaxAmt;
+            prepay.NetAmtUnapplied = tuple?.Item5 ?? netAmt;
+            prepay.TaxAmtUnapplied = tuple?.Item6 ?? taxAmt;
             prepay.Remark          = trans.Remark;
 
             PrepayAdjust.Update(prepay);
@@ -160,6 +160,8 @@ namespace eGUICustomizations.Graph_Release
                                                                  And<TWNGUITrans.gUIFormatcode, Equal<Required<TWNGUITrans.gUIFormatcode>>>>,
                                               Aggregate<Count>>.Select(this, gUINbr, vATInCode).RowCount;
 
+            if (vATInCode.EndsWith("3") == true) { ++SequenceNo; }
+
             TWNGUIValidation gUIValidation = new TWNGUIValidation();
 
             gUIValidation.CheckCorrespondingInv(this, gUINbr, vATInCode);
@@ -172,6 +174,8 @@ namespace eGUICustomizations.Graph_Release
             SequenceNo = (int)PXSelectGroupBy<TWNGUITrans, Where<TWNGUITrans.gUINbr, Equal<Required<TWNGUITrans.gUINbr>>,
                                                                  And<TWNGUITrans.gUIFormatcode, Equal<Required<TWNGUITrans.gUIFormatcode>>>>,
                                               Aggregate<Count>>.Select(this, gUINbr, vATOutCode).RowCount;
+            
+            if (vATOutCode.EndsWith("3") == true) { ++SequenceNo; }
 
             TWNGUIValidation gUIValidation = new TWNGUIValidation();
 
