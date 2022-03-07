@@ -82,8 +82,7 @@ namespace eGUICustomizations.Graph
                                                                                  typeof(TWNManualGUIAP.vendorID).Name, manualGUIAP.VendorID,
                                                                                  typeof(Vendor.acctName).Name),
                             DeductionCode = manualGUIAP.Deduction,
-                            Remark        = manualGUIAP.Remark,
-                            OrderNbr      = string.Empty
+                            Remark        = manualGUIAP.Remark
                         });
 
                         manualGUIAP.Status = TWNGUIManualStatus.Released;

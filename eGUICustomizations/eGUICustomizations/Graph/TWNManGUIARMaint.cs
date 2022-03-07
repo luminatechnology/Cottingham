@@ -110,8 +110,7 @@ namespace eGUICustomizations.Graph
                             AcctCD        = customer.AcctCD,
                             AcctName      = customer.AcctName,
                             eGUIExcluded  = true,
-                            Remark        = manualGUIAR.Remark,
-                            OrderNbr      = string.Empty
+                            Remark        = manualGUIAR.Remark
                         });
 
                         manualGUIAR.Status = TWNStringList.TWNGUIManualStatus.Released;

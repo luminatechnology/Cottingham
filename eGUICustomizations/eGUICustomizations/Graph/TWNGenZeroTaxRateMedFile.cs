@@ -25,7 +25,7 @@ namespace eGUICustomizations.Graph
         public PXSetup<TWNGUIPreferences> gUIPreferSetup;
         #endregion
 
-        #region Constructor
+        #region Ctor
         public TWNGenZeroTaxRateMedFile()
         {
             GUITranProc.SetProcessCaption(ActionsMessages.Export);
@@ -54,7 +54,7 @@ namespace eGUICustomizations.Graph
         }
         #endregion
 
-        #region Function
+        #region Methods
         public void Export(List<TWNGUITrans> tWNGUITrans)
         {
             try
