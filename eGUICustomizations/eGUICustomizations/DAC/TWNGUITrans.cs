@@ -136,14 +136,14 @@ namespace eGUICustomizations.DAC
 
         #region TaxNbr
         [Descriptor.TaxNbrVerify(8, IsUnicode = true)]
-        [PXUIField(DisplayName = "Tax Nbr")]    
+        [PXUIField(DisplayName = "Tax Nbr.")]    
         public virtual string TaxNbr { get; set; }
         public abstract class taxNbr : PX.Data.BQL.BqlString.Field<taxNbr> { }
         #endregion
 
         #region OurTaxNbr
         [TaxNbrVerify(8, IsUnicode = true)]
-        [PXUIField(DisplayName = "Our Tax Nbr")]
+        [PXUIField(DisplayName = "Our Tax Nbr.")]
         public virtual string OurTaxNbr { get; set; }
         public abstract class ourTaxNbr : PX.Data.BQL.BqlString.Field<ourTaxNbr> { }
         #endregion
@@ -178,7 +178,7 @@ namespace eGUICustomizations.DAC
 
         #region CustVend
         [PXDBString(20, IsUnicode = true)]
-        [PXUIField(DisplayName = "Cust/Vend")]
+        [PXUIField(DisplayName = "Customer/Vendor")]
         [PXSelector(typeof(Search<PX.Objects.CR.BAccount.acctCD,
                                   Where<PX.Objects.CR.BAccount.type.IsIn<PX.Objects.CR.BAccountType.customerType,
                                                                          PX.Objects.CR.BAccountType.vendorType,
@@ -226,11 +226,16 @@ namespace eGUICustomizations.DAC
         public abstract class batchNbr : PX.Data.BQL.BqlString.Field<batchNbr> { }
         #endregion
 
+        #region DocType
+        [PXDBString(3, IsFixed = true)]
+        [PXUIField(DisplayName = "Doc. Type", Visibility = PXUIVisibility.SelectorVisible, Enabled = false, Visible = false)]
+        public virtual string DocType { get; set; }
+        public new abstract class docType : PX.Data.BQL.BqlString.Field<docType> { }
+        #endregion
+
         #region OrderNbr
         [PXDBString(20, IsUnicode = true)]
-        [PXUIField(DisplayName = "Order Nbr")]
-        [PXSelector(typeof(Search<GLTran.refNbr>),
-                    ValidateValue = false)]
+        [PXUIField(DisplayName = "Order Nbr.", Enabled = false)]
         public virtual string OrderNbr { get; set; }
         public abstract class orderNbr : PX.Data.BQL.BqlString.Field<orderNbr> { }
         #endregion
@@ -277,7 +282,7 @@ namespace eGUICustomizations.DAC
 
         #region ExportTicketNbr
         [PXDBString(14, IsUnicode = true)]
-        [PXUIField(DisplayName = "Export Ticket Nbr")]
+        [PXUIField(DisplayName = "Export Ticket Nbr.")]
         public virtual string ExportTicketNbr { get; set; }
         public abstract class exportTicketNbr : PX.Data.BQL.BqlString.Field<exportTicketNbr> { }
         #endregion
@@ -312,7 +317,7 @@ namespace eGUICustomizations.DAC
 
         #region EGUIExportedDateTime
         [PXDBDate()]
-        [PXUIField(DisplayName = "eGUI Exported Date Time")]
+        [PXUIField(DisplayName = "eGUI Exported On")]
         public virtual DateTime? EGUIExportedDateTime { get; set; }
         public abstract class eGUIExportedDateTime : PX.Data.BQL.BqlDateTime.Field<eGUIExportedDateTime> { }
         #endregion
