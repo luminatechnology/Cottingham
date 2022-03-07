@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using PX.Common;
 using PX.Data;
 using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
 using PX.Objects.AR;
+using PX.Objects.CR;
+using PX.Objects.CS;
+using PX.Objects.SO;
 using eGUICustomizations.DAC;
 using eGUICustomizations.Descriptor;
 
@@ -48,9 +52,7 @@ namespace eGUICustomizations.Graph
                 TWNExpOnlineStrGUIInv graph   = CreateInstance<TWNExpOnlineStrGUIInv>();
                 TWNExpGUIInv2BankPro invGraph = CreateInstance<TWNExpGUIInv2BankPro>();
 
-                string lines = "", fileName = "";
-
-                string verticalBar = TWNExpGUIInv2BankPro.verticalBar;
+                string lines = "", fileName = "", verticalBar = TWNExpGUIInv2BankPro.verticalBar;
 
                 TWNGUIPreferences preferences = PXSelect<TWNGUIPreferences>.Select(graph);
 
@@ -58,12 +60,13 @@ namespace eGUICustomizations.Graph
 
                 foreach (TWNGUITrans gUITrans in tWNGUITrans)
                 {
+                    #region Header
                     // 主檔代號
                     lines += "M" + verticalBar;
                     // 訂單編號
                     lines += gUITrans.OrderNbr + verticalBar;
                     // 訂單狀態
-                    lines += ((gUITrans.VATType != TWGUIFormatCode.vATOutCode33) ? "0" : "3") + verticalBar;
+                    lines += (gUITrans.GUIStatus == TWNStringList.TWNGUIStatus.Voided ? 2 : gUITrans.VATType != TWGUIFormatCode.vATOutCode33 ? 0 : 3) + verticalBar;
                     // 訂單日期
                     lines += gUITrans.TransDate.Value.ToString("yyyy/MM/dd") + verticalBar;
                     // 預計出貨日
@@ -91,17 +94,14 @@ namespace eGUICustomizations.Graph
                     // 會員郵遞區號
                     lines += verticalBar;
                     // 會員地址
-                    ARAddress address = SelectFrom<ARAddress>.InnerJoin<ARInvoice>.On<ARInvoice.billAddressID.IsEqual<ARAddress.addressID>>.Where<ARInvoice.refNbr.IsEqual<@P.AsString>>.View.SelectSingleBound(graph, null, gUITrans.OrderNbr);
-                    lines += address?.AddressLine1 + verticalBar;
+                    lines += graph.GetBillingAddress(graph, gUITrans.DocType, gUITrans.OrderNbr, gUITrans.CustVend) + verticalBar;
                     // 會員電話
                     lines += verticalBar;
                     // 會員行動電話
-                    //PX.Objects.AR.Customer  customer = PXSelectReadonly<PX.Objects.AR.Customer, Where<PX.Objects.AR.Customer.acctCD, Equal<Required<PX.Objects.AR.Customer.acctCD>>>>.Select(graph, gUITrans.CustVend);
-                    //PX.Objects.CR.CRContact contact = PXSelectReadonly<PX.Objects.CR.CRContact, Where<PX.Objects.CR.CRContact.contactID, Equal<Required<PX.Objects.AR.Customer.defContactID>>>>.Select(graph, customer.DefContactID);
-                    ARContact contact = SelectFrom<ARContact>.InnerJoin<ARInvoice>.On<ARInvoice.billContactID.IsEqual<ARContact.contactID>>.Where<ARInvoice.refNbr.IsEqual<@P.AsString>>.View.SelectSingleBound(graph, null, gUITrans.OrderNbr);
-                    lines += contact?.Phone1 + verticalBar;
+                    (string phone, string email) = graph.GetBillingInfo(graph, gUITrans.DocType, gUITrans.OrderNbr, gUITrans.CustVend);
+                    lines += phone + verticalBar;
                     // 會員電子郵件
-                    lines += contact?.Email + verticalBar;
+                    lines += email + verticalBar;
                     // 紅利點數折扣金額
                     lines += verticalBar;
                     // 索取紙本發票                       
@@ -130,37 +130,40 @@ namespace eGUICustomizations.Graph
                     lines += gUITrans.OrderNbr.Substring(gUITrans.OrderNbr.Length - 4, 4) + verticalBar;
                     // 稅率代碼
                     // 稅率
-                    lines += "0" + verticalBar + "\r\n";
+                    lines += 0 + verticalBar + "\r\n";
+                    #endregion
 
                     int num = 1;
-                    foreach (PXResult<PX.Objects.AR.ARTran> result in invGraph.RetrieveARTran(gUITrans.OrderNbr))
+                    foreach (ARTran tran in invGraph.RetrieveARTran(gUITrans.OrderNbr))
                     {
-                        PX.Objects.AR.ARTran aRTran = result;
-
                         // 明細代號
                         lines += "D" + verticalBar;
                         // 序號
                         lines += num++ + verticalBar;
                         // 訂單編號
-                        lines += aRTran.RefNbr + verticalBar;
+                        lines += tran.RefNbr + verticalBar;
                         // 商品編號
                         // 商品條碼
                         lines += new string(char.Parse(verticalBar), 2);
                         // 商品名稱
-                        lines += System.Text.RegularExpressions.Regex.Replace((aRTran.TranDesc ?? "").Replace("'", @"\'").Trim(), @"[\r\n]+", "") + verticalBar;
+                        lines += Regex.Replace((tran.TranDesc ?? "").Replace("'", @"\'").Trim(), @"[\r\n]+", "") + verticalBar;
                         // 商品規格
                         // 單位
+                        lines += new string(char.Parse(verticalBar), 2);
                         // 單價
-                        lines += new string(char.Parse(verticalBar), 3);
+                        ARInvoice invoice = ARInvoice.PK.Find(graph, tran.TranType, tran.RefNbr);
+
+                        (decimal UnitPrice, decimal ExtPrice) = graph.CalcTaxAmt(invoice.TaxCalcMode == PX.Objects.TX.TaxCalculationMode.Gross, string.IsNullOrEmpty(gUITrans.TaxNbr), tran.CuryExtPrice.Value);
+
+                        lines += UnitPrice + verticalBar;
                         // 數量
-                        lines += (aRTran.Qty == 0m ? 1 : aRTran.Qty) + verticalBar;
+                        lines += (tran.Qty == 0m ? 1 : tran.Qty) + verticalBar;
                         // 未稅金額
-                        lines += verticalBar;
+                        lines += ExtPrice + verticalBar;
                         // 含稅金額
-                        PX.Objects.AR.ARInvoice invoice = PX.Objects.AR.ARInvoice.PK.Find(graph, aRTran.TranType, aRTran.RefNbr);
-                        lines += (invoice.TaxCalcMode != PX.Objects.TX.TaxCalculationMode.Gross ? aRTran.CuryTranAmt * (decimal)1.05 : aRTran.CuryTranAmt) + verticalBar;
+                        lines += (invoice.TaxCalcMode != PX.Objects.TX.TaxCalculationMode.Gross ? tran.CuryTranAmt * (decimal)1.05 : tran.CuryTranAmt) + verticalBar;
                         // 健康捐
-                        lines += "0" + verticalBar;
+                        lines += 0 + verticalBar;
                         // 稅率別
                         lines += TWNExpGUIInv2BankPro.GetTaxType(gUITrans.VATType) + verticalBar;
                         // 紅利點數折扣金額
@@ -168,11 +171,59 @@ namespace eGUICustomizations.Graph
                         lines += new string(char.Parse(verticalBar), 1) + "\r\n";
                     }
 
+                    #region Voided GUI
                     // The following method is only for voided invoice.
-                    if (gUITrans.GUIStatus == TWNStringList.TWNGUIStatus.Voided)
+                    if (gUITrans.GUIStatus == TWNStringList.TWNGUIStatus.Voided && gUITrans.DocType != ARDocType.Prepayment)
                     {
                         TWNExpGUIInv2BankPro.CreateVoidedDetailLine(verticalBar, gUITrans.OrderNbr, ref lines);
                     }
+                    #endregion
+
+                    #region Prepayment / Invoice reveral Prepayment
+                    bool hasAdjust = SelectFrom<ARAdjust>.Where<ARAdjust.adjdDocType.IsEqual<@P.AsString>
+                                                         .And<ARAdjust.adjdRefNbr.IsEqual<@P.AsString>>>.View.SelectSingleBound(graph, null, gUITrans.DocType, gUITrans.OrderNbr).Count > 0;
+
+                    if (gUITrans.DocType == ARDocType.Prepayment || hasAdjust)
+                    {
+                        TWNGUIPrepayAdjust prepayAdj = SelectFrom<TWNGUIPrepayAdjust>.Where<TWNGUIPrepayAdjust.appliedGUINbr.IsEqual<@P.AsString>.And<TWNGUIPrepayAdjust.sequenceNo.IsEqual<@P.AsInt>>>
+                                                                                     .AggregateTo<Sum<TWNGUIPrepayAdjust.netAmt,
+                                                                                                      Sum<TWNGUIPrepayAdjust.taxAmt>>>.View.ReadOnly.Select(graph, gUITrans.GUINbr, gUITrans.SequenceNo);
+
+                        bool isB2C = string.IsNullOrEmpty(gUITrans.TaxNbr);
+
+                        decimal? netAmt   = hasAdjust == false ? gUITrans.NetAmount + gUITrans.TaxAmount : prepayAdj.NetAmt + prepayAdj.TaxAmt;
+                        decimal? grossAmt = hasAdjust == false ? gUITrans.NetAmount : prepayAdj.NetAmt;
+
+                        // 明細代號
+                        lines += "D" + verticalBar;
+                        // 序號
+                        lines += num++ + verticalBar;
+                        // 訂單編號
+                        lines += gUITrans.OrderNbr + verticalBar;
+                        // 商品編號
+                        // 商品條碼
+                        lines += new string(char.Parse(verticalBar), 2);
+                        // 商品名稱
+                        lines += string.Format("{0}預收款", hasAdjust ? "扣:" : "") + verticalBar;
+                        // 商品規格
+                        // 單位
+                        // 單價
+                        lines += new string(char.Parse(verticalBar), 3);
+                        // 數量
+                        lines += 0 + verticalBar;
+                        // 未稅金額
+                        lines += (isB2C == true ? netAmt : grossAmt) + verticalBar;
+                        // 含稅金額
+                        lines += netAmt + verticalBar;
+                        // 健康捐
+                        lines += 0 + verticalBar;
+                        // 稅率別
+                        lines += TWNExpGUIInv2BankPro.GetTaxType(gUITrans.VATType) + verticalBar;
+                        // 紅利點數折扣金額
+                        // 明細備註
+                        lines += new string(char.Parse(verticalBar), 1) + "\r\n";
+                    }
+                    #endregion
                 }
 
                 // Total Records
@@ -186,6 +237,99 @@ namespace eGUICustomizations.Graph
                 PXProcessing<TWNGUITrans>.SetError(ex);
                 throw;
             }
+        }
+        #endregion
+
+        #region Methods
+        private string GetBillingAddress(PXGraph graph, string docType, string refNbr, string customer)
+        {
+            string addressLine = SelectFrom<ARAddress>.InnerJoin<ARInvoice>.On<ARInvoice.billAddressID.IsEqual<ARAddress.addressID>>
+                                                      .Where<ARInvoice.refNbr.IsEqual<@P.AsString>>.View.SelectSingleBound(graph, null, refNbr).TopFirst?.AddressLine1;
+
+            if (string.IsNullOrEmpty(addressLine) )
+            {
+                addressLine = SelectFrom<ARAddress>.InnerJoin<ARInvoice>.On<ARInvoice.billAddressID.IsEqual<ARAddress.addressID>>
+                                                   .InnerJoin<ARAdjust>.On<ARAdjust.adjdDocType.IsEqual<ARInvoice.docType>
+                                                                           .And<ARAdjust.adjdRefNbr.IsEqual<ARInvoice.refNbr>>>
+                                                   .Where<ARAdjust.adjgDocType.IsEqual<@P.AsString>
+                                                          .And<ARAdjust.adjgRefNbr.IsEqual<@P.AsString>>>.View
+                                                   .SelectSingleBound(graph, null, docType, refNbr).TopFirst?.AddressLine1;
+            }
+
+            if (string.IsNullOrEmpty(addressLine))
+            {
+                addressLine = SelectFrom<SOAddress>.InnerJoin<SOOrder>.On<SOOrder.billAddressID.IsEqual<SOAddress.addressID>>
+                                                   .InnerJoin<SOAdjust>.On<SOAdjust.adjdOrderType.IsEqual<SOOrder.orderType>
+                                                                           .And<SOAdjust.adjdOrderNbr.IsEqual<SOOrder.orderNbr>>>
+                                                   .Where<SOAdjust.adjgDocType.IsEqual<@P.AsString>
+                                                          .And<SOAdjust.adjgRefNbr.IsEqual<@P.AsString>>>.View
+                                                   .SelectSingleBound(graph, null, docType, refNbr).TopFirst?.AddressLine1;
+            }
+
+            if (string.IsNullOrEmpty(addressLine))
+            {
+                addressLine = SelectFrom<Address>.InnerJoin<Customer>.On<Customer.defBillAddressID.IsEqual<Address.addressID>>
+                                                 .Where<Customer.acctCD.IsEqual<@P.AsString>>.View
+                                                 .SelectSingleBound(graph, null, customer).TopFirst?.AddressLine1;
+            }
+
+            return addressLine;
+        }
+
+        private (string phone, string email) GetBillingInfo(PXGraph graph, string docType, string refNbr, string customer)
+        {
+            IContact contact = SelectFrom<ARContact>.InnerJoin<ARInvoice>.On<ARInvoice.billContactID.IsEqual<ARContact.contactID>>
+                                                    .Where<ARInvoice.refNbr.IsEqual<@P.AsString>>.View.SelectSingleBound(graph, null, refNbr).TopFirst;
+
+            if (contact == null)
+            {
+                contact = SelectFrom<ARContact>.InnerJoin<ARInvoice>.On<ARInvoice.billContactID.IsEqual<ARContact.contactID>>
+                                               .InnerJoin<ARAdjust>.On<ARAdjust.adjdDocType.IsEqual<ARInvoice.docType>
+                                                                       .And<ARAdjust.adjdRefNbr.IsEqual<ARInvoice.refNbr>>>
+                                               .Where<ARAdjust.adjgDocType.IsEqual<@P.AsString>
+                                                      .And<ARAdjust.adjgRefNbr.IsEqual<@P.AsString>>>.View
+                                               .SelectSingleBound(graph, null, docType, refNbr).TopFirst;
+            }
+
+            if (contact == null)
+            {
+                contact = SelectFrom<SOContact>.InnerJoin<SOOrder>.On<SOOrder.billContactID.IsEqual<SOContact.contactID>>
+                                               .InnerJoin<SOAdjust>.On<SOAdjust.adjdOrderType.IsEqual<SOOrder.orderType>
+                                                                       .And<SOAdjust.adjdOrderNbr.IsEqual<SOOrder.orderNbr>>>
+                                               .Where<SOAdjust.adjgDocType.IsEqual<@P.AsString>
+                                                       .And<SOAdjust.adjgRefNbr.IsEqual<@P.AsString>>>.View
+                                               .SelectSingleBound(graph, null, docType, refNbr).TopFirst;
+            }
+
+            if (contact == null)
+            {
+                contact = SelectFrom<Contact>.InnerJoin<Customer>.On<Customer.defBillContactID.IsEqual<Contact.contactID>>
+                                             .Where<Customer.acctCD.IsEqual<@P.AsString>>.View.SelectSingleBound(graph, null, customer).TopFirst;
+            }
+
+            return (contact.Phone1, contact.Email);
+        }
+
+        public virtual (decimal UnitPrice, decimal ExtPrice) CalcTaxAmt(bool isGross, bool hasTaxNbr, decimal extPrice)
+        {
+            // B2C
+            if (hasTaxNbr == false)
+            {
+                if (isGross == false)
+                {
+                    return (decimal.Multiply(extPrice, (decimal)1.05), decimal.Multiply(extPrice, (decimal)1.05));
+                }
+            }
+            // B2B
+            else
+            {
+                if (isGross == true)
+                {
+                    return (decimal.Divide(extPrice, (decimal)1.05), decimal.Divide(extPrice, (decimal)1.05));
+                }
+            }
+
+            return (extPrice, extPrice);
         }
         #endregion
     }
