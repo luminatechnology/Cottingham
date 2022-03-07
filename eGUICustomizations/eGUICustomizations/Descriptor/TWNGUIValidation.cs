@@ -1,4 +1,5 @@
-﻿using PX.Data;
+﻿using System;
+using PX.Data;
 using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
 using PX.Data.Licensing;
@@ -174,7 +175,7 @@ namespace eGUICustomizations.Descriptor
                                                                                 .OrderBy<TWNGUIPrepayAdjust.createdDateTime.Desc,
                                                                                          TWNGUIPrepayAdjust.prepayGUINbr.Desc>.View.SelectSingleBound(cache.Graph, null, appliedGUINbr);
 
-                if (prepayAdjust != null && register?.CuryOrigDocAmt != (prepayAdjust.NetAmtUnapplied + prepayAdjust.TaxAmtUnapplied))
+                if (prepayAdjust != null && Math.Abs((decimal)register?.CuryOrigDocAmt) != (prepayAdjust.NetAmtUnapplied + prepayAdjust.TaxAmtUnapplied))
                 {
                     throw new PXSetPropertyException(prepayAdjust.SequenceNo > 0 ? TWMessages.ExistPrepayCM : TWMessages.HasMultiPrepay, appliedGUINbr);
                 }
