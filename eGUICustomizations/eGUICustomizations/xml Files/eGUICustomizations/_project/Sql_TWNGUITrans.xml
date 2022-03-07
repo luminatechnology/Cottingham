@@ -26,6 +26,7 @@
   <col name="DeductionCode" type="NVarChar(1)" nullable="true" />
   <col name="Branch" type="NVarChar(10)" nullable="true" />
   <col name="BatchNbr" type="NVarChar(15)" nullable="true" />
+  <col name="DocType" type="Char(3)" nullable="true" />
   <col name="OrderNbr" type="NVarChar(20)" nullable="true" />
   <col name="TransDate" type="DateTime" nullable="true" />
   <col name="PrintedDate" type="DateTime" nullable="true" />
