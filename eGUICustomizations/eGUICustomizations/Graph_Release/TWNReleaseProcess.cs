@@ -51,6 +51,7 @@ namespace eGUICustomizations.Graph_Release
             row.EGUIExcluded  = sGUITran.eGUIExcluded;
             row.Remark        = sGUITran.Remark;
             row.BatchNbr      = sGUITran.BatchNbr;
+            row.DocType       = sGUITran.DocType;
             row.OrderNbr      = sGUITran.OrderNbr;
             row.CarrierType   = sGUITran.CarrierType;
             row.CarrierID     = sGUITran.CarrierID;
@@ -106,12 +107,12 @@ namespace eGUICustomizations.Graph_Release
 
                 var trans = rp.InitAndCheckOnAR(regisExt.UsrGUINbr, regisExt.UsrVATOutCode);
 
-                Customer customer = Customer.PK.Find(this, register.CustomerID);
-
                 Tuple<string, string, string, decimal?, decimal?> tuple = new ARReleaseProcess_Extension().RetrieveTaxDetails(this, register);
 
                 if (isDeleted == true)
                 {
+                    Customer customer = Customer.PK.Find(this, register.CustomerID);
+
                     rp.CreateGUITrans(new STWNGUITran()
                     {
                         VATCode       = regisExt.UsrVATOutCode,
@@ -147,7 +148,11 @@ namespace eGUICustomizations.Graph_Release
 
                 for (int i = 1; i <= count; i++)
                 {
-                    rp.CreateGUIPrepayAdjust(isDeleted && i == 2);
+                    bool isVoided = i != 2; // First reocrd is voided and the second one is used.
+
+                    rp.CreateGUIPrepayAdjust(isDeleted && !isVoided, Tuple.Create<string, int?, decimal?, decimal?, decimal?, decimal?>(null, null, null, null,
+                                                                                                                                        isVoided == true ? 0m : tuple.Item4 ,
+                                                                                                                                        isVoided == true ? 0m : tuple.Item5));
                 }
 
                 ts.Complete();
@@ -261,6 +266,7 @@ namespace eGUICustomizations.Graph_Release
         public string DeductionCode;
         public string Remark;
         public string BatchNbr;
+        public string DocType;
         public string OrderNbr;
         public string CarrierType;
         public string CarrierID;
