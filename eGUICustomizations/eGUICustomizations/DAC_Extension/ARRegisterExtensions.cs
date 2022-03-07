@@ -142,7 +142,7 @@ namespace PX.Objects.AR
         #region UsrShowTWGUITab
         [PXBool()]
         [PXUIField(Visible = false)]
-        [PXFormula(typeof(Switch<Case<Where<ARRegister.docType, Equal<ARDocType.prepayment>>, True>, False>))]
+        [PXFormula(typeof(Switch<Case<Where<ARRegister.docType, Equal<ARDocType.prepayment>, Or<ARRegister.docType, Equal<ARDocType.voidPayment>>>, True>, False>))]
         public virtual bool? UsrShowTWGUITab { get; set; }
         public abstract class usrShowTWGUITab : PX.Data.BQL.BqlBool.Field<usrShowTWGUITab> { }
         #endregion
