@@ -115,7 +115,7 @@ namespace PX.Objects.AR
 
             if (e.Row == null) { return; }
 
-            bool isPrepayment = e.Row.DocType == ARDocType.Prepayment;
+            bool isPrepayment = e.Row.DocType.IsIn(ARDocType.Prepayment, ARDocType.VoidPayment);
 
             PXUIFieldAttribute.SetVisible<ARRegisterExt.usrGUIDate>   (e.Cache, null, activateGUI && isPrepayment);
             PXUIFieldAttribute.SetVisible<ARRegisterExt.usrGUINbr>    (e.Cache, null, activateGUI && isPrepayment);
