@@ -74,6 +74,7 @@ namespace PX.Objects.AP
                             DeductionCode = row.Deduction,
                             Remark        = row.Remark,
                             BatchNbr      = doc.BatchNbr,
+                            DocType       = doc.DocType,
                             OrderNbr      = doc.RefNbr
                         });
 
