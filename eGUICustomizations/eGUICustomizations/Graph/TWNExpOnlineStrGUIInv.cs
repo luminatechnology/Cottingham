@@ -153,7 +153,7 @@ namespace eGUICustomizations.Graph
                         // 單價
                         ARInvoice invoice = ARInvoice.PK.Find(graph, tran.TranType, tran.RefNbr);
 
-                        (decimal UnitPrice, decimal ExtPrice) = graph.CalcTaxAmt(invoice.TaxCalcMode == PX.Objects.TX.TaxCalculationMode.Gross, string.IsNullOrEmpty(gUITrans.TaxNbr), tran.CuryExtPrice.Value);
+                        (decimal UnitPrice, decimal ExtPrice) = graph.CalcTaxAmt(invoice.TaxCalcMode == PX.Objects.TX.TaxCalculationMode.Gross, !string.IsNullOrEmpty(gUITrans.TaxNbr), tran.CuryUnitPrice.Value, tran.CuryExtPrice.Value);
 
                         lines += UnitPrice + verticalBar;
                         // 數量
@@ -172,8 +172,8 @@ namespace eGUICustomizations.Graph
                     }
 
                     #region Voided GUI
-                    // The following method is only for voided invoice.
-                    if (gUITrans.GUIStatus == TWNStringList.TWNGUIStatus.Voided && gUITrans.DocType != ARDocType.Prepayment)
+                    // The following method is only for voided invoice when the invoice doesn't have any lines.
+                    if (gUITrans.GUIStatus == TWNStringList.TWNGUIStatus.Voided && gUITrans.DocType != ARDocType.Prepayment && num == 1)
                     {
                         TWNExpGUIInv2BankPro.CreateVoidedDetailLine(verticalBar, gUITrans.OrderNbr, ref lines);
                     }
@@ -310,14 +310,14 @@ namespace eGUICustomizations.Graph
             return (contact.Phone1, contact.Email);
         }
 
-        public virtual (decimal UnitPrice, decimal ExtPrice) CalcTaxAmt(bool isGross, bool hasTaxNbr, decimal extPrice)
+        public virtual (decimal UnitPrice, decimal ExtPrice) CalcTaxAmt(bool isGross, bool hasTaxNbr, decimal unitPrice, decimal extPrice)
         {
             // B2C
             if (hasTaxNbr == false)
             {
                 if (isGross == false)
                 {
-                    return (decimal.Multiply(extPrice, (decimal)1.05), decimal.Multiply(extPrice, (decimal)1.05));
+                    return (decimal.Multiply(unitPrice, (decimal)1.05), decimal.Multiply(extPrice, (decimal)1.05));
                 }
             }
             // B2B
@@ -325,11 +325,11 @@ namespace eGUICustomizations.Graph
             {
                 if (isGross == true)
                 {
-                    return (decimal.Divide(extPrice, (decimal)1.05), decimal.Divide(extPrice, (decimal)1.05));
+                    return (decimal.Divide(unitPrice, (decimal)1.05), decimal.Divide(extPrice, (decimal)1.05));
                 }
             }
 
-            return (extPrice, extPrice);
+            return (unitPrice, extPrice);
         }
         #endregion
     }
