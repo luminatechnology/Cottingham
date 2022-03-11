@@ -281,8 +281,8 @@ namespace PX.Objects.AR
             decimal? remainNet, remainTax;
 
             foreach (PXResult<TaxZone, TaxZoneDet, CR.Location> result in SelectFrom<TaxZone>.InnerJoin<TaxZoneDet>.On<TaxZoneDet.FK.TaxZone>
-                                                                                                    .InnerJoin<CR.Location>.On<CR.Location.cTaxZoneID.IsEqual<TaxZoneDet.taxZoneID>>
-                                                                                                    .Where<CR.Location.bAccountID.IsEqual<@P.AsInt>>.View.SelectSingleBound(graph, null, register.CustomerID))
+                                                                                             .InnerJoin<CR.Location>.On<CR.Location.cTaxZoneID.IsEqual<TaxZoneDet.taxZoneID>>
+                                                                                             .Where<CR.Location.bAccountID.IsEqual<@P.AsInt>>.View.SelectSingleBound(graph, null, register.CustomerID))
             {
                 TaxZone    taxZone = result;
                 TaxZoneDet zoneDet = result;
@@ -295,8 +295,8 @@ namespace PX.Objects.AR
             }
 
             TaxRev taxRev = SelectFrom<TaxRev>.Where<TaxRev.taxID.IsEqual<@P.AsString>
-                                                    .And<TaxRev.taxType.IsEqual<@P.AsString>>
-                                                         .And<TaxRev.startDate.IsLessEqual<@P.AsDateTime>>>.View.Select(graph, taxID, "S", register.GetExtension<ARRegisterExt>().UsrGUIDate); // "S" -> Output
+                                                     .And<TaxRev.taxType.IsEqual<@P.AsString>>
+                                                          .And<TaxRev.startDate.IsLessEqual<@P.AsDateTime>>>.View.Select(graph, taxID, "S", register.GetExtension<ARRegisterExt>().UsrGUIDate); // "S" -> Output
 
             if (taxRev == null) { throw new PXException(TX.Messages.TaxRateNotSpecified, taxID); }
 
