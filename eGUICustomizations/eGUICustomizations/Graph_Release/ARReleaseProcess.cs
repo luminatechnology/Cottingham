@@ -38,8 +38,8 @@ namespace PX.Objects.AR
             if (doc != null &&
                 doc.Released == true &&
                 doc.DocType.IsIn(ARDocType.Invoice, ARDocType.CreditMemo, ARDocType.CashSale, ARDocType.Prepayment) &&
-                ((string.IsNullOrEmpty(docExt.UsrGUINbr) && docExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode36) || !string.IsNullOrEmpty(docExt.UsrVATOutCode))
-                )
+                ((string.IsNullOrEmpty(docExt.UsrGUINbr) && docExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode36) || !string.IsNullOrEmpty(docExt.UsrVATOutCode)) &&
+                doc.ReleasedToVerify != null)
             {
                 if (docExt.UsrVATOutCode.IsIn(TWGUIFormatCode.vATOutCode33, TWGUIFormatCode.vATOutCode34) &&
                     docExt.UsrCreditAction == TWNStringList.TWNCreditAction.NO)
@@ -277,26 +277,30 @@ namespace PX.Objects.AR
 
         public Tuple<string, string, string, decimal?, decimal?> RetrieveTaxDetails(PXGraph graph, ARRegister register)
         {
-            string   taxZoneID = null, taxID = null, taxCateID = null;
+            string  taxZoneID = null, taxCateID = null;
             decimal? remainNet, remainTax;
+
+            ARRegisterExt regisExt = register.GetExtension<ARRegisterExt>();
+
+            string taxID = SelectFrom<Tax>.Where<TaxExt.usrGUIType.IsEqual<@P.AsString>>.View.SelectSingleBound(graph, null, regisExt.UsrVATType).TopFirst?.TaxID;
 
             foreach (PXResult<TaxZone, TaxZoneDet, CR.Location> result in SelectFrom<TaxZone>.InnerJoin<TaxZoneDet>.On<TaxZoneDet.FK.TaxZone>
                                                                                              .InnerJoin<CR.Location>.On<CR.Location.cTaxZoneID.IsEqual<TaxZoneDet.taxZoneID>>
                                                                                              .Where<CR.Location.bAccountID.IsEqual<@P.AsInt>>.View.SelectSingleBound(graph, null, register.CustomerID))
             {
-                TaxZone    taxZone = result;
+                TaxZone taxZone = result;
                 TaxZoneDet zoneDet = result;
 
                 if (taxZone == null) { throw new PXException(TWMessages.CustNoTezZone); }
 
                 taxZoneID = taxZone.TaxZoneID;
-                taxID     = zoneDet.TaxID;
                 taxCateID = taxZone.DfltTaxCategoryID;
+                taxID     = taxID ?? zoneDet.TaxID;
             }
 
             TaxRev taxRev = SelectFrom<TaxRev>.Where<TaxRev.taxID.IsEqual<@P.AsString>
                                                      .And<TaxRev.taxType.IsEqual<@P.AsString>>
-                                                          .And<TaxRev.startDate.IsLessEqual<@P.AsDateTime>>>.View.Select(graph, taxID, "S", register.GetExtension<ARRegisterExt>().UsrGUIDate); // "S" -> Output
+                                                          .And<TaxRev.startDate.IsLessEqual<@P.AsDateTime>>>.View.Select(graph, taxID, "S", regisExt.UsrGUIDate); // "S" -> Output
 
             if (taxRev == null) { throw new PXException(TX.Messages.TaxRateNotSpecified, taxID); }
 
