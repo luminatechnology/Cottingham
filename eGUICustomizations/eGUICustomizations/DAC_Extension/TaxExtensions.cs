@@ -10,7 +10,7 @@ namespace PX.Objects.TX
         [PXUIField(DisplayName = "GUI Enabled")]
         [PXDefault(false, PersistingCheck = PXPersistingCheck.Nothing)]
         public virtual bool? UsrTWNGUI { get; set; }
-        public abstract class usrTWNGUI : IBqlField { }
+        public abstract class usrTWNGUI : PX.Data.BQL.BqlBool.Field<usrTWNGUI> { }
         #endregion
 
         #region UsrGUIType
@@ -18,7 +18,7 @@ namespace PX.Objects.TX
         [PXUIField(DisplayName = "GUI VAT Type")]
         [TWNStringList.TWNGUIVATType.List]
         public virtual string UsrGUIType { get; set; }
-        public abstract class usrGUIType : IBqlField { }
+        public abstract class usrGUIType : PX.Data.BQL.BqlString.Field<usrGUIType> { }
         #endregion
     }
 }
