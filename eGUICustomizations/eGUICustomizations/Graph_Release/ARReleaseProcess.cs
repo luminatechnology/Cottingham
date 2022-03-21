@@ -39,7 +39,7 @@ namespace PX.Objects.AR
                 doc.Released == true &&
                 doc.DocType.IsIn(ARDocType.Invoice, ARDocType.CreditMemo, ARDocType.CashSale, ARDocType.Prepayment) &&
                 ((string.IsNullOrEmpty(docExt.UsrGUINbr) && docExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode36) || !string.IsNullOrEmpty(docExt.UsrVATOutCode)) &&
-                doc.ReleasedToVerify != null)
+                doc.OpenDoc == true)
             {
                 if (docExt.UsrVATOutCode.IsIn(TWGUIFormatCode.vATOutCode33, TWGUIFormatCode.vATOutCode34) &&
                     docExt.UsrCreditAction == TWNStringList.TWNCreditAction.NO)
