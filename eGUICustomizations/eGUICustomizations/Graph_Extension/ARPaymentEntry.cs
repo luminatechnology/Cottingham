@@ -132,12 +132,14 @@ namespace PX.Objects.AR
             ARRegisterExt regisExt = e.Row.GetExtension<ARRegisterExt>();
 
             bool taxNbrBlank = string.IsNullOrEmpty(regisExt.UsrTaxNbr);
+            bool noGUINbr    = string.IsNullOrEmpty(regisExt.UsrGUINbr);
             bool hasReleased = e.Row.Status.IsIn(ARDocStatus.Open, ARDocStatus.Closed);
 
             PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrB2CType>   (e.Cache, e.Row, !hasReleased && taxNbrBlank);
             PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrCarrierID> (e.Cache, e.Row, !hasReleased && taxNbrBlank && regisExt.UsrB2CType == TWNStringList.TWNB2CType.MC);
             PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrNPONbr>    (e.Cache, e.Row, !hasReleased && taxNbrBlank && regisExt.UsrB2CType == TWNStringList.TWNB2CType.NPO);
-            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrVATOutCode>(e.Cache, e.Row, string.IsNullOrEmpty(regisExt.UsrGUINbr));
+            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrVATOutCode>(e.Cache, e.Row, noGUINbr);
+            PXUIFieldAttribute.SetEnabled<ARRegisterExt.usrGUIDate>   (e.Cache, e.Row, noGUINbr);
 
             generateGUI.SetEnabled(hasReleased == true);
         }
