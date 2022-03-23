@@ -153,7 +153,10 @@ namespace eGUICustomizations.Graph
                         // 單價
                         ARInvoice invoice = ARInvoice.PK.Find(graph, tran.TranType, tran.RefNbr);
 
-                        (decimal UnitPrice, decimal ExtPrice) = graph.CalcTaxAmt(invoice.TaxCalcMode == PX.Objects.TX.TaxCalculationMode.Gross, !string.IsNullOrEmpty(gUITrans.TaxNbr), tran.CuryUnitPrice.Value, tran.CuryExtPrice.Value);
+                        (decimal UnitPrice, decimal ExtPrice) = graph.CalcTaxAmt(invoice.TaxCalcMode == PX.Objects.TX.TaxCalculationMode.Gross, 
+                                                                                 !string.IsNullOrEmpty(gUITrans.TaxNbr), 
+                                                                                 tran.CuryDiscAmt > 0 ? (tran.CuryTranAmt / tran.Qty).Value : tran.CuryUnitPrice.Value, 
+                                                                                 tran.CuryExtPrice.Value);
 
                         lines += UnitPrice + verticalBar;
                         // 數量
