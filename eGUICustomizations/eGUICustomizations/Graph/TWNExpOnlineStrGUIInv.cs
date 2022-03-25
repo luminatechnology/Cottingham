@@ -155,8 +155,8 @@ namespace eGUICustomizations.Graph
 
                         (decimal UnitPrice, decimal ExtPrice) = graph.CalcTaxAmt(invoice.TaxCalcMode == PX.Objects.TX.TaxCalculationMode.Gross, 
                                                                                  !string.IsNullOrEmpty(gUITrans.TaxNbr), 
-                                                                                 tran.CuryDiscAmt > 0 ? (tran.CuryTranAmt / tran.Qty).Value : tran.CuryUnitPrice.Value, 
-                                                                                 tran.CuryExtPrice.Value);
+                                                                                 tran.CuryDiscAmt > 0 ? (tran.CuryTranAmt / tran.Qty).Value : tran.CuryUnitPrice.Value,
+                                                                                 tran.CuryTranAmt.Value/*tran.CuryExtPrice.Value*/);
 
                         lines += UnitPrice + verticalBar;
                         // 數量
