@@ -84,6 +84,7 @@ namespace PX.Objects.AR
                                                                                  And<TWNGUITrans.gUIFormatcode, NotEqual<VATOut34Att>>>>>>>>>),
                     typeof(TWNGUITrans.gUIFormatcode),
                     typeof(TWNGUITrans.gUINbr),
+                    typeof(TWNGUITrans.orderNbr),
                     typeof(TWNGUITrans.netAmtRemain),
                     typeof(TWNGUITrans.taxAmtRemain),
                     ValidateValue = false,
