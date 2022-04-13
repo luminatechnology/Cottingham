@@ -106,11 +106,6 @@ namespace PX.Objects.AR
                     CreatGUI:
                         if (docExt.UsrCreditAction.IsIn(TWNStringList.TWNCreditAction.CN, TWNStringList.TWNCreditAction.NO))
                         {
-                            //FSAppointment appointment = SelectFrom<FSAppointment>.LeftJoin<FSPostDoc>.On<FSPostDoc.appointmentID.IsEqual<FSAppointment.appointmentID>>
-                            //                                                     .Where<FSPostDoc.postDocType.IsEqual<@P.AsString>
-                            //                                                            .And<FSPostDoc.postRefNbr.IsEqual<@P.AsString>>>
-                            //                                                     .View.ReadOnly.Select(Base, doc.DocType, doc.RefNbr);
-
                             if (tWNGUITrans != null)
                             {
                                 settledNet = (tWNGUITrans.NetAmtRemain < remainNet) ? tWNGUITrans.NetAmtRemain : remainNet;
@@ -205,7 +200,7 @@ namespace PX.Objects.AR
                             }
                             else
                             {
-                                if (remainNet < 0) { throw new PXException(TWMessages.RemainAmt); }
+                                if (remainNet < 0 && (i + 1) == gUINbrs.Length) { throw new PXException(TWMessages.RemainAmt); }
 
                                 rp.ViewGUITrans.SetValueExt<TWNGUITrans.netAmtRemain>(tWNGUITrans, tWNGUITrans.NetAmtRemain -= settledNet);
                                 rp.ViewGUITrans.SetValueExt<TWNGUITrans.taxAmtRemain>(tWNGUITrans, tWNGUITrans.TaxAmtRemain -= settledTax);
