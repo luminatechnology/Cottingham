@@ -60,13 +60,15 @@ namespace eGUICustomizations.Graph
 
                 foreach (TWNGUITrans gUITrans in tWNGUITrans)
                 {
+                    bool isCM = gUITrans.GUIFormatcode == TWGUIFormatCode.vATOutCode33;
+
                     #region Header
                     // 主檔代號
                     lines += "M" + verticalBar;
                     // 訂單編號
-                    lines += gUITrans.OrderNbr + verticalBar;
+                    lines += (isCM == false ? gUITrans.OrderNbr : ARRegister.PK.Find(graph, gUITrans.DocType, gUITrans.OrderNbr)?.OrigRefNbr) + verticalBar;
                     // 訂單狀態
-                    lines += (gUITrans.GUIStatus == TWNStringList.TWNGUIStatus.Voided ? 2 : gUITrans.VATType != TWGUIFormatCode.vATOutCode33 ? 0 : 3) + verticalBar;
+                    lines += (gUITrans.GUIStatus == TWNStringList.TWNGUIStatus.Voided ? 2 : isCM == false ? 0 : 3) + verticalBar;
                     // 訂單日期
                     lines += gUITrans.TransDate.Value.ToString("yyyy/MM/dd") + verticalBar;
                     // 預計出貨日
@@ -113,7 +115,7 @@ namespace eGUICustomizations.Graph
                     // 相關號碼1(出貨單號)
                     lines += new string(char.Parse(verticalBar), 3);
                     // 相關號碼2
-                    lines += gUITrans.BatchNbr + verticalBar;
+                    lines += (isCM == false ? gUITrans.BatchNbr : gUITrans.OrderNbr) + verticalBar;
                     // 相關號碼3
                     // 主檔備註
                     // 商品名稱
@@ -141,7 +143,7 @@ namespace eGUICustomizations.Graph
                         // 序號
                         lines += num++ + verticalBar;
                         // 訂單編號
-                        lines += tran.RefNbr + verticalBar;
+                        lines += (isCM == false ? tran.RefNbr : tran.OrigInvoiceNbr) + verticalBar;
                         // 商品編號
                         // 商品條碼
                         lines += new string(char.Parse(verticalBar), 2);
