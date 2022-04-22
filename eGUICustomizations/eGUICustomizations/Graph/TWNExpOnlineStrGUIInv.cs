@@ -141,7 +141,7 @@ namespace eGUICustomizations.Graph
                     {
                         if (isCM == true && lines.Contains(FixedMsg) == true && !string.IsNullOrEmpty(tran.OrigInvoiceNbr) )
                         {
-                            lines.Replace(FixedMsg, tran.OrigInvoiceNbr);
+                            lines = lines.Replace(FixedMsg, tran.OrigInvoiceNbr);
                         }
 
                         // 明細代號
