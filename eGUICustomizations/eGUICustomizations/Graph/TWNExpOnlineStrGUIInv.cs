@@ -44,6 +44,7 @@ namespace eGUICustomizations.Graph
         #region Static Method
         public static void Upload(List<TWNGUITrans> tWNGUITrans)
         {
+            const string FixedMsg = "GetRefNbrFromLine";
             try
             {
                 // Avoid to create empty content file in automation schedule.
@@ -66,7 +67,7 @@ namespace eGUICustomizations.Graph
                     // 主檔代號
                     lines += "M" + verticalBar;
                     // 訂單編號
-                    lines += (isCM == false ? gUITrans.OrderNbr : ARRegister.PK.Find(graph, gUITrans.DocType, gUITrans.OrderNbr)?.OrigRefNbr) + verticalBar;
+                    lines += (isCM == false ? gUITrans.OrderNbr : ARRegister.PK.Find(graph, gUITrans.DocType, gUITrans.OrderNbr)?.OrigRefNbr ?? FixedMsg) + verticalBar;
                     // 訂單狀態
                     lines += (gUITrans.GUIStatus == TWNStringList.TWNGUIStatus.Voided ? 2 : isCM == false ? 0 : 3) + verticalBar;
                     // 訂單日期
@@ -88,7 +89,7 @@ namespace eGUICustomizations.Graph
                     // 買方統一編號
                     lines += gUITrans.TaxNbr + verticalBar;
                     // 買受人公司名稱
-                    lines += verticalBar;
+                    lines += gUITrans.GUITitle + verticalBar;
                     // 會員編號
                     lines += gUITrans.CustVend + verticalBar;
                     // 會員姓名
@@ -138,6 +139,11 @@ namespace eGUICustomizations.Graph
                     int num = 1;
                     foreach (ARTran tran in invGraph.RetrieveARTran(gUITrans.OrderNbr))
                     {
+                        if (isCM == true && lines.Contains(FixedMsg) == true && !string.IsNullOrEmpty(tran.OrigInvoiceNbr) )
+                        {
+                            lines.Replace(FixedMsg, tran.OrigInvoiceNbr);
+                        }
+
                         // 明細代號
                         lines += "D" + verticalBar;
                         // 序號
