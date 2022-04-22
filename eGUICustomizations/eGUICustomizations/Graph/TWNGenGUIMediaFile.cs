@@ -250,7 +250,7 @@ namespace eGUICustomizations.Graph
 
         public virtual string GetGUINbr(TWNGUITrans gUITrans)
         {
-            if (gUITrans.GUIFormatcode == TWGUIFormatCode.vATInCode28)
+            if (gUITrans.GUIFormatcode.IsIn(TWGUIFormatCode.vATInCode28, TWGUIFormatCode.vATInCode29))
             {
                 return gUITrans.GUINbr.Substring(4, gUITrans.GUINbr.Length - 4);
             }
@@ -282,7 +282,7 @@ namespace eGUICustomizations.Graph
         {
             if (gUITrans.GUIFormatcode.StartsWith("2"))
             {
-                if (gUITrans.GUIFormatcode == TWGUIFormatCode.vATInCode28)
+                if (gUITrans.GUIFormatcode.IsIn(TWGUIFormatCode.vATInCode28, TWGUIFormatCode.vATInCode29) )
                 {
                     return (new string(space, 4) + gUITrans.GUINbr.Substring(0, 4));
                 }
