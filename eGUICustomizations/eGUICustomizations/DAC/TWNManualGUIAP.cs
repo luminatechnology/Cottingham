@@ -146,6 +146,13 @@ namespace eGUICustomizations.DAC
         public abstract class remark : PX.Data.BQL.BqlString.Field<remark> { }
         #endregion
 
+        #region GUIDecPeriod
+        [PXDBDate()]
+        [PXUIField(DisplayName = "GUI Declaration Period")]
+        public virtual DateTime? GUIDecPeriod { get; set; }
+        public abstract class gUIDecPeriod : PX.Data.BQL.BqlDateTime.Field<gUIDecPeriod> { }
+        #endregion
+
         #region CreatedByID
         [PXDBCreatedByID]
         public virtual Guid? CreatedByID { get; set; }

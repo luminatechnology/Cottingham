@@ -62,6 +62,7 @@ namespace eGUICustomizations.Graph
                             GUIStatus     = TWNGUIStatus.Used,
                             GUIDirection  = TWNGUIDirection.Receipt,
                             GUIDate       = manualGUIAP.GUIDate,
+                            GUIDecPeriod  = manualGUIAP.GUIDecPeriod,
                             GUITitle      = (string)PXSelectorAttribute.GetField(manualGUIAP_Open.Cache,
                                                                                  manualGUIAP,
                                                                                  typeof(TWNManualGUIAP.vendorID).Name, manualGUIAP.VendorID,

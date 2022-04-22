@@ -16,6 +16,7 @@
   <col name="NetAmt" type="Decimal(18,0)" nullable="true" />
   <col name="TaxAmt" type="Decimal(10,0)" nullable="true" />
   <col name="Remark" type="NVarChar(20)" nullable="true" />
+  <col name="GUIDecPeriod" type="DateTime" nullable="true" />
   <col name="CreatedByID" type="UniqueIdentifier" />
   <col name="CreatedByScreenID" type="Char(8)" />
   <col name="CreatedDateTime" type="DateTime" />

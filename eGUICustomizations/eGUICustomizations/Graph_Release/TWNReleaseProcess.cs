@@ -34,7 +34,8 @@ namespace eGUICustomizations.Graph_Release
             row.GUIStatus     = sGUITran.GUIStatus;
             row.Branch        = PXAccess.GetBranchCD(sGUITran.BranchID);
             row.GUIDirection  = sGUITran.GUIDirection;
-            row.GUIDate       = row.GUIDecPeriod = sGUITran.GUIDate;
+            row.GUIDate       = sGUITran.GUIDate;
+            row.GUIDecPeriod  = sGUITran.GUIDecPeriod ?? sGUITran.GUIDate;
             row.GUITitle      = sGUITran.GUITitle;
             row.TaxZoneID     = sGUITran.TaxZoneID;
             row.TaxCategoryID = sGUITran.TaxCategoryID;
@@ -279,6 +280,7 @@ namespace eGUICustomizations.Graph_Release
         public bool B2CPrinted;
 
         public DateTime? GUIDate;
+        public DateTime? GUIDecPeriod;
 
         public decimal? NetAmount;
         public decimal? TaxAmount;
