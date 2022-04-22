@@ -22,7 +22,8 @@
                   <px:PXGridColumn CommitChanges="True" DataField="VendorID" Width="140" ></px:PXGridColumn>
                   <px:PXGridColumn DataField="Vatincode" Width="70" ></px:PXGridColumn>
                   <px:PXGridColumn DataField="GUINbr" Width="140" CommitChanges="True" ></px:PXGridColumn>
-                  <px:PXGridColumn DataField="Guidate" Width="90" ></px:PXGridColumn>
+                  <px:PXGridColumn DataField="GUIdate" Width="90" ></px:PXGridColumn>
+                  <px:PXGridColumn DataField="GUIDecPeriod" Width="90" ></px:PXGridColumn>
                   <px:PXGridColumn DataField="TaxZoneID" Width="120" ></px:PXGridColumn>
                   <px:PXGridColumn DataField="TaxCategoryID" Width="120" ></px:PXGridColumn>
                   <px:PXGridColumn DataField="TaxID" Width="140" ></px:PXGridColumn>
@@ -44,8 +45,9 @@
                   <px:PXGridColumn DataField="Status" Width="70" ></px:PXGridColumn>
                   <px:PXGridColumn DataField="VendorID" Width="140" ></px:PXGridColumn>
                   <px:PXGridColumn DataField="Vatincode" Width="70" ></px:PXGridColumn>
-                  <px:PXGridColumn DataField="Guinbr" Width="140" ></px:PXGridColumn>
-                  <px:PXGridColumn DataField="Guidate" Width="90" ></px:PXGridColumn>
+                  <px:PXGridColumn DataField="GUInbr" Width="140" ></px:PXGridColumn>
+                  <px:PXGridColumn DataField="GUIdate" Width="90" ></px:PXGridColumn>
+                  <px:PXGridColumn DataField="GUIDecPeriod" Width="90" ></px:PXGridColumn>
                   <px:PXGridColumn DataField="TaxZoneID" Width="120" ></px:PXGridColumn>
                   <px:PXGridColumn DataField="TaxCategoryID" Width="120" ></px:PXGridColumn>
                   <px:PXGridColumn DataField="TaxID" Width="140" ></px:PXGridColumn>
