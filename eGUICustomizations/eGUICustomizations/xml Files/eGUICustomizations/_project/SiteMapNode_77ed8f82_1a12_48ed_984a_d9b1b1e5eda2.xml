@@ -25,7 +25,7 @@
         </layout>
         <data>
             <SiteMap>
-                <row Position="98" Title="GUI Inquiry" Url="~/Pages/TW/TW401000.aspx" ScreenID="TW401000" NodeID="77ed8f82-1a12-48ed-984a-d9b1b1e5eda2" ParentID="79c43add-e6c1-4655-b6ff-292a335a7fbe">
+                <row Position="98" Title="GUI Transaction List" Url="~/Pages/TW/TW401000.aspx" ScreenID="TW401000" NodeID="77ed8f82-1a12-48ed-984a-d9b1b1e5eda2" ParentID="79c43add-e6c1-4655-b6ff-292a335a7fbe">
                     <MUIScreen IsPortal="0" WorkspaceID="3ca80fc2-2fa4-485a-8672-c8832daa2acc" Order="20" SubcategoryID="98e86774-69e3-41ea-b94f-eb2c7a8426d4" />
                 </row>
             </SiteMap>

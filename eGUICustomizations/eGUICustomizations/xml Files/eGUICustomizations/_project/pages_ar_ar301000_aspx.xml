@@ -11,6 +11,7 @@
                                 <Prop Key="ID" Value="CstPXLayoutRule22" />
                                 <Prop Key="StartGroup" Value="True" />
                                 <Prop Key="GroupCaption" Value="GUI Info" />
+                                <Prop Key="ControlSize" Value="M" />
                             </PXLayoutRule>
                         </AddItem>
                         <AddItem>
@@ -21,11 +22,11 @@
                             </PXDateTimeEdit>
                         </AddItem>
                         <AddItem>
-                            <PXMultiSelector TypeFullName="PX.Web.UI.PXMultiSelector">
+                            <PXSelector TypeFullName="PX.Web.UI.PXSelector">
                                 <Prop Key="Virtual:ApplyStylesheetSkin" />
-                                <Prop Key="DataField" Value="UsrGUINbr" />
                                 <Prop Key="ID" Value="CstPXSelector27" />
-                            </PXMultiSelector>
+                                <Prop Key="DataField" Value="UsrGUINbr" />
+                            </PXSelector>
                         </AddItem>
                         <AddItem>
                             <PXLayoutRule TypeFullName="PX.Web.UI.PXLayoutRule">
@@ -33,6 +34,7 @@
                                 <Prop Key="ID" Value="CstPXLayoutRule23" />
                                 <Prop Key="StartGroup" Value="True" />
                                 <Prop Key="GroupCaption" Value="GUI Details" />
+                                <Prop Key="ControlSize" Value="M" />
                             </PXLayoutRule>
                         </AddItem>
                         <AddItem>
@@ -58,21 +60,20 @@
                             </PXTextEdit>
                         </AddItem>
                         <AddItem>
-                            <PXLayoutRule TypeFullName="PX.Web.UI.PXLayoutRule">
-                                <Prop Key="Virtual:ApplyStylesheetSkin" />
-                                <Prop Key="ID" Value="CstPXLayoutRule80" />
-                                <Prop Key="StartGroup" Value="True" />
-                                <Prop Key="GroupCaption" Value="Credit Action" />
-                                <Children Key="Controls" />
-                            </PXLayoutRule>
-                        </AddItem>
-                        <AddItem>
                             <PXGroupBox TypeFullName="PX.Web.UI.PXGroupBox">
                                 <Prop Key="Virtual:ApplyStylesheetSkin" />
                                 <Prop Key="CommitChanges" Value="True" />
                                 <Prop Key="DataField" Value="UsrCreditAction" />
                                 <Prop Key="ID" Value="CstGroupBox81" />
                                 <Children Key="Template">
+                                    <AddItem>
+                                        <PXLayoutRule TypeFullName="PX.Web.UI.PXLayoutRule">
+                                            <Prop Key="Virtual:ApplyStylesheetSkin" />
+                                            <Prop Key="ID" Value="CstPXLayoutRule24" />
+                                            <Prop Key="StartRow" Value="True" />
+                                            <Children Key="Controls" />
+                                        </PXLayoutRule>
+                                    </AddItem>
                                     <AddItem>
                                         <PXRadioButton TypeFullName="PX.Web.UI.PXRadioButton">
                                             <Prop Key="Virtual:ApplyStylesheetSkin" />
@@ -92,6 +93,7 @@
                                         </PXRadioButton>
                                     </AddItem>
                                 </Children>
+                                <Prop Key="Caption" Value="Credit Action" />
                             </PXGroupBox>
                         </AddItem>
                         <AddItem>
@@ -102,18 +104,10 @@
                             </PXLayoutRule>
                         </AddItem>
                         <AddItem>
-                            <PXLayoutRule TypeFullName="PX.Web.UI.PXLayoutRule">
-                                <Prop Key="Virtual:ApplyStylesheetSkin" />
-                                <Prop Key="ID" Value="CstPXLayoutRule31" />
-                                <Prop Key="StartGroup" Value="True" />
-                                <Prop Key="GroupCaption" Value="B2C Printing" />
-                            </PXLayoutRule>
-                        </AddItem>
-                        <AddItem>
                             <PXGroupBox TypeFullName="PX.Web.UI.PXGroupBox">
                                 <Prop Key="Virtual:ApplyStylesheetSkin" />
                                 <Prop Key="ID" Value="CstGroupBox32" />
-                                <Prop Key="Caption" Value="B2C Type" />
+                                <Prop Key="Caption" Value="B2C Printing Type" />
                                 <Prop Key="CommitChanges" Value="True" />
                                 <Prop Key="ContentLayout.Layout" Value="Stack" />
                                 <Children Key="Template">
@@ -182,26 +176,6 @@
                                 </Children>
                                 <Prop Key="DataField" Value="UsrB2CType" />
                             </PXGroupBox>
-                        </AddItem>
-                        <AddItem>
-                            <PXLayoutRule TypeFullName="PX.Web.UI.PXLayoutRule">
-                                <Prop Key="Virtual:ApplyStylesheetSkin" />
-                                <Prop Key="ID" Value="CstPXLayoutRule71" />
-                                <Prop Key="StartGroup" Value="True" />
-                            </PXLayoutRule>
-                        </AddItem>
-                        <AddItem>
-                            <PXButton TypeFullName="PX.Web.UI.PXButton">
-                                <Prop Key="Virtual:ApplyStylesheetSkin" />
-                                <Prop Key="ID" Value="CstButton79" />
-                                <Prop Key="AutoCallBack.Target" Value="ds" />
-                                <Prop Key="AutoCallBack.Command" Value="buyPlasticBag" />
-                                <Prop Key="AlignLeft" Value="True" />
-                                <Prop Key="Text" Value="#CDATA">
-                                    <CDATA name="Value"><![CDATA[
-            <AutoCallBack Target="ds" Command="buyPlasticBag" />]]></CDATA>
-                                </Prop>
-                            </PXButton>
                         </AddItem>
                     </Children>
                 </PXTabItem>
