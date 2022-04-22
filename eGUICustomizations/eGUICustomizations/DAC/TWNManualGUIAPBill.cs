@@ -184,10 +184,10 @@ namespace eGUICustomizations.DAC
         #endregion
 
         #region NetAmt
-        [PXDBDecimal(0)]
+        [TWTaxAmountCalc(0, typeof(TWNManualGUIAPBill.taxID), typeof(TWNManualGUIAPBill.netAmt), typeof(TWNManualGUIAPBill.taxAmt))]
         [PXUIField(DisplayName = "Net Amt")]
         [PXDefault(TypeCode.Decimal, "0.0")]
-        public virtual Decimal? NetAmt { get; set; }
+        public virtual decimal? NetAmt { get; set; }
         public abstract class netAmt : PX.Data.BQL.BqlDecimal.Field<netAmt> { }
         #endregion
 
@@ -195,7 +195,7 @@ namespace eGUICustomizations.DAC
         [PXDBDecimal(0)]
         [PXUIField(DisplayName = "Tax Amt")]
         [PXDefault(TypeCode.Decimal, "0.0")]
-        public virtual Decimal? TaxAmt { get; set; }
+        public virtual decimal? TaxAmt { get; set; }
         public abstract class taxAmt : PX.Data.BQL.BqlDecimal.Field<taxAmt> { }
         #endregion
 
