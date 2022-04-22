@@ -454,6 +454,7 @@ namespace eGUICustomizations.DAC
         public const string vATInCode26 = "26";
         public const string vATInCode27 = "27";
         public const string vATInCode28 = "28";
+        public const string vATInCode29 = "29";
         public const string vATOutCode31 = "31";
         public const string vATOutCode32 = "32";
         public const string vATOutCode33 = "33";
