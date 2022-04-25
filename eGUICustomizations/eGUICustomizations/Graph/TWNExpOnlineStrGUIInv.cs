@@ -97,7 +97,7 @@ namespace eGUICustomizations.Graph
                     // 會員郵遞區號
                     lines += verticalBar;
                     // 會員地址
-                    lines += graph.GetBillingAddress(graph, gUITrans.DocType, gUITrans.OrderNbr, gUITrans.CustVend) + verticalBar;
+                    lines += (string.IsNullOrEmpty(gUITrans.TaxNbr) ? graph.GetBillingAddress(graph, gUITrans.DocType, gUITrans.OrderNbr, gUITrans.CustVend) : string.Empty) + verticalBar;
                     // 會員電話
                     lines += verticalBar;
                     // 會員行動電話
