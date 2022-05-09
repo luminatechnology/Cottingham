@@ -94,7 +94,8 @@ namespace eGUICustomizations.Graph
                     // 買受人公司名稱
                     lines += gUITrans.GUITitle + verticalBar;
                     // 會員編號
-                    lines += graph.GetMemberNbr(graph, register?.CustomerID, new string[] { gUITrans.CustVend, gUITrans.GUITitle }) + verticalBar;
+                    (string phone, string email) = graph.GetBillingInfo(graph, gUITrans.DocType, gUITrans.OrderNbr, gUITrans.CustVend);
+                    lines += graph.GetMemberNbr(graph, register?.CustomerID, new string[] { gUITrans.CustVend, phone }) + verticalBar;
                     // 會員姓名
                     lines += gUITrans.GUITitle + verticalBar;
                     // 會員郵遞區號
@@ -104,7 +105,6 @@ namespace eGUICustomizations.Graph
                     // 會員電話
                     lines += verticalBar;
                     // 會員行動電話
-                    (string phone, string email) = graph.GetBillingInfo(graph, gUITrans.DocType, gUITrans.OrderNbr, gUITrans.CustVend);
                     lines += phone + verticalBar;
                     // 會員電子郵件
                     lines += email + verticalBar;
