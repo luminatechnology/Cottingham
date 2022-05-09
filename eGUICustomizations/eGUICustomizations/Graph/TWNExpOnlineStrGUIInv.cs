@@ -45,6 +45,7 @@ namespace eGUICustomizations.Graph
         public static void Upload(List<TWNGUITrans> tWNGUITrans)
         {
             const string FixedMsg = "GetRefNbrFromLine";
+           
             try
             {
                 // Avoid to create empty content file in automation schedule.
@@ -63,11 +64,13 @@ namespace eGUICustomizations.Graph
                 {
                     bool isCM = gUITrans.GUIFormatcode == TWGUIFormatCode.vATOutCode33;
 
+                    ARRegister register = ARRegister.PK.Find(graph, gUITrans.DocType, gUITrans.OrderNbr);
+
                     #region Header
                     // 主檔代號
                     lines += "M" + verticalBar;
                     // 訂單編號
-                    lines += (isCM == false ? gUITrans.OrderNbr : ARRegister.PK.Find(graph, gUITrans.DocType, gUITrans.OrderNbr)?.OrigRefNbr ?? FixedMsg) + verticalBar;
+                    lines += (isCM == false ? gUITrans.OrderNbr : register?.OrigRefNbr ?? FixedMsg) + verticalBar;
                     // 訂單狀態
                     lines += (gUITrans.GUIStatus == TWNStringList.TWNGUIStatus.Voided ? 2 : isCM == false ? 0 : 3) + verticalBar;
                     // 訂單日期
@@ -91,7 +94,7 @@ namespace eGUICustomizations.Graph
                     // 買受人公司名稱
                     lines += gUITrans.GUITitle + verticalBar;
                     // 會員編號
-                    lines += gUITrans.CustVend + verticalBar;
+                    lines += graph.GetMemberNbr(graph, register?.CustomerID, new string[] { gUITrans.CustVend, gUITrans.GUITitle }) + verticalBar;
                     // 會員姓名
                     lines += gUITrans.GUITitle + verticalBar;
                     // 會員郵遞區號
@@ -319,6 +322,17 @@ namespace eGUICustomizations.Graph
             }
 
             return (contact.Phone1, contact.Email);
+        }
+
+        /// <summary>
+        /// According to David's email [[SCM][廷漢] ��單檔案上傳結果訊息通知] comment.
+        /// </summary>
+        private string GetMemberNbr(PXGraph graph, int? customerID, string[] strings)
+        {
+            bool iseGUICust = Convert.ToBoolean(Convert.ToInt32(CSAnswers.PK.Find(graph, Customer.PK.Find(graph, customerID)?.NoteID, "EGUICUSMEM")?.Value ?? "0") );
+
+            // [0] -> TWNGUITrans.CustVend, [1] -> TWNGUITrans.GUITitle
+            return iseGUICust == true ? strings[0] + strings[1] : strings[0];
         }
 
         public virtual (decimal UnitPrice, decimal ExtPrice) CalcTaxAmt(bool isGross, bool hasTaxNbr, decimal unitPrice, decimal extPrice)
