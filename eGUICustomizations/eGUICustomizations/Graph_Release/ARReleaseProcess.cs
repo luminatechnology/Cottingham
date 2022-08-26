@@ -32,11 +32,14 @@ namespace PX.Objects.AR
         #region Methods
         public void CreateGUITranAndPrepay()
         {
-            ARRegister    doc    = Base.ARInvoice_DocType_RefNbr.Current;//Base.ARDocument.Current;
+            ARRegister    doc    = Base.ARDocument.Current;
             ARRegisterExt docExt = doc.GetExtension<ARRegisterExt>();
 
+            // Since there is a rare chance that the parent DAC is not updated immediately, do the condition of the child DAC source.
+            bool? released = Base.ARInvoice_DocType_RefNbr.Current?.Selected == true ? Base.ARInvoice_DocType_RefNbr.Current.Released : doc.Released;
+
             if (doc != null &&
-                doc.Released == true &&
+                released == true &&
                 doc.DocType.IsIn(ARDocType.Invoice, ARDocType.CreditMemo, ARDocType.CashSale, ARDocType.Prepayment) &&
                 ((string.IsNullOrEmpty(docExt.UsrGUINbr) && docExt.UsrVATOutCode == TWGUIFormatCode.vATOutCode36) || !string.IsNullOrEmpty(docExt.UsrVATOutCode)) &&
                 doc.OpenDoc == true)
