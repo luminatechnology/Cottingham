@@ -32,7 +32,7 @@ namespace PX.Objects.AR
         #region Methods
         public void CreateGUITranAndPrepay()
         {
-            ARRegister    doc    = Base.ARDocument.Current;
+            ARRegister    doc    = Base.ARInvoice_DocType_RefNbr.Current;//Base.ARDocument.Current;
             ARRegisterExt docExt = doc.GetExtension<ARRegisterExt>();
 
             if (doc != null &&
