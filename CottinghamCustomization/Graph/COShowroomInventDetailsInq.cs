@@ -127,9 +127,9 @@ namespace CottinghamCustomization
     {
         #region TenantID
         [PXInt()]
-		[PXUIField(DisplayName = "Tenant ID", Enabled = false)]
+		[PXUIField(DisplayName = "Source Tenant")]
 		[CompanySelector(SubstituteKey = typeof(PX.SM.UPCompany.companyCD))]
-		[PXUnboundDefault(2)]
+		[PXUnboundDefault(4)] // 4 -> The current operating production tenant ID.
 		public virtual int? TenantID { get; set; }
 		public abstract class tenantID : PX.Data.BQL.BqlInt.Field<tenantID> { }
 		#endregion
