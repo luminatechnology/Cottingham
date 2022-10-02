@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report Name="report1">
+<Report version="" Name="report1">
   <DrawGrid>False</DrawGrid>
   <EmbeddedImages>
     <EmbeddedImage>
@@ -164,10 +164,13 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
   <LayoutUnit>Inch</LayoutUnit>
   <MailSettings>
     <ActivitySource>RQRequisition.ReqNbr</ActivitySource>
+    <Bcc></Bcc>
     <Body>='Request for Proposal'</Body>
+    <Cc></Cc>
     <Format>='PDF'</Format>
     <ParentSource>Vendor.NoteID</ParentSource>
     <Subject>=[CompanyContact.FullName]+':'+' '+'Requisition #'+' '+[RQRequisition.ReqNbr]</Subject>
+    <TemplateID></TemplateID>
     <To>=[RemitContact.Email]</To>
   </MailSettings>
   <PageSettings>
@@ -311,7 +314,7 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
       <ChildName>Contact</ChildName>
       <Links>
         <RelationRow>
-          <ChildField>UserID</ChildField>
+          <ChildField>ContactID</ChildField>
           <ParentField>OwnerID</ParentField>
         </RelationRow>
       </Links>
@@ -2494,6 +2497,7 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
       <FullName>PX.Objects.AP.Vendor</FullName>
     </ReportTable>
   </Tables>
+  <Version></Version>
   <ViewerFields>
     <ViewerField Name="RQRequisition.ReqNbr"></ViewerField>
     <ViewerField Name="RQRequisitionLine.LineNbr"></ViewerField>
@@ -2560,6 +2564,7 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
   </ViewerFields>
   <Sections>
     <PageHeader Name="pageHeaderSection1">
+      <DrawGrid>False</DrawGrid>
       <Height>0in</Height>
       <Visible>False</Visible>
       <Items>
@@ -2588,6 +2593,7 @@ fuNXK0q9k/T9/+tWnFzbL/Z3bJly5YtW7Zs2fIakWt6+eJT//5F6z7rdk7Rq8CVc/oTu/3Z/5Yt70PeZ
       <Visible>False</Visible>
     </Detail>
     <PageFooter Name="pageFooterSection1">
+      <DrawGrid>False</DrawGrid>
       <Height>0in</Height>
       <Visible>False</Visible>
     </PageFooter>

@@ -1,10 +1,55 @@
 ﻿using PX.Data;
+using PX.Data.WorkflowAPI;
 using PX.Objects.EP;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace PX.Objects.SO
 {
-    public class SOOrderEntry_Extension : PXGraphExtension<SOOrderEntry>
+    public class SOOrderEntry_Extension : PXGraphExtension<SOOrderEntry_Workflow, SOOrderEntry>
     {
+        public const string LSPriceOrder = "SO641011";
+
+        #region Override Methods
+        public override void Configure(PXScreenConfiguration config)
+        {
+            Configure(config.GetScreenConfigurationContext<SOOrderEntry, SOOrder>());
+        }
+
+        protected virtual void Configure(WorkflowContext<SOOrderEntry, SOOrder> context)
+        {
+            context.UpdateScreenConfigurationFor(screen =>
+            {
+                return screen.WithActions(actions =>
+                {
+                    actions.Add<SOOrderEntry_Extension>(e => e.printLSPriceOrder,
+                                                        a => a.WithCategory(PX.Objects.Common.CommonActionCategories.Get(context).PrintingAndEmailing/*"Printing and Emailing"*/).PlaceAfter(s => s.printSalesOrder));
+                });
+            });
+        }
+        #endregion
+
+        #region Actions
+        public PXAction<SOOrder> printLSPriceOrder;
+        [PXButton()]
+        [PXUIField(DisplayName = "Print Sales Order(LS Price)", MapEnableRights = PXCacheRights.Select)]
+        protected virtual IEnumerable PrintLSPriceOrder(PXAdapter adapter)
+        {
+            if (Base.Document.Current != null)
+            {
+                Dictionary<string, string> parameters = new Dictionary<string, string>
+                {
+                    [nameof(SOOrder.OrderType)] = Base.Document.Current.OrderType,
+                    [nameof(SOOrder.RefNbr)] = Base.Document.Current.RefNbr
+                };
+
+                throw new PXReportRequiredException(parameters, LSPriceOrder, LSPriceOrder);
+            }
+
+            return adapter.Get();
+        }
+        #endregion 
+
         #region Event Handlers
         protected void _(Events.RowPersisting<SOLine> e, PXRowPersisting baseHandler)
         {
