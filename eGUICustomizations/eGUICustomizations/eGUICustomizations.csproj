@@ -46,8 +46,9 @@
       <HintPath>..\..\..\..\..\Bin\PX.Data.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="PX.Data.BQL.Fluent">
-      <HintPath>..\..\..\..\..\..\Bin\PX.Data.BQL.Fluent.dll</HintPath>
+    <Reference Include="PX.Data.BQL.Fluent, Version=1.0.0.0, Culture=neutral, PublicKeyToken=3b136cac2f602b8e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Bin\PX.Data.BQL.Fluent.dll</HintPath>
     </Reference>
     <Reference Include="PX.Objects">
       <HintPath>..\..\..\..\..\Bin\PX.Objects.dll</HintPath>
@@ -97,6 +98,7 @@
     <Compile Include="Graph\TWNExportMthsMaint.cs" />
     <Compile Include="Graph\TWNExportTiktTypesMaint.cs" />
     <Compile Include="Graph\TWNGenGUIMediaFile.cs" />
+    <Compile Include="Graph\TWNGenWHTFile.cs" />
     <Compile Include="Graph\TWNGenZeroTaxRateMedFile.cs" />
     <Compile Include="Graph\TWNGUIPrefMaint.cs" />
     <Compile Include="Graph\TWNManGUIAPMaint.cs" />
