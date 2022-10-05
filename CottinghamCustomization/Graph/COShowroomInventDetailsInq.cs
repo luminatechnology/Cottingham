@@ -176,7 +176,7 @@ namespace CottinghamCustomization
 
 		#region SalesPrice
 		[PXDBDecimal(0)]
-		[PXUIField(DisplayName = "LS Price", Visibility = PXUIVisibility.Visible)]
+		[PXUIField(DisplayName = "RSP Price", Visibility = PXUIVisibility.Visible)]
 		public virtual decimal? SalesPrice { get; set; }
 		public abstract class salesPrice : PX.Data.BQL.BqlDecimal.Field<salesPrice> { }
 		#endregion
