@@ -170,7 +170,7 @@ namespace CottinghamCustomization.DAC
 
         #region NoteID
         [PXNote()]
-        public virtual Guid? Noteid { get; set; }
+        public virtual Guid? NoteID { get; set; }
         public abstract class noteID : PX.Data.BQL.BqlGuid.Field<noteID> { }
         #endregion
 
