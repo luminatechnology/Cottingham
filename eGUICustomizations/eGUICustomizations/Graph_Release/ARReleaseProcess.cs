@@ -135,7 +135,7 @@ namespace PX.Objects.AR
                                 BranchID      = doc.BranchID,
                                 GUIDirection  = TWNStringList.TWNGUIDirection.Issue,
                                 GUIDate       = docExt.UsrGUIDate.Value.Date.Add(doc.CreatedDateTime.Value.TimeOfDay),
-                                GUITitle      = ARContact.PK.Find(Base, (doc as ARInvoice).BillContactID)?.FullName, // As David's email [GUI Form Adjustment] # 6
+                                GUITitle      = ARContact.PK.Find(Base, (doc as ARInvoice)?.BillContactID)?.FullName, // As David's email [GUI Form Adjustment] # 6
                                 TaxZoneID     = taxZoneID,
                                 TaxCategoryID = taxCateID,
                                 TaxID         = taxID,
