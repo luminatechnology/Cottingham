@@ -113,6 +113,7 @@
     <Compile Include="DAC_Extensions\RQRequestClassExtensions.cs" />
     <Compile Include="DAC_Extensions\SOLineExtensions.cs" />
     <Compile Include="DAC_Extensions\SOOrderExtensions.cs" />
+    <Compile Include="Graph_Extensions\InventoryTranHistEnq.cs" />
     <Compile Include="Graph_Extensions\POOrderEntry.cs" />
     <Compile Include="Graph_Extensions\POReceiptEntry.cs" />
     <Compile Include="Graph\COProdContribInq.cs" />

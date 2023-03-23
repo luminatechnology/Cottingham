@@ -1,0 +1,29 @@
+﻿<Page path="~/pages/in/in405000.aspx" ControlId="1" pageSource="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">
+    <PXGridLevel DataMember="ResultRecords" ParentId="phG_grid_Levels#0" TypeFullName="PX.Web.UI.PXGridLevel">
+        <Children Key="Columns">
+            <AddItem>
+                <PXGridColumn TypeFullName="PX.Web.UI.PXGridColumn">
+                    <Prop Key="DataField" Value="INTran__SOShipmentNbr" />
+                    <Prop Key="Width" Value="140" />
+                    <Prop Key="DisplayFormat" Value="&gt;CCCCCCCCCCCCCCC" />
+                    <Prop Key="Label" Value="SO Shipment Nbr." />
+                </PXGridColumn>
+            </AddItem>
+            <PXGridColumn DataField="INTran__POReceiptNbr" OriginalIndex="21" />
+        </Children>
+        <Children Key="RowTemplate">
+            <AddItem>
+                <PXSelector TypeFullName="PX.Web.UI.PXSelector">
+                    <Prop Key="Virtual:ApplyStylesheetSkin" />
+                    <Prop Key="ID" Value="CstPXSelector1" />
+                    <Prop Key="DataField" Value="INTran__SOShipmentNbr" />
+                    <Prop Key="AllowEdit" Value="True" />
+                </PXSelector>
+            </AddItem>
+            <PXSelector DataField="INTran__POReceiptNbr" OriginalIndex="4" />
+        </Children>
+    </PXGridLevel>
+    <PXGrid ID="grid" ParentId="phG_grid" TypeFullName="PX.Web.UI.PXGrid">
+        <Prop Key="FastFilterFields" Value="RefNbr,INTran__SOOrderNbr,INTran__POReceiptNbr,INTran__SOShipmentNbr" />
+    </PXGrid>
+</Page>
