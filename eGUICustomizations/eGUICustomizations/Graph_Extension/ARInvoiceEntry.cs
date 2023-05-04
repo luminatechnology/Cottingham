@@ -94,7 +94,7 @@ namespace PX.Objects.AR
         {
             baseHandler?.Invoke(e.Cache, e.Args);
 
-            if (e.Operation == PXDBOperation.Insert || e.Operation == PXDBOperation.Update)
+            if (activateGUI == true && (e.Operation == PXDBOperation.Insert || e.Operation == PXDBOperation.Update))
             {
                 ARRegisterExt regisExt = e.Row.GetExtension<ARRegisterExt>();
 

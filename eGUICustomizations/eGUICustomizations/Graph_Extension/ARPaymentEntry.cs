@@ -148,7 +148,7 @@ namespace PX.Objects.AR
         {
             baseHandler?.Invoke(e.Cache, e.Args);
 
-            if (e.Operation == PXDBOperation.Insert || e.Operation == PXDBOperation.Update)
+            if (activateGUI == true && (e.Operation == PXDBOperation.Insert || e.Operation == PXDBOperation.Update))
             {
                 ARRegisterExt regisExt = e.Row.GetExtension<ARRegisterExt>();
 
@@ -177,7 +177,7 @@ namespace PX.Objects.AR
         {
             Guid? custNoteID = Base.customer.Current?.NoteID;
 
-            if (custNoteID != null && Base.CurrentDocument.Current?.DocType == ARDocType.Prepayment)
+            if (activateGUI == true && custNoteID != null && Base.CurrentDocument.Current?.DocType == ARDocType.Prepayment)
             {
                 var value = CS.CSAnswers.PK.Find(Base, custNoteID, "PRINTPREPA")?.Value;
 
@@ -189,7 +189,7 @@ namespace PX.Objects.AR
         {
             ARPayment row = e.Row as ARPayment;
 
-            if (row == null) { return; }
+            if (row == null && activateGUI != true) { return; }
 
             ///<remarks>Determined by Tax Zone and Tax Category. Tax Zone is default from customer master (Location.CTaxZoneID). TaxCategory is default form Tax Zone(TaxZone.Dflttaxcategory)</remarks>
             Tax tax = SelectFrom<Tax>.InnerJoin<TaxZoneDet>.On<TaxZoneDet.FK.Tax>

@@ -49,7 +49,7 @@ namespace PX.Objects.AP
 
             var row = e.Row as APInvoice;
 
-            if (row != null && row.DocType.IsIn(APDocType.Invoice, APDocType.DebitAdj) && string.IsNullOrEmpty(row.OrigRefNbr))
+            if (activateGUI == true && row != null && row.DocType.IsIn(APDocType.Invoice, APDocType.DebitAdj) && string.IsNullOrEmpty(row.OrigRefNbr))
             {
                 if (ManualAPBill.Select().Count == 0 && Base.Taxes.Select().Count > 0)
                 {
