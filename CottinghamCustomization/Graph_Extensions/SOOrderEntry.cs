@@ -1,5 +1,8 @@
 ﻿using PX.Data;
+using PX.Data.BQL;
+using PX.Data.BQL.Fluent;
 using PX.Data.WorkflowAPI;
+using PX.Objects.CR;
 using PX.Objects.EP;
 using System.Collections;
 using System.Collections.Generic;
@@ -66,8 +69,8 @@ namespace PX.Objects.SO
 
             if (row != null && e.NewValue != null)
             {
-                row.SalesPersonID = PXSelectReadonly<EPEmployee, Where<EPEmployee.bAccountID, Equal<Required<SOOrder.ownerID>>,
-                                                                       And<EPEmployee.status, Equal<AP.VendorStatus.active>>>>.Select(Base, e.NewValue).TopFirst?.SalesPersonID;
+                row.SalesPersonID = SelectFrom<EPEmployee>.InnerJoin<BAccount>.On<BAccount.bAccountID.IsEqual<EPEmployee.bAccountID>>
+                                                          .Where<BAccount.defContactID.IsEqual<@P.AsInt>>.View.ReadOnly.Select(Base, e.NewValue).TopFirst?.SalesPersonID;
             }
         }
 
