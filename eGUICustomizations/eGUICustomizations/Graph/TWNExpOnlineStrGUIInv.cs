@@ -194,48 +194,55 @@ namespace eGUICustomizations.Graph
                     #endregion
 
                     #region Prepayment / Invoice reveral Prepayment
-                    bool hasAdjust = SelectFrom<ARAdjust>.Where<ARAdjust.adjdDocType.IsEqual<@P.AsString>
-                                                         .And<ARAdjust.adjdRefNbr.IsEqual<@P.AsString>>>.View.SelectSingleBound(graph, null, gUITrans.DocType, gUITrans.OrderNbr).Count > 0;
+                    ARAdjust adjust = SelectFrom<ARAdjust>.Where<ARAdjust.adjdDocType.IsEqual<@P.AsString>
+                                                                 .And<ARAdjust.adjdRefNbr.IsEqual<@P.AsString>>>.View
+                                                          .SelectSingleBound(graph, null, gUITrans.DocType, gUITrans.OrderNbr);
+                    bool hasAdjust = adjust != null;
 
-                    if (gUITrans.DocType == ARDocType.Prepayment || hasAdjust)
+                    if (gUITrans.DocType == ARDocType.Prepayment || (hasAdjust && adjust.AdjgDocType == ARDocType.Prepayment))
                     {
-                        TWNGUIPrepayAdjust prepayAdj = SelectFrom<TWNGUIPrepayAdjust>.Where<TWNGUIPrepayAdjust.appliedGUINbr.IsEqual<@P.AsString>.And<TWNGUIPrepayAdjust.sequenceNo.IsEqual<@P.AsInt>>>
+                        TWNGUIPrepayAdjust prepayAdj = SelectFrom<TWNGUIPrepayAdjust>.Where<TWNGUIPrepayAdjust.appliedGUINbr.IsEqual<@P.AsString>
+                                                                                            .And<TWNGUIPrepayAdjust.sequenceNo.IsEqual<@P.AsInt>>>
                                                                                      .AggregateTo<Sum<TWNGUIPrepayAdjust.netAmt,
-                                                                                                      Sum<TWNGUIPrepayAdjust.taxAmt>>>.View.ReadOnly.Select(graph, gUITrans.GUINbr, gUITrans.SequenceNo);
-
-                        bool isB2C = string.IsNullOrEmpty(gUITrans.TaxNbr);
+                                                                                                      Sum<TWNGUIPrepayAdjust.taxAmt>>>.View.ReadOnly
+                                                                                     .Select(graph, gUITrans.GUINbr, gUITrans.SequenceNo);
 
                         decimal? netAmt   = hasAdjust == false ? gUITrans.NetAmount + gUITrans.TaxAmount : prepayAdj.NetAmt + prepayAdj.TaxAmt;
                         decimal? grossAmt = hasAdjust == false ? gUITrans.NetAmount : prepayAdj.NetAmt;
 
-                        // 明細代號
-                        lines += "D" + verticalBar;
-                        // 序號
-                        lines += num++ + verticalBar;
-                        // 訂單編號
-                        lines += gUITrans.OrderNbr + verticalBar;
-                        // 商品編號
-                        // 商品條碼
-                        lines += new string(char.Parse(verticalBar), 2);
-                        // 商品名稱
-                        lines += string.Format("{0}預收款", hasAdjust ? "扣:" : "") + verticalBar;
-                        // 商品規格
-                        // 單位
-                        // 單價
-                        lines += new string(char.Parse(verticalBar), 3);
-                        // 數量
-                        lines += 0 + verticalBar;
-                        // 未稅金額
-                        lines += (isB2C == true ? netAmt : grossAmt) + verticalBar;
-                        // 含稅金額
-                        lines += netAmt + verticalBar;
-                        // 健康捐
-                        lines += 0 + verticalBar;
-                        // 稅率別
-                        lines += TWNExpGUIInv2BankPro.GetTaxType(gUITrans.VATType) + verticalBar;
-                        // 紅利點數折扣金額
-                        // 明細備註
-                        lines += new string(char.Parse(verticalBar), 1) + "\r\n";
+                        if (netAmt != null && netAmt > 0m)
+                        {
+                            bool isB2C = string.IsNullOrEmpty(gUITrans.TaxNbr);
+
+                            // 明細代號
+                            lines += "D" + verticalBar;
+                            // 序號
+                            lines += num++ + verticalBar;
+                            // 訂單編號
+                            lines += gUITrans.OrderNbr + verticalBar;
+                            // 商品編號
+                            // 商品條碼
+                            lines += new string(char.Parse(verticalBar), 2);
+                            // 商品名稱
+                            lines += string.Format("{0}預收款", hasAdjust ? "扣:" : "") + verticalBar;
+                            // 商品規格
+                            // 單位
+                            // 單價
+                            lines += new string(char.Parse(verticalBar), 3);
+                            // 數量
+                            lines += 0 + verticalBar;
+                            // 未稅金額
+                            lines += (isB2C == true ? netAmt : grossAmt) + verticalBar;
+                            // 含稅金額
+                            lines += netAmt + verticalBar;
+                            // 健康捐
+                            lines += 0 + verticalBar;
+                            // 稅率別
+                            lines += TWNExpGUIInv2BankPro.GetTaxType(gUITrans.VATType) + verticalBar;
+                            // 紅利點數折扣金額
+                            // 明細備註
+                            lines += new string(char.Parse(verticalBar), 1) + "\r\n";
+                        }
                     }
                     #endregion
                 }
