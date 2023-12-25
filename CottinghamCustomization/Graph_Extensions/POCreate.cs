@@ -4,58 +4,63 @@ using PX.Data;
 using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
 using PX.Objects.SO;
-using static PX.Objects.PO.POCreate;
 
 namespace PX.Objects.PO
 {
     public class POCreate_Extension : PXGraphExtension<POCreate>
     {
-        #region Event Handlers
-        /// <summary>
-        /// Override this event handler to define another new logical static method.
-        /// </summary>
-        /// <param name="e"></param>
-        /// <param name="baseHandler"></param>
-        protected void _(Events.RowSelected<POCreateFilter> e, PXRowSelected baseHandler)
+        //#region Event Handlers
+        ///// <summary>
+        ///// Override this event handler to define another new logical static method.
+        ///// </summary>
+        //protected void _(Events.RowSelected<POCreate.POCreateFilter> e, PXRowSelected baseHandler)
+        //{
+        //    //baseHandler?.Invoke(e.Cache, e.Args);
+
+        //    POCreate.POCreateFilter filter = Base.Filter.Current;
+
+        //    if (filter == null) return;
+
+        //    Base.FixedDemand.SetProcessDelegate(delegate (List<POFixedDemand> list)
+        //    {
+        //        CreateProc2(list, filter.PurchDate, filter.OrderNbr != null, filter.BranchID);
+        //    });
+
+        //    PXLongRunStatus status = PXLongOperation.GetStatus(Base.UID, out TimeSpan span, out Exception message);
+
+        //    PXUIFieldAttribute.SetVisible<POLine.orderNbr>(Base.Caches[typeof(POLine)], null, (status == PXLongRunStatus.Completed || status == PXLongRunStatus.Aborted));
+        //    PXUIFieldAttribute.SetVisible<POCreate.POCreateFilter.orderTotal>(e.Cache, null, filter.VendorID != null);
+        //}
+        //#endregion      
+        ///// <summary>
+        ///// Copy standard method and add one new customizaed method.
+        ///// </summary>
+        //public static void CreateProc2(List<POFixedDemand> list, DateTime? orderDate, bool extSort, int? branchID = null)
+        //{
+        //    PXRedirectRequiredException poredirect = CreatePOOrders(list, orderDate, extSort, branchID);
+
+        //    CopyNoteOrFile2PO(list);
+
+        //    if (poredirect != null) { throw poredirect; }
+        //}
+
+        #region Delegate Methods
+        [PXOverride]
+        public PXRedirectRequiredException CreatePOOrders(List<POFixedDemand> list, DateTime? PurchDate, bool extSort, int? branchID = null,
+                                                          Func<List<POFixedDemand>, DateTime?, bool, int?, PXRedirectRequiredException> baseMethod = null)
         {
-            POCreateFilter filter = Base.Filter.Current;
-
-            if (filter == null) return;
-
-            Base.FixedDemand.SetProcessDelegate(delegate (List<POFixedDemand> list)
-            {
-                CreateProc2(list, filter.PurchDate, filter.OrderNbr != null);
-            });
-
-            TimeSpan span;
-            Exception message;
-            PXLongRunStatus status = PXLongOperation.GetStatus(Base.UID, out span, out message);
-
-            PXUIFieldAttribute.SetVisible<POLine.orderNbr>(Base.Caches[typeof(POLine)], null, (status == PXLongRunStatus.Completed || status == PXLongRunStatus.Aborted));
-            PXUIFieldAttribute.SetVisible<POCreateFilter.orderTotal>(e.Cache, null, filter.VendorID != null);
+            PXRedirectRequiredException poredirect = baseMethod(list, PurchDate, extSort, branchID);
+            
+            CopyNoteOrFile2PO(list);
+            
+            return poredirect;
         }
         #endregion
 
         #region Static Methods
         /// <summary>
-        /// Copy standard method and add one new customizaed method.
-        /// </summary>
-        /// <param name="list"></param>
-        /// <param name="orderDate"></param>
-        /// <param name="extSort"></param>
-        public static void CreateProc2(List<POFixedDemand> list, DateTime? orderDate, bool extSort)
-        {
-            PXRedirectRequiredException poredirect = CreatePOOrders(list, orderDate, extSort);
-
-            CopyNoteOrFile2PO(list);
-
-            if (poredirect != null) { throw poredirect; }
-        }
-
-        /// <summary>
         /// Copy notes or attchments from SO to PO by configuration of sales order type.
         /// </summary>
-        /// <param name="list"></param>
         public static void CopyNoteOrFile2PO(List<POFixedDemand> list)
         {
             POOrderEntry orderEntry = PXGraph.CreateInstance<POOrderEntry>();
