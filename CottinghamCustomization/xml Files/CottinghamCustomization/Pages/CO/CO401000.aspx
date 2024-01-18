@@ -11,7 +11,7 @@
 	<px:PXFormView ID="form" runat="server" DataSourceID="ds" DataMember="Filter" Width="100%" Height="50px" AllowAutoHide="false">
 		<Template>
 			<px:PXLayoutRule ID="PXLayoutRule1" runat="server" StartRow="True"></px:PXLayoutRule>
-			<px:PXSelector runat="server" ID="CstPXSelector1" DataField="TenantID" ></px:PXSelector></Template>
+			<px:PXSelector runat="server" ID="CstPXSelector1" DataField="TenantID" CommitChanges="true" ></px:PXSelector></Template>
 	</px:PXFormView>
 </asp:Content>
 <asp:Content ID="cont3" ContentPlaceHolderID="phG" Runat="Server">

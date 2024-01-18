@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using PX.Data;
 using PX.Data.BQL;
 using PX.Data.BQL.Fluent;
+using PX.Data.Maintenance.GI;
 using PX.Data.Update;
 using PX.Objects.AR;
 using PX.Objects.CS;
@@ -15,7 +16,6 @@ namespace CottinghamCustomization
     public class COShowroomInventDetailsInq : PXGraph<COShowroomInventDetailsInq>
     {
 		#region Constant string Classes & Variables
-		private const string GIScreenID = "GI000092";
 		private const string GIHasModified = "The Source Generic Inquiry Has Been Modified To Be Different From Current One.";
 
 		public const string PriceClass_WS = "WS";
@@ -48,26 +48,29 @@ namespace CottinghamCustomization
 
 				using (new PXLoginScope($"{Accessinfo.UserName}@{companyName}"))
 				{
-					PXGenericInqGrph giGraph = PXGenericInqGrph.CreateInstance("Inventory for Prestige", "Inventory for Prestige");//(GIScreenID);
+                    //PXGenericInqGrph giGraph = PXGenericInqGrph.CreateInstance("Inventory for Prestige");
+                    PXGenericInqGrph giGraph = PXGenericInqGrph.CreateInstance((Guid)SelectFrom<GIDesign>.Where<GIDesign.name.IsEqual<P.AsString>>
+																										 .View.SelectSingleBound(this, null, "Inventory for Prestige")
+																										 .TopFirst?.DesignID);
 
-					foreach (GenericResult item in giGraph.Results.Select())
+                    foreach (GenericResult item in giGraph.Results.Select())
 					{
-						ARSalesPrice salesPrice = item.Values[nameof(ARSalesPrice)] as ARSalesPrice;
-						InventoryItem inventory = item.Values["Item"] as InventoryItem;
-						INPostClass postClass = item.Values["PostClass"] as INPostClass;
-						INLocationStatus locStatus = item.Values["InventorySiteStatus"] as INLocationStatus;
+						ARSalesPrice	 salesPrice = item.Values[nameof(ARSalesPrice)] as ARSalesPrice;
+						InventoryItem	 inventory  = item.Values["Item"] as InventoryItem;
+						INPostClass		 postClass  = item.Values["PostClass"] as INPostClass;
+						INLocationStatus locStatus  = item.Values["InventorySiteStatus"] as INLocationStatus;
 
 						COInventoryDetails details = new COInventoryDetails()
 						{
-							InventoryID = GetSegmentDimension(InventoryRawAttribute.DimensionName, InventoryItem.PK.Find(giGraph, locStatus.InventoryID)?.InventoryCD),
-							InventDescr = inventory.Descr,
-							SiteCD = INSite.PK.Find(giGraph, locStatus.SiteID)?.SiteCD,
-							LocationCD = INLocation.PK.Find(giGraph, locStatus.LocationID).LocationCD,
+							InventoryID    = GetSegmentDimension(InventoryRawAttribute.DimensionName, InventoryItem.PK.Find(giGraph, locStatus.InventoryID)?.InventoryCD),
+							InventDescr    = inventory.Descr,
+							SiteCD         = INSite.PK.Find(giGraph, locStatus.SiteID)?.SiteCD,
+							LocationCD     = INLocation.PK.Find(giGraph, locStatus.LocationID).LocationCD,
 							//QtyAvail = locStatus.QtyAvail,
-							SalesPrice = salesPrice.SalesPrice,
-							PostClassID = postClass.PostClassID,
+							SalesPrice     = salesPrice.SalesPrice,
+							PostClassID	   = postClass.PostClassID,
 							PostClassDescr = postClass.Descr,
-							ItemClassCD = GetSegmentDimension(INItemClass.Dimension, INItemClass.PK.Find(giGraph, inventory.ItemClassID)?.ItemClassCD)
+							ItemClassCD    = GetSegmentDimension(INItemClass.Dimension, INItemClass.PK.Find(giGraph, inventory.ItemClassID)?.ItemClassCD)
 						};
 
 						Dictionary<string, object> dicFormula = (Dictionary<string, object>)item.Values[nameof(GenericResult)];
