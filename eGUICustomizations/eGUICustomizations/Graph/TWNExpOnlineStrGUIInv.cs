@@ -23,13 +23,6 @@ namespace eGUICustomizations.Graph
                                   And<TWNGUITrans.gUIFormatcode, Equal<TWNExpGUIInv2BankPro.VATOutCode35>,
                                        And<Where<TWNGUITrans.eGUIExported, Equal<False>,
                                                  Or<TWNGUITrans.eGUIExported, IsNull>>>>>> GUITranProc;
-        //public PXProcessing<TWNGUITrans,
-        //                    Where<TWNGUITrans.eGUIExcluded, Equal<False>,
-        //                          And<TWNGUITrans.gUIFormatcode, Equal<VATOutCode35>,
-        //                               And2<Where<TWNGUITrans.eGUIExported, Equal<False>,
-        //                                          Or<TWNGUITrans.eGUIExported, IsNull>>,
-        //                                    And<Where<TWNGUITrans.taxNbr, IsNull,
-        //                                              Or<TWNGUITrans.taxNbr, Equal<StringEmpty>>>>>>>> GUITranProc;
         #endregion
 
         #region Ctor
@@ -64,13 +57,13 @@ namespace eGUICustomizations.Graph
                 {
                     bool isCM = gUITrans.GUIFormatcode == TWGUIFormatCode.vATOutCode33;
 
-                    ARRegister register = ARRegister.PK.Find(graph, gUITrans.DocType, gUITrans.OrderNbr);
+                    ARInvoice invoice = ARInvoice.PK.Find(graph, gUITrans.DocType, gUITrans.OrderNbr);
 
                     #region Header
                     // 主檔代號
                     lines += "M" + verticalBar;
                     // 訂單編號
-                    lines += (isCM == false ? gUITrans.OrderNbr : register?.OrigRefNbr ?? FixedMsg) + verticalBar;
+                    lines += (isCM == false ? gUITrans.OrderNbr : invoice?.OrigRefNbr ?? FixedMsg) + verticalBar;
                     // 訂單狀態
                     lines += (gUITrans.GUIStatus == TWNStringList.TWNGUIStatus.Voided ? 2 : isCM == false ? 0 : 3) + verticalBar;
                     // 訂單日期
@@ -95,7 +88,7 @@ namespace eGUICustomizations.Graph
                     lines += gUITrans.GUITitle + verticalBar;
                     // 會員編號
                     (string phone, string email) = graph.GetBillingInfo(graph, gUITrans.DocType, gUITrans.OrderNbr, gUITrans.CustVend);
-                    lines += graph.GetMemberNbr(graph, register?.CustomerID, new string[] { gUITrans.CustVend, phone }) + verticalBar;
+                    lines += graph.GetMemberNbr(graph, invoice?.CustomerID, new string[] { gUITrans.CustVend, phone }) + verticalBar;
                     // 會員姓名
                     lines += gUITrans.GUITitle + verticalBar;
                     // 會員郵遞區號
@@ -162,13 +155,10 @@ namespace eGUICustomizations.Graph
                         // 單位
                         lines += new string(char.Parse(verticalBar), 2);
                         // 單價
-                        ARInvoice invoice = ARInvoice.PK.Find(graph, tran.TranType, tran.RefNbr);
-
                         (decimal UnitPrice, decimal ExtPrice) = graph.CalcTaxAmt(invoice.TaxCalcMode == PX.Objects.TX.TaxCalculationMode.Gross, 
                                                                                  !string.IsNullOrEmpty(gUITrans.TaxNbr), 
                                                                                  tran.CuryDiscAmt > 0 ? (tran.CuryTranAmt / tran.Qty).Value : tran.CuryUnitPrice.Value,
                                                                                  tran.CuryTranAmt.Value/*tran.CuryExtPrice.Value*/);
-
                         lines += UnitPrice + verticalBar;
                         // 數量
                         lines += (tran.Qty == 0m ? 1 : tran.Qty) + verticalBar;
@@ -195,11 +185,13 @@ namespace eGUICustomizations.Graph
 
                     #region Prepayment / Invoice reveral Prepayment
                     ARAdjust adjust = SelectFrom<ARAdjust>.Where<ARAdjust.adjdDocType.IsEqual<@P.AsString>
-                                                                 .And<ARAdjust.adjdRefNbr.IsEqual<@P.AsString>>>.View
+                                                                 .And<ARAdjust.adjdRefNbr.IsEqual<@P.AsString>
+                                                                 .And<ARAdjust.adjgDocType.IsEqual<ARDocType.prepayment>>>>.View
                                                           .SelectSingleBound(graph, null, gUITrans.DocType, gUITrans.OrderNbr);
                     bool hasAdjust = adjust != null;
 
-                    if (gUITrans.DocType == ARDocType.Prepayment || (hasAdjust && adjust.AdjgDocType == ARDocType.Prepayment))
+                    // Prepayment invoice OR Balance invoice with applied prepayment
+                    if (gUITrans.DocType == ARDocType.Prepayment || hasAdjust)
                     {
                         TWNGUIPrepayAdjust prepayAdj = SelectFrom<TWNGUIPrepayAdjust>.Where<TWNGUIPrepayAdjust.appliedGUINbr.IsEqual<@P.AsString>
                                                                                             .And<TWNGUIPrepayAdjust.sequenceNo.IsEqual<@P.AsInt>>>
@@ -210,7 +202,7 @@ namespace eGUICustomizations.Graph
                         decimal? netAmt   = hasAdjust == false ? gUITrans.NetAmount + gUITrans.TaxAmount : prepayAdj.NetAmt + prepayAdj.TaxAmt;
                         decimal? grossAmt = hasAdjust == false ? gUITrans.NetAmount : prepayAdj.NetAmt;
 
-                        if (netAmt != null && netAmt > 0m)
+                        if (netAmt != null && netAmt != 0m)
                         {
                             bool isB2C = string.IsNullOrEmpty(gUITrans.TaxNbr);
 
